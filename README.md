@@ -2,6 +2,19 @@
 
 A final project in System Integration and Architecture 1
 
-# Installation
+## Pre-requisite
 
-*To be added*
+- Python 3.11
+
+## Installation
+
+To download the requirements, enter the following command:
+
+```bash
+pip install -r requirements.txt
+```
+To run the system, enter the following command:
+
+```bash
+python manage.py runserver
+```
