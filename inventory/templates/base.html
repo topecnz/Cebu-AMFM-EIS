@@ -1,0 +1,14 @@
+{% load static %}
+<html>
+    <head>
+        <title>Cebu AM/FM Eletronics Inventory System | {% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    </head>
+    <body>
+        {% include "components/navbar.html" %}
+        {% block content%}{% endblock %}
+        {% include "components/footer.html" %}
+        
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}">
+    </body>
+</html>
