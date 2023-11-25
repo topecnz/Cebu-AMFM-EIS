@@ -30,7 +30,6 @@ $ pip install pipenv
 $ python -m venv .venv
 $ source .venv/bin/activate
 $ pipenv install
-$ pip install -r requirements.txt
 $ python manage.py runserver
 ```
 
@@ -39,7 +38,6 @@ $ python manage.py runserver
 PS> pip install pipenv
 PS> python -m venv .venv
 PS> .venv\Scripts\activate
-PS> pipenv install
-PS> pip install -r requirements.txt
+PS> pipenv installpip install -r requirements.txt
 PS> python manage.py runserver
 ```
