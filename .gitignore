@@ -4,3 +4,4 @@ Pipfile.lock
 .vscode
 migrations
 .venv
+*.sqlite3
