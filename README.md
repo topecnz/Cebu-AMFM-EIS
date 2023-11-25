@@ -38,6 +38,6 @@ $ python manage.py runserver
 PS> pip install pipenv
 PS> python -m venv .venv
 PS> .venv\Scripts\activate
-PS> pipenv installpip install -r requirements.txt
+PS> pipenv install
 PS> python manage.py runserver
 ```
