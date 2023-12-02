@@ -5,3 +5,4 @@ Pipfile.lock
 migrations
 .venv
 *.sqlite3
+*.sqlite3-journal
