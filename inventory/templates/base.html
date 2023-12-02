@@ -3,11 +3,12 @@
     <head>
         <title>Cebu AM/FM Eletronics Inventory System | {% block title %}{% endblock %}</title>
         <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        {% block head_content %}{% endblock %}
     </head>
     <body>
-        {% include "components/navbar.html" %}
-        {% block content%}{% endblock %}
-        {% include "components/footer.html" %}
+        {% comment %} {% include "components/navbar.html" %} {% endcomment %}
+        {% block content %}{% endblock %}
+        {% comment %} {% include "components/footer.html" %} {% endcomment %}
         
         <script src="{% static 'js/bootstrap.bundle.min.js' %}">
     </body>
