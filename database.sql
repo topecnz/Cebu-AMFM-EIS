@@ -48,7 +48,7 @@ CREATE TABLE account(
     acc_type_id INT NOT NULL,
     emp_id INT NOT NULL,
     PRIMARY KEY (acc_id),
-    FOREIGN KEY (emp_id) REFERENCES (employee.emp_id)
+    FOREIGN KEY (emp_id) REFERENCES employee(emp_id)
 );
 CREATE TABLE product_type(
     prod_type_id INT NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE product(
     prod_updated_at TIMESTAMP DEFAULT NOW(),
     prod_type_id INT NOT NULL,
     PRIMARY KEY (prod_id),
-    FOREIGN KEY (prod_type_id) REFERENCES (product_type.prod_type_id)
+    FOREIGN KEY (prod_type_id) REFERENCES product_type(prod_type_id)
 );
 CREATE TABLE inventory(
     in_id INT NOT NULL,
@@ -79,7 +79,7 @@ CREATE TABLE inventory(
     in_updated_at TIMESTAMP DEFAULT NOW(),
     prod_id INT NOT NULL,
     PRIMARY KEY (in_id),
-    FOREIGN KEY (prod_id) REFERENCES (product.prod_id)
+    FOREIGN KEY (prod_id) REFERENCES product(prod_id)
 );
 CREATE TABLE supplier_item(
     sup_itm_id INT NOT NULL,
@@ -90,8 +90,8 @@ CREATE TABLE supplier_item(
     sup_itm_updated_at TIMESTAMP DEFAULT NOW(),
     prod_id INT NOT NULL,
     PRIMARY KEY (sup_itm_id),
-    FOREIGN KEY (prod_id) REFERENCES (product.prod_id)
-)
+    FOREIGN KEY (prod_id) REFERENCES product(prod_id)
+);
 CREATE TABLE invoice(
     inv_id INT NOT NULL AUTO_INCREMENT,
     inv_date TIMESTAMP DEFAULT NOW(),
@@ -99,18 +99,18 @@ CREATE TABLE invoice(
     cus_id INT,
     emp_id INT NOT NULL,
     PRIMARY KEY (inv_id),
-    FOREIGN KEY (cus_id) REFERENCES (customer.cus_id),
-    FOREIGN KEY (emp_id) REFERENCES (employee.emp_id)
+    FOREIGN KEY (cus_id) REFERENCES customer(cus_id),
+    FOREIGN KEY (emp_id) REFERENCES employee(emp_id)
 );
 CREATE TABLE order_list(
     ord_id INT NOT NULL AUTO_INCREMENT,
     ord_price FLOAT default 0.0,
     ord_qty INT default 0,
     prod_id INT NOT NULL,
-    int_id INT NOT NULL 
+    inv_id INT NOT NULL ,
     PRIMARY KEY (ord_id),
-    FOREIGN KEY (prod_id) REFERENCES (product.prod_id),
-    FOREIGN KEY (inv_id) REFERENCES (invoice.inv_id),
+    FOREIGN KEY (prod_id) REFERENCES product(prod_id),
+    FOREIGN KEY (inv_id) REFERENCES invoice(inv_id),
 );
 
 -- -- might be optional or it depends to the client if they need to have history to check their activities.
