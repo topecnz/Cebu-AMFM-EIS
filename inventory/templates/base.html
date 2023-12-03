@@ -4,12 +4,20 @@
         <title>Cebu AM/FM Eletronics Inventory System | {% block title %}{% endblock %}</title>
         <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
         {% block head_content %}{% endblock %}
+        {% if user.is_authenticated %}
+        
+        
+        {% endif %}
     </head>
     <body>
-        {% comment %} {% include "components/navbar.html" %} {% endcomment %}
+        {% if user.is_authenticated %}
+        {% include "components/header.html" %}
+        {% endif %}
         {% block content %}{% endblock %}
         {% comment %} {% include "components/footer.html" %} {% endcomment %}
         
-        <script src="{% static 'js/bootstrap.bundle.min.js' %}">
+        <script src="{% static 'js/jquery.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+          
     </body>
 </html>
