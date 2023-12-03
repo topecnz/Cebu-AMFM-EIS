@@ -2,6 +2,26 @@ from django.contrib.auth.models import UserManager, AbstractBaseUser, Permission
 from django.db import models
 from django.utils import timezone
 
+class CustomUserManager(UserManager):
+    def _create_user(self, username, password):
+        if not username:
+            raise ValueError("You are not provided a valid username.")
+        if not password:
+            raise ValueError("You are not provided a valid password.")
+
+        username = self.model.normalize_username(username)
+        user = self.model(username=username, password=password)
+        user.set_password(password)
+        user.save()
+        
+        return user
+    
+    def create_user(self, username, password):
+        return self._create_user(username, password)
+    
+    def create_superuser(self, username, password):
+        return self._create_user(username, password)
+
 class AccountType(models.Model):
     acc_type_id = models.IntegerField(primary_key=True)
     acc_type_name = models.CharField(max_length=64)
@@ -72,19 +92,6 @@ class Supplier(models.Model):
         managed = True
         db_table = 'supplier'
 
-
-class Account(models.Model):
-    acc_id = models.AutoField(primary_key=True)
-    acc_username = models.CharField(unique=True, max_length=32)
-    acc_password = models.CharField(max_length=32)
-    acc_type = models.ForeignKey(AccountType, models.DO_NOTHING)
-    emp = models.ForeignKey(Employee, models.DO_NOTHING)
-
-    class Meta:
-        managed = True
-        db_table = 'account'
-
-
 class Product(models.Model):
     prod_id = models.AutoField(primary_key=True)
     prod_name = models.CharField(max_length=1024)
@@ -148,3 +155,31 @@ class Invoice(models.Model):
     class Meta:
         managed = True
         db_table = 'invoice'
+
+class Account(AbstractBaseUser, PermissionsMixin):
+    acc_id = models.AutoField(primary_key=True)
+    username = models.CharField(unique=True, max_length=32, verbose_name='Username')
+    last_login = models.DateTimeField(blank=True, null=True)
+    acc_created_at = models.DateTimeField(default=timezone.localtime)
+    acc_updated_at = models.DateTimeField(default=timezone.localtime)
+    acc_type = models.ForeignKey(AccountType, models.DO_NOTHING, null=True, blank=True)
+    emp = models.ForeignKey(Employee, models.DO_NOTHING, null=True, blank=True)
+    
+    objects = CustomUserManager()
+    
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = []
+
+    class Meta:
+        managed = True
+        db_table = 'account'
+
+    def get_full_name(self):
+        return self.username
+
+    def get_short_name(self):
+        return self.username
+
+    def __str__(self):
+        return self.username
+    

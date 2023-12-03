@@ -42,8 +42,11 @@ CREATE TABLE account_type(
 );
 CREATE TABLE account(
     acc_id INT NOT NULL AUTO_INCREMENT,
-    acc_username varchar(32) NOT NULL UNIQUE,
-    acc_password varchar(32) NOT NULL,
+    username varchar(32) NOT NULL UNIQUE,
+    password varchar(32) NOT NULL,
+    is_superuser BOOLEAN DEFAULT 0,
+    acc_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+    acc_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
     acc_type_id INT NOT NULL,
     emp_id INT NOT NULL,
     PRIMARY KEY (acc_id),
