@@ -12,10 +12,9 @@ CREATE TABLE employee(
     emp_phone varchar(12) NOT NULL,
     emp_email varchar(1024) NOT NULL,
     emp_address varchar(1024) NOT NULL,
-    emp_status enum('Active', 'Removed') default 'Active',
     emp_created_at TIMESTAMP DEFAULT NOW(),
     emp_updated_at TIMESTAMP DEFAULT NOW(),
-    PRIMARY KEY (emp_id),
+    PRIMARY KEY (emp_id)
 );
 CREATE TABLE customer(
     cus_id INT NOT NULL AUTO_INCREMENT,
@@ -48,7 +47,8 @@ CREATE TABLE account(
     acc_type_id INT NOT NULL,
     emp_id INT NOT NULL,
     PRIMARY KEY (acc_id),
-    FOREIGN KEY (emp_id) REFERENCES employee(emp_id)
+    FOREIGN KEY (emp_id) REFERENCES employee(emp_id),
+    FOREIGN KEY (acc_type_id) REFERENCES account_type(acc_type_id)
 );
 CREATE TABLE product_type(
     prod_type_id INT NOT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE order_list(
     inv_id INT NOT NULL ,
     PRIMARY KEY (ord_id),
     FOREIGN KEY (prod_id) REFERENCES product(prod_id),
-    FOREIGN KEY (inv_id) REFERENCES invoice(inv_id),
+    FOREIGN KEY (inv_id) REFERENCES invoice(inv_id)
 );
 
 -- -- might be optional or it depends to the client if they need to have history to check their activities.
@@ -132,3 +132,20 @@ CREATE TABLE order_list(
 --     bar_id INT NOT NULL AUTO_INCREMENT,
 --     PRIMARY KEY (brg_id)
 -- );
+
+
+DROP TABLE account_type;
+DROP TABLE product_type;
+DROP TABLE product_brand;
+DROP TABLE employee;
+DROP TABLE customer;
+DROP TABLE supplier;
+DROP TABLE account;
+DROP TABLE product;
+DROP TABLE inventory;
+DROP TABLE supplier_item;
+DROP TABLE order_list;
+DROP TABLE invoice;
+
+
+account_type product_type product_brand employee customer supplier account product inventory supplier_item order_list invoice
