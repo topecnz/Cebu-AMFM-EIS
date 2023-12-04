@@ -44,6 +44,7 @@ CREATE TABLE account(
     acc_id INT NOT NULL AUTO_INCREMENT,
     username varchar(32) NOT NULL UNIQUE,
     password varchar(32) NOT NULL,
+    acc_is_active BOOLEAN DEFAULT 1,
     is_superuser BOOLEAN DEFAULT 0,
     acc_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
     acc_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),

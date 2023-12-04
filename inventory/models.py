@@ -160,6 +160,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     acc_id = models.AutoField(primary_key=True)
     username = models.CharField(unique=True, max_length=32, verbose_name='Username')
     last_login = models.DateTimeField(blank=True, null=True)
+    acc_is_active = models.BooleanField(default=True)
     acc_created_at = models.DateTimeField(default=timezone.localtime)
     acc_updated_at = models.DateTimeField(default=timezone.localtime)
     acc_type = models.ForeignKey(AccountType, models.DO_NOTHING, null=True, blank=True)
