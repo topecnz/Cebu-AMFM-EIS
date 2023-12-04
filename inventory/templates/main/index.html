@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<h1>Hello, {{ user.username }}!</h1>
+<p>ID: {{ user.acc_id }}</p>
+<p>Last Login: {{ user.last_login }}</p>
+<p>Created: {{ user.acc_created_at }}</p>
+<p>Position Type: {{ user.acc_type_id }}</p>
+
+{% endblock %}

@@ -5,19 +5,30 @@
         <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
         {% block head_content %}{% endblock %}
         {% if user.is_authenticated %}
-        
-        
+        <style>
+          .text-small {
+            font-size: 85%;
+          }
+          
+          .dropdown-toggle:not(:focus) {
+            outline: 0;
+          }
+        </style>
+        {% block style %}{% endblock %}
         {% endif %}
     </head>
     <body>
         {% if user.is_authenticated %}
-        {% include "components/header.html" %}
+        {% include "components/header.html" with user=user %}
         {% endif %}
+        <div class="container">
         {% block content %}{% endblock %}
+        </div>
         {% comment %} {% include "components/footer.html" %} {% endcomment %}
         
         <script src="{% static 'js/jquery.min.js' %}"></script>
         <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        {% block script %}{% endblock %}
           
     </body>
 </html>

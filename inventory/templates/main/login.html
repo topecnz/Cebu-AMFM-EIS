@@ -13,8 +13,8 @@
                 <form action="" method="POST" class="row g-3">
                     {% csrf_token %}
                     <h4>Login</h4>
-                    {% if message %}
-                    <div class="alert alert-warning" role="alert">
+                    {% if message and status %}
+                    <div class="alert alert-{{status}}" role="alert">
                         {{message}}
                     </div>
                     {% endif %}
