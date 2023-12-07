@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Add Account{% endblock %}
+{% block style %}
+{% endblock %}
+{% block content %}
+
+    {% csrf_token %}
+    <div class="mb-3">
+        <h3>Add Account<h3>
+    </div>
+    <div id="alertMsg" class="">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">First Name</label>
+        <input id="fname" type="text" class="form-control" placeholder="Enter First Name">
+        <div id="fnMsg">
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Last Name</label>
+        <input id="lname" type="text" class="form-control" placeholder="Enter Last Name">
+        <div id="lnMsg">
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input id="username" type="text" class="form-control" placeholder="Enter Username">
+        <div id="userMsg">
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input id="password" type="password" class="form-control {% if is_p_matched %}{{p_color}}{% endif %}" placeholder="Enter Password">
+        <div id="passMsg">
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Confirm Password</label>
+        <input id="cpassword" type="password" class="form-control" placeholder="Enter Confirm Password">
+        <div id="cpassMsg">
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Position</label>
+        <select id="acc_type" class="form-select" aria-label="Default select example">
+            <option selected disabled>Open this select menu</option>
+            {% for res in acc_type %}
+            <option value="{{res.acc_type_id}}">{{res.acc_type_name}}</option>
+            {% endfor %}
+        </select>
+        <div id="typeMsg">
+        </div>
+    </div>
+    <div class="col-12">
+        <button id="btnSubmit" class="btn btn-dark float-end">Add</button>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $('#btnSubmit').click(function () {
+        fn = $('#fname').val();
+        ln = $('#lname').val();
+        u = $('#username').val();
+        p = $('#password').val();
+        cp = $('#cpassword').val();
+        at = $('#acc_type').val();
+
+        $.validate_check = function (feed, input, data) {
+            txt = !data ? 'Required' : '';
+            Ac = !data ? 'is-invalid' : 'is-valid';
+            Rc = !data ? 'is-valid' : 'is-invalid';
+            Af = !data ? 'invalid-feedback' : 'valid-feedback';
+            Rf = !data ? 'valid-feedback' : 'invalid-feedback';
+    
+            $(feed).text(txt).addClass(Af).removeClass(Rf);
+            $(input).addClass(Ac).removeClass(Rc);
+        };
+
+        // Check if there's an empty fields
+        $.validate_check('#fnMsg', '#fname', fn);
+        $.validate_check('#lnMsg', '#lname', ln);
+        $.validate_check('#userMsg', '#username', u);
+        $.validate_check('#passMsg', '#password', p);
+        $.validate_check('#cpassMsg', '#cpassword', cp);
+        $.validate_check('#typeMsg', '#acc_type', at);
+
+        // return if found
+        if (!fn || !ln || !u || !p || !cp || !at) {           
+            return 0;
+        }
+
+        $.post("{% url 'Submit Account' %}", {
+            fname: fn,
+            lname: ln,
+            username: u,
+            password: p,
+            acc_type: at
+        }, function (e) {
+            if (e.code == 200) {
+                $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
+            }
+            else {
+                $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
+            }
+        }
+        );
+    });
+
+    $('#username').on('input', function () {
+        var u = $('#username').val()
+        if (u.length < 8) {
+            $('#userMsg').text("Input username atleast 8 characters.").addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#username').addClass('is-invalid').removeClass('is-valid');
+        } else {
+            $.post("{% url 'Check Username' %}", {
+                username: u
+            }, function (e) {
+                if (e.found == true) {
+                    $('#userMsg').text("Username is already taken!").addClass('invalid-feedback').removeClass('valid-feedback');
+                    $('#username').addClass('is-invalid').removeClass('is-valid');
+                } else {
+                    $('#userMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                    $('#username').addClass('is-valid').removeClass('is-invalid');
+                }
+            })
+        }
+    });
+
+    $('#cpassword').on("input", function () {
+        var pw = $('#password').val();
+        var cpw = $('#cpassword').val();
+
+        if (pw != cpw) {
+            $('#cpassMsg').text("Password not matched!").addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#cpassword').addClass('is-invalid').removeClass('is-valid');
+        }
+        else {
+            $('#cpassMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
+            $('#cpassword').addClass('is-valid').removeClass('is-invalid');
+        }
+    });
+
+    $('#password').on("input", function () {
+        var pw = $('#password').val().length;
+
+        if (pw < 8) {
+            $('#passMsg').text("Input password atleast 8 characters.").addClass('invalid-feedback').removeClass('valid-feedback');;
+            $('#password').addClass('is-invalid').removeClass('is-valid');
+        }
+        else {
+            $('#passMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
+            $('#password').addClass('is-valid').removeClass('is-invalid');
+        }
+    });
+</script>
+{% endblock %}

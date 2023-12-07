@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}View Product{% endblock %}
+{% block style %}
+{% endblock %}
+{% block content %}
+
+{% csrf_token %}
+<div class="mb-3">
+    <h3>View Product<h3>
+</div>
+<div id="alertMsg" class="">
+</div>
+<div class="mb-3">
+    <label class="form-label">Inventory ID:</label>
+    <label id="inv_id">{{inventory.in_id}}</label>
+</div>
+<div class="mb-3">
+    <label class="form-label">Product ID:</label>
+    <label id="prod_id">{{inventory.prod_id}}</label>
+</div>
+<div class="mb-3">
+    <label class="form-label">Product Name:</label>
+    <label id="prod_name">{{inventory.prod.prod_name}}</label>
+</div>
+<div class="mb-3">
+    <label class="form-label">Price</label>
+    <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{inventory.in_qty}}" id="qty" type="number" class="form-control" placeholder="Enter Price">
+    <div id="qMsg">
+    </div>
+</div>
+<div class="col-12">
+    {% if user.acc_type_id != 3 %}
+    <button id="btnSubmit" class="btn btn-dark float-end">Update</button>
+    {% endif %}
+</div>
+   
+{% endblock %}
+
+{% block script %}
+    {% if user.acc_type_id != 3 %}
+    <script>
+        $('#btnSubmit').click(function () {
+            p = $('#prod_id').text();
+            i = $('#inv_id').text();
+            q = $('#qty').val();
+
+            console.log(p, i)
+    
+            $.validate_check = function (feed, input, data) {
+                txt = !data ? 'Required' : '';
+                Ac = !data ? 'is-invalid' : 'is-valid';
+                Rc = !data ? 'is-valid' : 'is-invalid';
+                Af = !data ? 'invalid-feedback' : 'valid-feedback';
+                Rf = !data ? 'valid-feedback' : 'invalid-feedback';
+        
+                $(feed).text(txt).addClass(Af).removeClass(Rf);
+                $(input).addClass(Ac).removeClass(Rc);
+            };
+    
+            // Check if there's an empty fields
+            $.validate_check('#qMsg', '#qty', p);
+    
+            // return if found
+            if (!q) {           
+                return 0;
+            }
+    
+            $.post("{% url 'Update Inventory' %}", {
+                prod_id: p,
+                in_id: i,
+                qty: q,
+            }, function (e) {
+                if (e.code == 200) {
+                    $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
+                }
+                else {
+                    $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
+                }
+            }
+            );
+        });
+    </script>
+    {% endif %}
+{% endblock %}

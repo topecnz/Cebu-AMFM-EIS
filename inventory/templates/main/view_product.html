@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}View Product{% endblock %}
+{% block style %}
+{% endblock %}
+{% block content %}
+
+{% csrf_token %}
+<div class="mb-3">
+    <h3>View Product<h3>
+</div>
+<div id="alertMsg" class="">
+</div>
+<div class="mb-3">
+    <label class="form-label">Product ID:</label>
+    <label id="prod_id">{{product.prod_id}}</label>
+</div>
+<div class="mb-3">
+    <label class="form-label">Product Name</label>
+    <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{product.prod_name}}" id="prod" type="text" class="form-control" placeholder="Enter Product Name">
+    <div id="pMsg">
+    </div>
+</div>
+<div class="mb-3">
+    <label class="form-label">Description</label>
+    <textarea {% if user.acc_type_id == 3 %}disabled{% endif %}   id="desc" style="resize: none;" class="form-control" rows="3">{{product.prod_desc}}</textarea>
+    <div id="dMsg">
+    </div>
+</div>
+<div class="mb-3">
+    <label class="form-label">Price</label>
+    <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{product.prod_price}}" id="price" type="number" class="form-control" placeholder="Enter Price">
+    <div id="prMsg">
+    </div>
+</div>
+{% comment %} <div class="mb-3">
+    <label class="form-label">Status</label>
+    <select {% if user.acc_type_id == 3 %}disabled{% endif %} id="prod_status" class="form-select" aria-label="Default select example">
+        <option disabled>Select Type</option>
+        {% if product.prod_status == 'Active' %}
+        <option selected value="Active">Active</option>
+        <option value="Removed">Removed</option>
+        {% else %}
+        <option value="Active">Active</option>
+        <option selected value="Removed">Removed</option>
+        {% endif %}
+    </select>
+    <div id="sMsg">
+    </div>
+</div> {% endcomment %}
+<div class="mb-3">
+    <label class="form-label">Type</label>
+    <select {% if user.acc_type_id == 3 %}disabled{% endif %} id="prod_type" class="form-select" aria-label="Default select example">
+        <option disabled>Select Type</option>
+        {% for res in type %}
+        {% if res.prod_type_id == product.prod_type_id %}
+        <option selected value="{{res.prod_type_id}}">{{res.prod_type_name}}</option>
+        {% else %}
+        <option value="{{res.prod_type_id}}">{{res.prod_type_name}}</option>
+        {% endif %}
+        {% endfor %}
+    </select>
+    <div id="ptMsg">
+    </div>
+</div>
+<div class="mb-3">
+    <label class="form-label">Brand</label>
+    <select {% if user.acc_type_id == 3 %}disabled{% endif %} id="prod_br" class="form-select" aria-label="Default select example">
+        <option disabled>Select brand</option>
+        {% for res in brand %}
+        {% if res.prod_br_id == product.prod_br_id %}
+        <option selected value="{{res.prod_br_id}}">{{res.prod_br_name}}</option>
+        {% else %}
+        <option value="{{res.prod_br_id}}">{{res.prod_br_name}}</option>
+        {% endif %}
+        {% endfor %}
+    </select>
+    <div id="brMsg">
+    </div>
+</div>
+<div class="col-12">
+    {% if user.acc_type_id != 3 %}
+    <button id="btnSubmit" class="btn btn-dark float-end">Update</button>
+    {% endif %}
+</div>
+   
+{% endblock %}
+
+{% block script %}
+    {% if user.acc_type_id != 3 %}
+    <script>
+        $('#btnSubmit').click(function () {
+            id = $('#prod_id').text();
+            p = $('#prod').val();
+            d = $('#desc').val();
+            pr = $('#price').val();
+            pt = $('#prod_type').val();
+            pb = $('#prod_br').val();
+    
+            $.validate_check = function (feed, input, data) {
+                txt = !data ? 'Required' : '';
+                Ac = !data ? 'is-invalid' : 'is-valid';
+                Rc = !data ? 'is-valid' : 'is-invalid';
+                Af = !data ? 'invalid-feedback' : 'valid-feedback';
+                Rf = !data ? 'valid-feedback' : 'invalid-feedback';
+        
+                $(feed).text(txt).addClass(Af).removeClass(Rf);
+                $(input).addClass(Ac).removeClass(Rc);
+            };
+    
+            // Check if there's an empty fields
+            $.validate_check('#pMsg', '#prod', p);
+            $.validate_check('#dMsg', '#desc', d);
+            $.validate_check('#prMsg', '#price', pr);
+            $.validate_check('#ptMsg', '#prod_type', pt);
+            $.validate_check('#pbMsg', '#prod_br', pb);
+    
+            // return if found
+            if (!p || !d || !pr || !pt || !pb || !s) {           
+                return 0;
+            }
+    
+            $.post("{% url 'Update Product' %}", {
+                id: id,
+                prod: p,
+                desc: d,
+                price: pr,
+                prod_type: pt,
+                prod_br: pb
+            }, function (e) {
+                if (e.code == 200) {
+                    $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
+                }
+                else {
+                    $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
+                }
+            }
+            );
+        });
+    </script>
+    {% endif %}
+{% endblock %}

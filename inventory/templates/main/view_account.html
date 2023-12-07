@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}View Account{% endblock %}
+{% block style %}
+{% endblock %}
+{% block content %}
+    {% if not error %}
+        <h1>{{user.username}}</h1>
+    {% else %}
+        <h1>{{error}}</h1>
+    {% endif %}
+   
+{% endblock %}
+
+{% block script %}
+{% endblock %}

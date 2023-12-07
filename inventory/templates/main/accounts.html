@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Account Management{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.min.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="mb-3">
+        <h3>Account Management<h3>
+    </div>
+    <div class="mb-5">
+        <a href="{% url 'Add Account' %}" class="btn btn-dark">Add Account</a>
+    </div>
+    <div>
+        <table id="example" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Status</th>
+                    <th>Last Login</th>
+                    <th>Created At</th>
+                    <th>Updated At</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% comment %} <tr>
+                    <td>Tiger Nixon</td>
+                    <td>System Architect</td>
+                    <td>Edinburgh</td>
+                    <td>61</td>
+                    <td>2011-04-25</td>
+                    <td>$320,800</td>
+                </tr> {% endcomment %}
+                {% if result %}
+                {% for user in result %}
+                <tr>
+                    <td>{{user.username}}</td>
+                    <td>{{user.acc_type.acc_type_name}}</td>
+                    <td>{% if user.acc_is_active %}
+                        Active
+                        {% else %}
+                        Removed
+                        {% endif %}
+                    </td>
+                    <td>{{user.last_login}}</td>
+                    <td>{{user.acc_created_at}}</td>
+                    <td>{{user.acc_updated_at}}</td>
+                    <td><a href="{% url 'Account Management' %}{{user.acc_id}}" class="btn btn-dark">'View'</a></td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Status</th>
+                    <th>Last Login</th>
+                    <th>Created At</th>
+                    <th>Updated At</th>
+                    <th>Action</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script>
+        new DataTable('#example');
+    </script>
+{% endblock %}

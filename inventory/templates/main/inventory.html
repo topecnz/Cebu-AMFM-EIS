@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Inventory{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.min.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="mb-3">
+        <h3>Inventory<h3>
+    </div>
+    <div id="alertMsg" class="">
+    </div>
+    {% if user.acc_type_id != 3%}
+    <div class="mb-5">
+        <a href="{% url 'Add Inventory' %}" class="btn btn-dark">Add Inventory</a>
+    </div>
+    {% endif %}
+    <div>
+        <table id="example" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Inventory ID</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if result %}
+                {% for inventory in result %}
+                <tr class="inv-data">
+                    <td class="inv-id">{{inventory.in_id}}</td>
+                    <td>{{inventory.prod.prod_name}}</td>
+                    <td>{{inventory.in_qty}}</td>
+                    <td class="inv-status">{{inventory.in_status}}</td>
+                    <td><a href="{% url 'Inventory' %}{{inventory.in_id}}" class="btn btn-dark m-1">View</a>
+                        {% if inventory.in_status == 'Available' and user.acc_type_id != 3 %}
+                        {% comment %} <button class="btn btn-dark prod-delete">Delete</button> {% endcomment %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Inventory ID</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script>
+        new DataTable('#example');
+    </script>
+    <script>
+        $('.prod-delete').each(function () {
+            $(this).click(function () {
+                id = $(this).closest('.inv-data').find('.inv-id').text();
+                
+                $.post("{% url 'Delete Product' %}", {
+                    id: id
+                }, function(e) {
+                    if (e.code == 200) {
+                        $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
+                    } else {
+                        $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
+                    }
+                })
+            })
+        });
+    </script>
+{% endblock %}

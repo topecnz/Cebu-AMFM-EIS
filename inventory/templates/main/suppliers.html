@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Supplier{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.min.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="mb-3">
+        <h3>Supplier<h3>
+    </div>
+    <div id="alertMsg" class="">
+    </div>
+    {% if user.acc_type_id != 3%}
+    <div class="mb-5">
+        <a href="{% url 'Add Supplier' %}" class="btn btn-dark">Add Supplier</a>
+    </div>
+    {% endif %}
+    <div>
+        <table id="example" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Supplier ID</th>
+                    <th>Supplier Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if result %}
+                {% for supplier in result %}
+                <tr class="sup-data">
+                    <td class="sup-id">{{supplier.sup_id}}</td>
+                    <td>{{supplier.sup_name}}</td>
+                    <td>{{supplier.sup_phone}}</td>
+                    <td>{{supplier.sup_email}}</td>
+                    <td class="sup-status">{{supplier.sup_status}}</td>
+                    <td><a href="{% url 'Suppliers' %}{{supplier.sup_id}}" class="btn btn-dark m-1">View</a>
+                        {% if supplier.sup_status == 'Active' and user.acc_type_id != 3 %}
+                        <button class="btn btn-dark sup-delete">Delete</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Supplier ID</th>
+                    <th>Supplier Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script>
+        new DataTable('#example');
+    </script>
+    <script>
+        $('.sup-delete').each(function () {
+            $(this).click(function () {
+                id = $(this).closest('.sup-data').find('.sup-id').text();
+                
+                $.post("{% url 'Delete Supplier' %}", {
+                    id: id
+                }, function(e) {
+                    if (e.code == 200) {
+                        $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
+                    } else {
+                        $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
+                    }
+                })
+            })
+        });
+    </script>
+{% endblock %}

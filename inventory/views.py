@@ -6,25 +6,21 @@ from .forms import *
 
 # Create your views here.
 
-def user_login(request: HttpRequest):
-    if request.user.is_authenticated:
-        return redirect('/')
-    
+def user_login(request: HttpRequest):    
     if request.method == 'POST':
-        u = request.POST['username']
-        p = request.POST['password']
         form = UserLoginForm(request.POST)
         message = None
         status = None
         if form.is_valid():
-            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+            u:str = form.cleaned_data['username']
+            p = form.cleaned_data['password']
+            user = authenticate(username=u.lower(), password=p)
             if user:
                 login(request, user)
                 if request.user.acc_is_active:
-                    if request.method == 'GET':
+                    if request.GET:
                         rd = request.GET['next']
-                        if rd:
-                            return redirect(rd)
+                        return redirect(rd)
                     return redirect('/')
                 else:
                     message = 'Account Removed'
@@ -36,9 +32,12 @@ def user_login(request: HttpRequest):
             'status': status if status else 'warning'
         }
         
+        if request.user.is_authenticated:
+            return redirect('/')
+        
         return render(request, 'main/login.html', obj)
     
-    return render(request, "main/login.html", {})
+    return render(request, "main/login.html")
 
 @login_required(login_url='/login')
 def home(request: HttpRequest):

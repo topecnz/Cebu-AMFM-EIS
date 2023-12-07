@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Add Account{% endblock %}
+{% block style %}
+<style>
+    input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+</style>
+{% endblock %}
+{% block content %}
+
+    {% csrf_token %}
+    <div class="mb-3">
+        <h3>Add Product<h3>
+    </div>
+    <div id="alertMsg" class="">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Product Name</label>
+        <input id="prod" type="text" class="form-control" placeholder="Enter Product Name">
+        <div id="pMsg">
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea id="desc" style="resize: none;" class="form-control"  rows="3"></textarea>
+        <div id="dMsg">
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Price</label>
+        <input id="price" type="number" class="form-control" placeholder="Enter Price">
+        <div id="prMsg">
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Type</label>
+        <select id="prod_type" class="form-select" aria-label="Default select example">
+            <option selected disabled>Select Type</option>
+            {% for res in type %}
+            <option value="{{res.prod_type_id}}">{{res.prod_type_name}}</option>
+            {% endfor %}
+        </select>
+        <div id="ptMsg">
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Brand</label>
+        <select id="prod_br" class="form-select" aria-label="Default select example">
+            <option selected disabled>Select brand</option>
+            {% for res in brand %}
+            <option value="{{res.prod_br_id}}">{{res.prod_br_name}}</option>
+            {% endfor %}
+        </select>
+        <div id="brMsg">
+        </div>
+    </div>
+    <div class="col-12">
+        <button id="btnSubmit" class="btn btn-dark float-end">Add</button>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $('#btnSubmit').click(function () {
+        console.log('hello');
+        p = $('#prod').val();
+        d = $('#desc').val();
+        pr = $('#price').val();
+        pt = $('#prod_type').val();
+        pb = $('#prod_br').val();
+
+        $.validate_check = function (feed, input, data) {
+            txt = !data ? 'Required' : '';
+            Ac = !data ? 'is-invalid' : 'is-valid';
+            Rc = !data ? 'is-valid' : 'is-invalid';
+            Af = !data ? 'invalid-feedback' : 'valid-feedback';
+            Rf = !data ? 'valid-feedback' : 'invalid-feedback';
+    
+            $(feed).text(txt).addClass(Af).removeClass(Rf);
+            $(input).addClass(Ac).removeClass(Rc);
+        };
+
+        // Check if there's an empty fields
+        $.validate_check('#pMsg', '#prod', p);
+        $.validate_check('#dMsg', '#desc', d);
+        $.validate_check('#prMsg', '#price', pr);
+        $.validate_check('#ptMsg', '#prod_type', pt);
+        $.validate_check('#pbMsg', '#prod_br', pb);
+
+        // return if found
+        if (!p || !d || !pr || !pt || !pb) {           
+            return 0;
+        }
+
+        $.post("{% url 'Submit Product' %}", {
+            prod: p,
+            desc: d,
+            price: pr,
+            prod_type: pt,
+            prod_br: pb
+        }, function (e) {
+            if (e.code == 200) {
+                $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
+            }
+            else {
+                $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
+            }
+        }
+        );
+    });
+
+    $('#username').on('input', function () {
+        var u = $('#username').val()
+        if (u.length < 8) {
+            $('#userMsg').text("Input username atleast 8 characters.").addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#username').addClass('is-invalid').removeClass('is-valid');
+        } else {
+            $.post("../check_username/", {
+                username: u
+            }, function (e) {
+                if (e.found == true) {
+                    $('#userMsg').text("Username is already taken!").addClass('invalid-feedback').removeClass('valid-feedback');
+                    $('#username').addClass('is-invalid').removeClass('is-valid');
+                } else {
+                    $('#userMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                    $('#username').addClass('is-valid').removeClass('is-invalid');
+                }
+            })
+        }
+    });
+
+    $('#cpassword').on("input", function () {
+        var pw = $('#password').val();
+        var cpw = $('#cpassword').val();
+
+        if (pw != cpw) {
+            $('#cpassMsg').text("Password not matched!").addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#cpassword').addClass('is-invalid').removeClass('is-valid');
+        }
+        else {
+            $('#cpassMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
+            $('#cpassword').addClass('is-valid').removeClass('is-invalid');
+        }
+    });
+
+    $('#password').on("input", function () {
+        var pw = $('#password').val().length;
+
+        if (pw < 8) {
+            $('#passMsg').text("Input password atleast 8 characters.").addClass('invalid-feedback').removeClass('valid-feedback');;
+            $('#password').addClass('is-invalid').removeClass('is-valid');
+        }
+        else {
+            $('#passMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
+            $('#password').addClass('is-valid').removeClass('is-invalid');
+        }
+    });
+</script>
+{% endblock %}
