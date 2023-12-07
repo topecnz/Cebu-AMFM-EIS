@@ -85,6 +85,7 @@ class Supplier(models.Model):
     sup_name = models.CharField(max_length=1024)
     sup_phone = models.CharField(max_length=12)
     sup_email = models.CharField(max_length=1024)
+    sup_status = models.CharField(max_length=32, default='Active')
     sup_created_at = models.DateTimeField()
     sup_updated_at = models.DateTimeField()
 
@@ -111,10 +112,10 @@ class Product(models.Model):
 class Inventory(models.Model):
     in_id = models.AutoField(primary_key=True)
     in_qty = models.IntegerField(blank=True, null=True)
-    int_status = models.CharField(max_length=13, blank=True, null=True)
+    in_status = models.CharField(max_length=13, blank=True, null=True)
     in_created_at = models.DateTimeField()
     in_updated_at = models.DateTimeField()
-    prod = models.ForeignKey(Product, models.DO_NOTHING)
+    prod = models.OneToOneField(Product, models.DO_NOTHING)
 
     class Meta:
         managed = True
@@ -166,7 +167,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     acc_created_at = models.DateTimeField(default=timezone.localtime)
     acc_updated_at = models.DateTimeField(default=timezone.localtime)
     acc_type = models.ForeignKey(AccountType, models.DO_NOTHING, null=True, blank=True)
-    emp = models.ForeignKey(Employee, models.DO_NOTHING, null=True, blank=True)
+    emp = models.OneToOneField(Employee, models.DO_NOTHING, null=True, blank=True)
     
     objects = CustomUserManager()
     
