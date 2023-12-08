@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 07, 2023 at 03:59 PM
+-- Generation Time: Dec 08, 2023 at 08:18 AM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 7.4.27
 
@@ -50,6 +50,15 @@ CREATE TABLE `account_type` (
   `acc_type_id` int(11) NOT NULL,
   `acc_type_name` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `account_type`
+--
+
+INSERT INTO `account_type` (`acc_type_id`, `acc_type_name`) VALUES
+(1, 'Super Administrator'),
+(2, 'Administrator'),
+(3, 'Employee');
 
 -- --------------------------------------------------------
 
@@ -158,6 +167,13 @@ CREATE TABLE `product_brand` (
   `prod_br_name` varchar(1024) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `product_brand`
+--
+
+INSERT INTO `product_brand` (`prod_br_id`, `prod_br_name`) VALUES
+(1, 'Epson');
+
 -- --------------------------------------------------------
 
 --
@@ -168,6 +184,13 @@ CREATE TABLE `product_type` (
   `prod_type_id` int(11) NOT NULL,
   `prod_type_name` varchar(1024) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `product_type`
+--
+
+INSERT INTO `product_type` (`prod_type_id`, `prod_type_name`) VALUES
+(1, 'Projector');
 
 -- --------------------------------------------------------
 
@@ -302,7 +325,7 @@ ALTER TABLE `account`
 -- AUTO_INCREMENT for table `account_type`
 --
 ALTER TABLE `account_type`
-  MODIFY `acc_type_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `acc_type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `customer`
@@ -344,13 +367,13 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `product_brand`
 --
 ALTER TABLE `product_brand`
-  MODIFY `prod_br_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `prod_br_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `product_type`
 --
 ALTER TABLE `product_type`
-  MODIFY `prod_type_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `prod_type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `supplier`
