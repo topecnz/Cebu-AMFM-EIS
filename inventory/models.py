@@ -3,24 +3,24 @@ from django.db import models
 from django.utils import timezone
 
 class CustomUserManager(UserManager):
-    def _create_user(self, username, password):
+    def _create_user(self, username, password, acc_type):
         if not username:
             raise ValueError("You are not provided a valid username.")
         if not password:
             raise ValueError("You are not provided a valid password.")
 
         username = self.model.normalize_username(username)
-        user = self.model(username=username, password=password)
+        user = self.model(username=username, password=password, acc_type_id=acc_type)
         user.set_password(password)
         user.save()
         
         return user
     
     def create_user(self, username, password):
-        return self._create_user(username, password)
+        return self._create_user(username, password, 3)
     
     def create_superuser(self, username, password):
-        return self._create_user(username, password)
+        return self._create_user(username, password, 1)
 
 class AccountType(models.Model):
     acc_type_id = models.AutoField(primary_key=True)
