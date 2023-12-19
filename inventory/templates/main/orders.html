@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Order{% endblock %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/dataTables.min.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="mb-3">
+        <h3>Invoice<h3>
+    </div>
+    <div id="alertMsg" class="">
+    </div>
+    {% if user.acc_type_id != 3%}
+    <div class="mb-5">
+        <a href="{% url 'Add Order' %}" class="btn btn-dark">Add Invoice</a>
+    </div>
+    {% endif %}
+    <div>
+        <table id="example" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Order Id</th>
+                    <th>Invoice Date</th>
+                    <th>Amount</th>
+                    <th>Customer Id</th>
+                    <th>Employee Id</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if result %}
+                {% for invoice in result %}
+                <tr class="inv-data">
+                    <td class="inv-id">{{invoice.inv_id}}</td>
+                    <td>{{invoice.inv_date}}</td>
+                    <td>{{invoice.inv_amount}}</td>
+                    <td>{{ invoice.customer.cus_id }}</td>
+                    <td>{{ invoice.employee.emp_id }}</td>
+                    <td><a href="{% url 'Orders' %}{{invoice.inv_id}}" class="btn btn-dark m-1">View</a>
+                        {% if user.acc_type_id != 3 %}
+                        <button class="btn btn-dark cus-delete">Delete</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Order Id</th>
+                    <th>Invoice Date</th>
+                    <th>Amount</th>
+                    <th>Customer Id</th>
+                    <th>Employee Id</th>
+                    <th>Action</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script>
+        new DataTable('#example');
+    </script>
+{% endblock %}

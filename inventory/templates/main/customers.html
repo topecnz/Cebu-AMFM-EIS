@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Customers{% endblock %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/dataTables.min.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="mb-3">
+        <h3>Customer<h3>
+    </div>
+    <div id="alertMsg" class="">
+    </div>
+    {% if user.acc_type_id != 3%}
+    <div class="mb-5">
+        <a href="{% url 'Add Customer' %}" class="btn btn-dark">Add Customer</a>
+    </div>
+    {% endif %}
+    <div>
+        <table id="example" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Customer ID</th>
+                    <th>Customer Firstname</th>
+                    <th>Customer Lastname</th>
+                    <th>Phone</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if result %}
+                {% for customer in result %}
+                <tr class="cus-data">
+                    <td class="cus-id">{{customer.cus_id}}</td>
+                    <td>{{customer.cus_fname}}</td>
+                    <td>{{customer.cus_lname}}</td>
+                    <td>{{customer.cus_phone}}</td>
+                    <td><a href="{% url 'Customers' %}{{customer.cus_id}}" class="btn btn-dark m-1">View</a>
+                        {% if user.acc_type_id != 3 %}
+                        <button class="btn btn-dark cus-delete">Delete</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Customer ID</th>
+                    <th>Customer Firstname</th>
+                    <th>Customer Lastname</th>
+                    <th>Phone</th>
+                    <th>Action</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script>
+        new DataTable('#example');
+    </script>
+{% endblock %}

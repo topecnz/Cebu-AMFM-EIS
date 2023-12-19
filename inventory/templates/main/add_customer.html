@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Add Customer{% endblock %}
+{% block style %}
+
+<style>
+    input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
+</style>
+{% endblock %}
+{% block content %}
+
+{% csrf_token %}
+    <div class ="mb-3">
+        <h3> Add Customer</h3>
+    </div>
+    <div id = "alertMsg" class="">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Customer Firstname</label>
+        <input id="fname" type="text" class="form-control" placeholder="Enter Customer Firstname">
+        <div id="fnMsg">
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Customer Middlename</label>
+        <input id="mname" type="text" class="form-control" placeholder="Enter Customer Middlename">
+        <div id="mnMsg">
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Customer Lastname</label>
+        <input id="lname" type="text" class="form-control" placeholder="Enter Customer Lastname">
+        <div id="lnMsg">
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Customer Phone Number</label>
+        <input id="phone" type="number" class="form-control" placeholder="Enter Phone Number">
+        <div id="phoneMsg">
+        </div>
+    </div>
+    <div class="col-12">
+        <button id="btnSubmit" class="btn btn-dark float-end">Add</button>
+    </div>
+
+{% endblock %}
+
+{% block script %}    
+<script>
+ $('#btnSubmit').click(function() {
+    
+    fn = $('#fname').val();
+    mn = $('#mname').val();
+    ln = $('#lname').val();
+    p = $('#phone').val();
+
+    $.validate_check = function (feed, input, data) {
+            txt = !data ? 'Required' : '';
+            Ac = !data ? 'is-invalid' : 'is-valid';
+            Rc = !data ? 'is-valid' : 'is-invalid';
+            Af = !data ? 'invalid-feedback' : 'valid-feedback';
+            Rf = !data ? 'valid-feedback' : 'invalid-feedback';
+    
+            $(feed).text(txt).addClass(Af).removeClass(Rf);
+            $(input).addClass(Ac).removeClass(Rc);
+        };
+
+         // Check if there's an empty fields
+        $.validate_check('#fnMsg', '#fname', fn);
+        $.validate_check('#mnMsg', '#mname', mn);
+        $.validate_check('#lnMsg', '#lname', ln);
+        $.validate_check('#phoneMsg', '#phone', p);
+      
+        //return if found
+        if (!fn || !mn || !ln || !p) {
+            return 0;
+        }
+
+        $.post("{% url 'Submit Customer' %}", {
+            fname: fn,
+            mname: mn,
+            lname: ln,
+            phone: p
+        }, function (e) {
+            if (e.code == 200) {
+                $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
+            }
+            else {
+                $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
+            }
+        }
+        );
+    });
+
+
+    $('#username').on('input', function () {
+        var u = $('#username').val()
+        if (u.length < 8) {
+            $('#userMsg').text("Input username atleast 8 characters.").addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#username').addClass('is-invalid').removeClass('is-valid');
+        } else {
+            $.post("../check_username/", {
+                username: u
+            }, function (e) {
+                if (e.found == true) {
+                    $('#userMsg').text("Username is already taken!").addClass('invalid-feedback').removeClass('valid-feedback');
+                    $('#username').addClass('is-invalid').removeClass('is-valid');
+                } else {
+                    $('#userMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                    $('#username').addClass('is-valid').removeClass('is-invalid');
+                }
+            })
+        }
+    });
+
+    $('#cpassword').on("input", function () {
+        var pw = $('#password').val();
+        var cpw = $('#cpassword').val();
+
+        if (pw != cpw) {
+            $('#cpassMsg').text("Password not matched!").addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#cpassword').addClass('is-invalid').removeClass('is-valid');
+        }
+        else {
+            $('#cpassMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
+            $('#cpassword').addClass('is-valid').removeClass('is-invalid');
+        }
+    });
+
+    $('#password').on("input", function () {
+        var pw = $('#password').val().length;
+
+        if (pw < 8) {
+            $('#passMsg').text("Input password atleast 8 characters.").addClass('invalid-feedback').removeClass('valid-feedback');;
+            $('#password').addClass('is-invalid').removeClass('is-valid');
+        }
+        else {
+            $('#passMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
+            $('#password').addClass('is-valid').removeClass('is-invalid');
+        }
+    });
+</script>
+{% endblock %}

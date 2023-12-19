@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}View Customer{% endblock %}
+{% block style %}
+<style>
+    input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+</style>
+{% endblock %}
+{% block content %}
+
+{% csrf_token %}
+<div class="mb-3">
+    <h3>View Customer<h3>
+</div>
+<div id="alertMsg" class="">
+</div>
+<div class="mb-3">
+    <label class="form-label">Customer ID:</label>
+    <label id="cus_id">{{customer.cus_id}}</label>
+</div>
+<div class="mb-3">
+    <label class="form-label">Customer Firstname</label>
+    <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{customer.cus_fname}}" id="fname" type="text" class="form-control" placeholder="Enter Customer Firstname">
+    <div id="fnMsg">
+    </div>
+</div>
+<div class="mb-3">
+    <label class="form-label">Customer Lastname</label>
+    <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{customer.cus_lname}}" id="lname" type="text" class="form-control" placeholder="Enter Customer Lastname">
+    <div id="lnMsg">
+    </div>
+</div>
+<div class="mb-3">
+    <label class="form-label">Customer Phone</label>
+    <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{customer.cus_phone}}" id="phone" type="number" class="form-control" placeholder="Enter Phone Number">
+    <div id="phoneMsg">
+    </div>
+</div>
+
+<div class="col-12">
+    {% if user.acc_type_id != 3 %}
+    <button id="btnSubmit" class="btn btn-dark float-end">Update</button>
+    {% endif %}
+</div>
+   
+{% endblock %}
+
+{% block script %}
+    {% if user.acc_type_id != 3 %}
+    <script>
+        $('#btnSubmit').click(function () {
+            id = $('#cus_id').text();
+            fn = $('#fname').val();
+            ln = $('#lname').val();
+            p = $('#phone').val();
+           
+    
+            $.validate_check = function (feed, input, data) {
+                txt = !data ? 'Required' : '';
+                Ac = !data ? 'is-invalid' : 'is-valid';
+                Rc = !data ? 'is-valid' : 'is-invalid';
+                Af = !data ? 'invalid-feedback' : 'valid-feedback';
+                Rf = !data ? 'valid-feedback' : 'invalid-feedback';
+        
+                $(feed).text(txt).addClass(Af).removeClass(Rf);
+                $(input).addClass(Ac).removeClass(Rc);
+            };
+    
+            // Check if there's an empty fields
+            $.validate_check('#fnMsg', '#fname', fn);
+            $.validate_check('#lnMsg', '#lname', ln);
+            $.validate_check('#phoneMsg', '#phone', p);
+           
+    
+            // return if found
+            if (!fn || !ln || !p ) {           
+                return 0;
+            }
+    
+            $.post("{% url 'Update Customer' %}", {
+                id: id,
+                fname: fn,
+                lname: ln,
+                phone: p
+               
+            }, function (e) {
+                if (e.code == 200) {
+                    $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
+                }
+                else {
+                    $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
+                }
+            }
+            );
+        });
+    </script>
+    {% endif %}
+{% endblock %}

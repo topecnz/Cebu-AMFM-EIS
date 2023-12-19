@@ -1,5 +1,5 @@
 from django.urls import path 
-from . import views, accounts, products, inventory, supplier
+from . import views, accounts, products, inventory, supplier, customer, order
 
 urlpatterns = [
     path('', views.home, name="Home"),
@@ -27,4 +27,14 @@ urlpatterns = [
     path('suppliers/<int:id>/', supplier.view_supplier, name="View Supplier"),
     path('suppliers/update_supplier/', supplier.update_supplier, name="Update Supplier"),
     path('suppliers/delete_supplier/', supplier.delete_supplier, name="Delete Supplier"),
+    path('customers/', customer.customers, name ="Customers"),
+    path('customers/add', customer.add_customer, name ="Add Customer"),
+    path('customers/submit_customer/', customer.submit_customer, name="Submit Customer"),
+    path('customers/<int:id>/',customer.view_customer, name="View Customer"),
+    path('customers/update_customer/', customer.update_customer, name="Update Customer"), 
+    path('orders/', order.orders, name ="Orders"),
+    path('orders/add', order.add_order, name ="Add Order"),
+    path('orders/submit_order/', order.submit_order, name="Submit Order"),
+    path('orders/<int:id>/',order.view_order, name="View Order"),
+    path('orders/update_order/', customer.update_customer, name="Update Order"), 
 ]

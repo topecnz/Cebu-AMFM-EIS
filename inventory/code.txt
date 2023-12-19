@@ -1,0 +1,72 @@
+from .models import Invoice, OrderList
+
+def get_customer_order_list(request, customer_id):
+    # Fetch the invoices related to the specific customer
+    invoices = Invoice.objects.filter(customer_id=customer_id)
+    
+    order_lists = []
+    # For each invoice, get the associated order lists
+    for invoice in invoices:
+        order_lists.extend(OrderList.objects.filter(invoice=invoice))
+    
+    return render(request, 'customer_order_list.html', {'order_lists': order_lists})
+
+
+
+# order.py
+
+@login_required
+def create_invoice(request, customer_id):
+    # Get the logged-in employee
+    logged_in_employee = request.user.employee  # Assuming user is associated with Employee model
+    
+    # Get the customer for whom the invoice is being created
+    customer = get_object_or_404(Customer, customer_id=customer_id)
+    
+    # Your logic for invoice creation
+    # For example, create a new invoice with the associated customer and employee
+    new_invoice = Invoice.objects.create(customer=customer, employee=logged_in_employee, ...)
+    # Replace '...' with other fields for the invoice
+    
+    return render(request, 'invoice/create_invoice.html', {'invoice': new_invoice})
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Invoice</title>
+</head>
+<body>
+    <h1>Create Invoice</h1>
+    <form method="POST" action="{% url 'create_invoice' customer_id %}">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="invoiceDate" class="form-label">Invoice Date:</label>
+            <input type="date" id="invoiceDate" name="invoice_date">
+        </div>
+
+        <div class="mb-3">
+            <label for="invoiceAmount" class="form-label">Invoice Amount:</label>
+            <input type="number" id="invoiceAmount" name="invoice_amount" step="0.01">
+        </div>
+        
+        <!-- Add hidden input field for employee ID -->
+        <input type="hidden" id="employeeId" name="employee_id" value="{{ employee.id }}">
+        
+        <input type="submit" value="Create Invoice">
+    </form>
+</body>
+</html>
+
+
+
+ # Calculate total amount
+                total_amount = Decimal('0.0') 
+                for i, prod_id in enumerate(prod):
+                    product = get_object_or_404(Product, id = prod_id)
+                    quantity = int(q[i])
+                    total_amount += Decimal(product.prod_price) * Decimal(quantity) # Accumulate the price
+
+
+logged_in_employee_id = request.user.employee.id  # Assuming the user's employee ID is stored in the 'employee' field

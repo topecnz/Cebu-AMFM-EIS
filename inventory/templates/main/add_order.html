@@ -1,0 +1,166 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Create Invoice{% endblock %}
+{% block style %}
+
+<style>
+    input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+</style>
+{% endblock %}
+{% block content %}
+
+{% csrf_token %}
+    <div class ="mb-3">
+        <h3> Add Invoice</h3>
+    </div>
+    <div id = "alertMsg" class="">
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label" id="invDateLabel">Invoice Date: </label>
+        <div id="invMsg">
+        </div>
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label">Amount:</label>
+        <input id="amount" type="number" class="form-control" placeholder="Enter Amount">
+        <div id="amtMsg">
+        </div>
+    </div>
+   
+    <div class="mb-3">
+        <label for="cus" class="form-label">Customer ID:</label>
+        <select id="custid"  class="form-select" aria-label="Default select example">
+            <option selected disabled>Select Customer</option>
+            {% for customer in customers %}
+                <option value="{{res.cus_id }}">{{ customer.cus_id }}</option>
+            {% endfor %}
+        </select>
+        <div id="cusMsg">
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" id="empIdLabel">Employee ID: </label>
+        <div id="empidMsg">
+        </div>
+    </div>
+    
+    <div class="col-12">
+        <button id="btnSubmit" class="btn btn-dark float-end">Add</button>
+    </div>
+
+{% endblock %}
+
+{% block script %}    
+<script>
+
+ $('#btnSubmit').click(function() {
+    
+    i = $('#invDateLabel').val();
+    a = $('#amount').val();
+    c =  $('#custid').val();
+    
+    
+    $.validate_check = function (feed, input, data) {
+            txt = !data ? 'Required' : '';
+            Ac = !data ? 'is-invalid' : 'is-valid';
+            Rc = !data ? 'is-valid' : 'is-invalid';
+            Af = !data ? 'invalid-feedback' : 'valid-feedback';
+            Rf = !data ? 'valid-feedback' : 'invalid-feedback';
+    
+            $(feed).text(txt).addClass(Af).removeClass(Rf);
+            $(input).addClass(Ac).removeClass(Rc);
+        };
+
+         // Check if there's an empty fields
+        $.validate_check('#invMsg', '#invDateLabel', i);
+        $.validate_check('#amtMsg', '#amount', a);
+        $.validate_check('#cusMsg', '#custid', c);
+        
+      
+        //return if found
+        if (!inv || !a || !c) {
+            return 0;
+        }
+
+        $.post("{% url 'Submit Order' %}", {
+            invDateLabel: i,
+            amount: a,
+            custid: c
+
+        }, function (e) {
+            if (e.code == 200) {
+                $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
+            }
+            else {
+                $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
+            }
+        }
+        );
+    });
+
+    var today = new Date();
+    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    document.getElementById('invDateLabel').textContent += date;
+
+   
+
+    $('#username').on('input', function () {
+        var u = $('#username').val()
+        if (u.length < 8) {
+            $('#userMsg').text("Input username atleast 8 characters.").addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#username').addClass('is-invalid').removeClass('is-valid');
+        } else {
+            $.post("../check_username/", {
+                username: u
+            }, function (e) {
+                if (e.found == true) {
+                    $('#userMsg').text("Username is already taken!").addClass('invalid-feedback').removeClass('valid-feedback');
+                    $('#username').addClass('is-invalid').removeClass('is-valid');
+                } else {
+                    $('#userMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                    $('#username').addClass('is-valid').removeClass('is-invalid');
+                }
+            })
+        }
+    });
+
+    $('#cpassword').on("input", function () {
+        var pw = $('#password').val();
+        var cpw = $('#cpassword').val();
+
+        if (pw != cpw) {
+            $('#cpassMsg').text("Password not matched!").addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#cpassword').addClass('is-invalid').removeClass('is-valid');
+        }
+        else {
+            $('#cpassMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
+            $('#cpassword').addClass('is-valid').removeClass('is-invalid');
+        }
+    });
+
+    $('#password').on("input", function () {
+        var pw = $('#password').val().length;
+
+        if (pw < 8) {
+            $('#passMsg').text("Input password atleast 8 characters.").addClass('invalid-feedback').removeClass('valid-feedback');;
+            $('#password').addClass('is-invalid').removeClass('is-valid');
+        }
+        else {
+            $('#passMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
+            $('#password').addClass('is-valid').removeClass('is-invalid');
+        }
+    });
+</script>
+{% endblock %}
+
+   
