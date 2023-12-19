@@ -15,9 +15,9 @@ from .models import Customer, Employee, AccountType, Product, ProductBrand, Prod
 
 @login_required(login_url = '/login')
 def orders(request: HttpRequest):
-    invoice = Invoice.objects.select_related('cus', 'emp')
+    orders = OrderList.objects.all()
     obj = {
-        'result' : invoice,
+        'result' : orders,
     }
     
     return render(request, 'main/orders.html', obj)
