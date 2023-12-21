@@ -36,25 +36,28 @@
 <div class="mb-3">
     <label class="form-label">Quantity:</label>
     <input id="qty" type="number" class="form-control" placeholder="Enter Quantity">
-    <div id="qytMsg">
+    <div id="qtyMsg">
     </div>
 </div>
 
+
 <div class="mb-3">
-    <label class="form-label">Invoice ID:</label>
-    <label id="inv_id">{{order_list.invoice.inv_id}}</label>
+    <label for="invoice_id">Invoice ID:</label>
+    <input type="text" id="invoice_id" name="invoice_id" value="{{ invoice_id }}" readonly>
+    
     <div id="invMsg">
     </div>
 </div>
 
 <div class="mb-3">
-    <label class="form-label">Product ID:</label>
-    <select id="product" class="form-select" aria-label="Default select example">
-        <option selected disabled>Select Type</option>
-        {% for res in product%}
-        <option value="{{res.order_list.prod_id}}">{{res.product.prod_name}}</option>
+    <label class="form-label">Product ID:</label> 
+    <select id="products" name='products' class="form-select" aria-label="Default select example">
+        <option selected disabled>Select Product</option>
+        {% for res in products %}
+        <option value="{{ res.prod_id }}">{{ res.prod_id }}</option>
         {% endfor %}
     </select>
+    
     <div id="prodMsg">
     </div>
 </div>
@@ -64,149 +67,55 @@
 </div>
 
 
-
-<br><br><br><br>
-    <div class ="mb-3">
-        <h3> Add Invoice</h3>
-    </div>
-    <div id = "alertMsg" class="">
-    </div>
-    
-    <div class="mb-3">
-        <label class="form-label" id="invDateLabel">Invoice Date: </label>
-        <div id="inMsg">
-        </div>
-    </div>
-    
-    <div class="mb-3">
-        <label class="form-label">Amount:</label>
-        <input id="amount" type="number" class="form-control" placeholder="Enter Amount">
-        <div id="amtMsg">
-        </div>
-    </div>
-   
-    <div class="mb-3">
-        <label for="cus" class="form-label">Customer ID:</label>
-        <select id="custid"  class="form-select" aria-label="Default select example">
-            <option selected disabled>Select Customer</option>
-            {% for customer in customers %}
-                <option value="{{res.cus_id }}">{{ customer.cus_id }}</option>
-            {% endfor %}
-        </select>
-        <div id="cusMsg">
-        </div>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label" id="empIdLabel">Employee ID: </label>
-        <div id="empidMsg">
-        </div>
-    </div>
-    
-    <div class="col-12">
-        <button id="btnSubmitinvoice" class="btn btn-dark float-end">Add</button>
-    </div>
-
 {% endblock %}
 
 {% block script %}    
 <script>
 
 $('#btnSubmitorder').click(function() {
-    
-
-    P = $('#price').val();
-    q = $('#qty').val();
-    i =  $('#inv_id').val();
-    pro = $('#product').val();
-    
+    var p = $('#price').val();
+    var q = $('#qty').val();
+    var i = $('#invoice_id').val();
+    var  pro_id = $('#products').val();
     
     $.validate_check = function (feed, input, data) {
-            txt = !data ? 'Required' : '';
-            Ac = !data ? 'is-invalid' : 'is-valid';
-            Rc = !data ? 'is-valid' : 'is-invalid';
-            Af = !data ? 'invalid-feedback' : 'valid-feedback';
-            Rf = !data ? 'valid-feedback' : 'invalid-feedback';
-    
-            $(feed).text(txt).addClass(Af).removeClass(Rf);
-            $(input).addClass(Ac).removeClass(Rc);
-        };
-
-         // Check if there's an empty fields
-        $.validate_check('#priMsg', '#price', p);
-        $.validate_check('#qtyMsg', '#qty', q);
-        $.validate_check('#invMsg', '#inv_id', i);
-        $.validate_check('#prodMsg', '#product', pro);
+                txt = !data ? 'Required' : '';
+                Ac = !data ? 'is-invalid' : 'is-valid';
+                Rc = !data ? 'is-valid' : 'is-invalid';
+                Af = !data ? 'invalid-feedback' : 'valid-feedback';
+                Rf = !data ? 'valid-feedback' : 'invalid-feedback';
         
-      
-        //return if found
-        if (!p || !q || !i || !pro ) {
-            return 0;
-        }
+                $(feed).text(txt).addClass(Af).removeClass(Rf);
+                $(input).addClass(Ac).removeClass(Rc);
+    };
 
-        $.post("{% url 'Submit Order' %}", {
-            price: p,
-            qty: q,
-            inv_id: i,
-            product: pro
+    // Check if there are empty fields
+    $.validate_check('#priMsg', '#price', p);
+    $.validate_check('#qtyMsg', '#qty', q);
+    $.validate_check('#invMsg', '#invoice_id', i);
+    $.validate_check('#prodMsg', '#products',  pro_id);
 
-        }, function (e) {
-            if (e.code == 200) {
-                $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
-            }
-            else {
-                $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
-            }
+    // Return if any field is empty
+    if (!p || !q || !i || !pro) {
+        return 0;
+    }
+
+    // Submit the order via POST request
+    $.post("{% url 'Submit Order' %}", {
+        price: p,
+        qty: q,
+        invoice_id: i, // Make sure the key matches the expected name in the Django view
+        products: pro_id
+    }, function (e) {
+        if (e.code == 200) {
+            $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
+        } else {
+            $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
         }
-        );
     });
+});
 
 
-
- $('#btnSubmitinvoice').click(function() {
-    
-    i = $('#invDateLabel').val();
-    a = $('#amount').val();
-    c =  $('#custid').val();
-    
-    
-    $.validate_check = function (feed, input, data) {
-            txt = !data ? 'Required' : '';
-            Ac = !data ? 'is-invalid' : 'is-valid';
-            Rc = !data ? 'is-valid' : 'is-invalid';
-            Af = !data ? 'invalid-feedback' : 'valid-feedback';
-            Rf = !data ? 'valid-feedback' : 'invalid-feedback';
-    
-            $(feed).text(txt).addClass(Af).removeClass(Rf);
-            $(input).addClass(Ac).removeClass(Rc);
-        };
-
-         // Check if there's an empty fields
-        $.validate_check('#invMsg', '#invDateLabel', i);
-        $.validate_check('#amtMsg', '#amount', a);
-        $.validate_check('#cusMsg', '#custid', c);
-        
-      
-        //return if found
-        if (!inv || !a || !c) {
-            return 0;
-        }
-
-        $.post("{% url 'Submit Order' %}", {
-            invDateLabel: i,
-            amount: a,
-            custid: c
-
-        }, function (e) {
-            if (e.code == 200) {
-                $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
-            }
-            else {
-                $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
-            }
-        }
-        );
-    });
 
     var today = new Date();
     var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();

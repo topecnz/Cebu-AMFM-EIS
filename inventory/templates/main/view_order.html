@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}View Customer{% endblock %}
+{% block title %}View Order{% endblock %}
 {% block style %}
 <style>
     input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
@@ -16,6 +16,65 @@
 
 {% csrf_token %}
 
+
+<div class ="mb-3">
+    <h3> View Order</h3>
+</div>
+<div id = "alertMsg" class="">
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Order ID:</label>
+    <label id="ord_id">{{order.ord_id}}</label>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Price</label>
+    <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{order.ord_price}}" id="price" type="text" class="form-control" placeholder="Enter Price">
+    <div id="priMsg">
+    </div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Quantity</label>
+    <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{order.ord_qty}}" id="qty" type="text" class="form-control" placeholder="Enter Quantity">
+    <div id="qtyMsg">
+    </div>
+</div>
+
+<div class="mb-3">
+    <label for="invoice_id">Invoice ID:</label>
+    <input type="text" id="invoice_id" name="invoice_id" value="{{ invoice_id }}" readonly>
+    
+    <div id="invMsg">
+    </div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Product ID:</label> 
+    <select {% if user.acc_type_id == 3 %}disabled{% endif %} id="products" name='products' class="form-select" aria-label="Default select example">
+        <option selected disabled>Select Product</option>
+        {% for res in products %}
+        {% if res.prod_id == product.prod_id %}
+        <option selected value="{{ res.prod_id }}">{{ res.prod_id }}</option>
+        {% else %}
+        <option  value="{{ res.prod_id }}">{{ res.prod_id }}</option>
+        {% endif %}
+        {% endfor %}
+    </select>
+    <div id="prodMsg">
+    </div>
+</div>
+
+<div class="col-12">
+    <button id="btnSubmitorder" class="btn btn-dark float-end">Add</button>
+</div>
+
+
+
+
+
+
 <div class="mb-3">
     <h3>View Invoice<h3>
 </div>
@@ -24,7 +83,7 @@
 
 <div class="mb-3">
     <label class="form-label">Invoice ID:</label>
-    <label id="inv_id">{{invoice.inv_id}}</label>
+    <label id="in_id">{{invoice.inv_id}}</label>
 </div>
 
 <div class="mb-3">
@@ -68,8 +127,54 @@
 
 {% block script %} 
 <script>
+$('#btnSubmitorder').click(function() {
+    id = $('#ord_id').text();
+    p = $('#price').val();
+    q = $('#qty').val();
+    i = $('#invoice_id').val();
+    pro = $('#products').val();
+    
+    $.validate_check = function (feed, input, data) {
+                txt = !data ? 'Required' : '';
+                Ac = !data ? 'is-invalid' : 'is-valid';
+                Rc = !data ? 'is-valid' : 'is-invalid';
+                Af = !data ? 'invalid-feedback' : 'valid-feedback';
+                Rf = !data ? 'valid-feedback' : 'invalid-feedback';
+        
+                $(feed).text(txt).addClass(Af).removeClass(Rf);
+                $(input).addClass(Ac).removeClass(Rc);
+    };
 
- $('#btnSubmit').click(function() {
+    // Check if there are empty fields
+    $.validate_check('#priMsg', '#price', p);
+    $.validate_check('#qtyMsg', '#qty', q);
+    $.validate_check('#invMsg', '#invoice_id', i);
+    $.validate_check('#prodMsg', '#products', pro);
+
+    // Return if any field is empty
+    if (!p || !q || !i || !pro) {
+        return 0;
+    }
+
+    // Submit the order via POST request
+    $.post("{% url 'Update Order' %}", {
+        id: id,
+        price: p,
+        qty: q,
+        invoice_id: i, // Make sure the key matches the expected name in the Django view
+        products: pro
+    }, function (e) {
+        if (e.code == 200) {
+            $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
+        } else {
+            $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
+        }
+    });
+});
+
+
+
+ $('#btnSubmitinvoice').click(function() {
     
     i = $('#invDateLabel').val();
     a = $('#amount').val();
@@ -117,171 +222,8 @@
     var today = new Date();
     var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
     document.getElementById('invDateLabel').textContent += date;
-
-   
-
-    $('#username').on('input', function () {
-        var u = $('#username').val()
-        if (u.length < 8) {
-            $('#userMsg').text("Input username atleast 8 characters.").addClass('invalid-feedback').removeClass('valid-feedback');
-            $('#username').addClass('is-invalid').removeClass('is-valid');
-        } else {
-            $.post("../check_username/", {
-                username: u
-            }, function (e) {
-                if (e.found == true) {
-                    $('#userMsg').text("Username is already taken!").addClass('invalid-feedback').removeClass('valid-feedback');
-                    $('#username').addClass('is-invalid').removeClass('is-valid');
-                } else {
-                    $('#userMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
-                    $('#username').addClass('is-valid').removeClass('is-invalid');
-                }
-            })
-        }
-    });
-
-    $('#cpassword').on("input", function () {
-        var pw = $('#password').val();
-        var cpw = $('#cpassword').val();
-
-        if (pw != cpw) {
-            $('#cpassMsg').text("Password not matched!").addClass('invalid-feedback').removeClass('valid-feedback');
-            $('#cpassword').addClass('is-invalid').removeClass('is-valid');
-        }
-        else {
-            $('#cpassMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
-            $('#cpassword').addClass('is-valid').removeClass('is-invalid');
-        }
-    });
-
-    $('#password').on("input", function () {
-        var pw = $('#password').val().length;
-
-        if (pw < 8) {
-            $('#passMsg').text("Input password atleast 8 characters.").addClass('invalid-feedback').removeClass('valid-feedback');;
-            $('#password').addClass('is-invalid').removeClass('is-valid');
-        }
-        else {
-            $('#passMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
-            $('#password').addClass('is-valid').removeClass('is-invalid');
-        }
-    });
 </script>
-{% endblock %}
-
-   
-
-<div class="col-12">
-    {% if user.acc_type_id != 3 %}
-    <button id="btnSubmit" class="btn btn-dark float-end">Update</button>
     {% endif %}
-</div>
-   
 {% endblock %}
 
-{% block script %}
-    {% if user.acc_type_id != 3 %}
-   
-    <script>
-
-        $('#btnSubmit').click(function() {
-           
-           i = $('#invDateLabel').val();
-           a = $('#amount').val();
-           c =  $('#custid').val();
-           
-           
-           $.validate_check = function (feed, input, data) {
-                   txt = !data ? 'Required' : '';
-                   Ac = !data ? 'is-invalid' : 'is-valid';
-                   Rc = !data ? 'is-valid' : 'is-invalid';
-                   Af = !data ? 'invalid-feedback' : 'valid-feedback';
-                   Rf = !data ? 'valid-feedback' : 'invalid-feedback';
-           
-                   $(feed).text(txt).addClass(Af).removeClass(Rf);
-                   $(input).addClass(Ac).removeClass(Rc);
-               };
-       
-                // Check if there's an empty fields
-               $.validate_check('#invMsg', '#invDateLabel', i);
-               $.validate_check('#amtMsg', '#amount', a);
-               $.validate_check('#cusMsg', '#custid', c);
-               
-             
-               //return if found
-               if (!inv || !a || !c) {
-                   return 0;
-               }
-       
-               $.post("{% url 'Submit Order' %}", {
-                   invDateLabel: i,
-                   amount: a,
-                   custid: c
-       
-               }, function (e) {
-                   if (e.code == 200) {
-                       $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
-                   }
-                   else {
-                       $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
-                   }
-               }
-               );
-           });
-       
-           var today = new Date();
-           var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-           document.getElementById('invDateLabel').textContent += date;
-       
-          
-       
-           $('#username').on('input', function () {
-               var u = $('#username').val()
-               if (u.length < 8) {
-                   $('#userMsg').text("Input username atleast 8 characters.").addClass('invalid-feedback').removeClass('valid-feedback');
-                   $('#username').addClass('is-invalid').removeClass('is-valid');
-               } else {
-                   $.post("../check_username/", {
-                       username: u
-                   }, function (e) {
-                       if (e.found == true) {
-                           $('#userMsg').text("Username is already taken!").addClass('invalid-feedback').removeClass('valid-feedback');
-                           $('#username').addClass('is-invalid').removeClass('is-valid');
-                       } else {
-                           $('#userMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
-                           $('#username').addClass('is-valid').removeClass('is-invalid');
-                       }
-                   })
-               }
-           });
-       
-           $('#cpassword').on("input", function () {
-               var pw = $('#password').val();
-               var cpw = $('#cpassword').val();
-       
-               if (pw != cpw) {
-                   $('#cpassMsg').text("Password not matched!").addClass('invalid-feedback').removeClass('valid-feedback');
-                   $('#cpassword').addClass('is-invalid').removeClass('is-valid');
-               }
-               else {
-                   $('#cpassMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
-                   $('#cpassword').addClass('is-valid').removeClass('is-invalid');
-               }
-           });
-       
-           $('#password').on("input", function () {
-               var pw = $('#password').val().length;
-       
-               if (pw < 8) {
-                   $('#passMsg').text("Input password atleast 8 characters.").addClass('invalid-feedback').removeClass('valid-feedback');;
-                   $('#password').addClass('is-invalid').removeClass('is-valid');
-               }
-               else {
-                   $('#passMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
-                   $('#password').addClass('is-valid').removeClass('is-invalid');
-               }
-           });
-       </script>
-       {% endblock %}
-       
-          
+    
