@@ -2,10 +2,23 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 
-<h1>Hello, {{ user.username }}!</h1>
-<p>ID: {{ user.acc_id }}</p>
-<p>Last Login: {{ user.last_login }}</p>
-<p>Created: {{ user.acc_created_at }}</p>
-<p>Position Type: {{ user.acc_type_id }}</p>
+{% with current_hour=user.last_login.hour %}
+    {% if current_hour >= 6 and current_hour < 12 %}
+        <h1 class="card-title">Good Morning, {{ user.username }}!</h1>
+    {% elif current_hour >= 12 and current_hour < 16 %}
+        <h1 class="card-title">Good Afternoon, {{ user.username }}!</h1>
+    {% else %}
+        <h1 class="card-title">Good Evening, {{ user.username }}!</h1>
+    {% endif %}
+{% endwith %}
+
+<div class="card mt-3 rounded-top rounded-2">
+    <div class="card-body">
+        <p class="card-text">ID: {{ user.acc_id }}</p>
+        <p class="card-text">Last Login: {{ user.last_login }}</p>
+        <p class="card-text">Created: {{ user.acc_created_at }}</p>
+        <p class="card-text">Position Type: {{ user.acc_type_id }}</p>
+    </div>
+</div>
 
 {% endblock %}
