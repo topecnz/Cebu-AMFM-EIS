@@ -152,6 +152,36 @@ def view_account(request: HttpRequest, id: int):
     # Error code 403
     raise PermissionDenied()
 
+def delete_account(request: HttpRequest):
+    if not request.user.is_authenticated:
+        return redirect('/')
+    
+    if request.user.acc_type_id == 1:
+        if request.method == 'POST':
+            id = request.POST['id']
+
+            User = get_user_model()
+            user = User.objects.filter(username=usr)
+
+            uname = False
+            for usr in user:
+                if usr.username == usr:
+                    uname = True
+                    break
+
+            user.acc_is_active = False
+            user.save()
+
+            code = 200
+            message = 'Account is successfully deleted!'
+
+            obj = {
+                    'code': code if code else 204,
+                    'message': message if message else 'Error!',
+                    'status': 'success' if code else 'warning',
+                }
+            return JsonResponse(obj)
+
 def update_account(request: HttpRequest):
     if not request.user.is_authenticated:
         return redirect('/')
@@ -161,3 +191,17 @@ def update_account(request: HttpRequest):
     
     # Error code 403
     raise PermissionDenied()
+
+def update_account(request: HttpRequest):
+    if not request.user.is_authenticated:
+        return redirect('/')
+    
+    if request.user.acc_type_id == 1:
+        pass
+
+def update_account(request: HttpRequest):
+    if not request.user.is_authenticated:
+        return redirect('/')
+    
+    if request.user.acc_type_id == 2:
+        pass
