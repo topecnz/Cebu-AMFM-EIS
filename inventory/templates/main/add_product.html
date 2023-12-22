@@ -62,6 +62,7 @@
     </div>
     <div class="col-12">
         <button id="btnSubmit" class="btn btn-dark float-end">Add</button>
+        <button id="btnGoBack" class="btn btn-dark float-end me-2">Go Back</button>
     </div>
 
 {% endblock %}
@@ -162,5 +163,10 @@
             $('#password').addClass('is-valid').removeClass('is-invalid');
         }
     });
+
+    $('#btnGoBack').click(function () {
+        window.location.href = "{% url 'Products' %}";
+    });
+
 </script>
 {% endblock %}
