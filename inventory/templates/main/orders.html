@@ -6,24 +6,27 @@
 {% endblock %}
 {% block content %}
     <div class="mb-3">
-        <h3>Invoice<h3>
+        <h3>Invoices<h3>
     </div>
     <div id="alertMsg" class="">
     </div>
     {% if user.acc_type_id != 3%}
-    <div class="mb-5">
-        <a href="{% url 'Add Order' %}" class="btn btn-dark">Add Invoice</a>
+    <div class="mb-5 ">
+        <a href="{% url 'Add Order' %}" class="btn btn-dark me-2">Create Order</a>
+      
     </div>
+    
+    
     {% endif %}
     <div>
         <table id="example" class="display" style="width:100%">
             <thead>
                 <tr>
-                    <th>Order Id</th>
+                    <th>Invoice ID</th>
                     <th>Invoice Date</th>
                     <th>Amount</th>
-                    <th>Customer Id</th>
-                    <th>Employee Id</th>
+                    <th>Customer ID</th>
+                    <th>Employee ID</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -47,11 +50,11 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <th>Order Id</th>
+                    <th>Invoice ID</th>
                     <th>Invoice Date</th>
                     <th>Amount</th>
-                    <th>Customer Id</th>
-                    <th>Employee Id</th>
+                    <th>Customer ID</th>
+                    <th>Employee ID</th>
                     <th>Action</th>
                 </tr>
             </tfoot>

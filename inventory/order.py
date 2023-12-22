@@ -14,26 +14,36 @@ from .models import Customer, Employee, AccountType, Product, ProductBrand, Prod
 
 @login_required(login_url = '/login')
 def orders(request: HttpRequest):
-    order = OrderList.objects.select_related('inv','prod')
+    order = OrderList.objects.all()
     obj = {
         'result' : order,
     }
     
     return render(request, 'main/orders.html', obj)
 
-def add_order(request):
+def add_order(request: HttpRequest):
     products = Product.objects.all()
+    customers = Customer.objects.all()
+
     
     if not request.user.is_authenticated:
+        logged_in_user = request.user
+        # emp_id = Employee.objects.get(user=logged_in_user) #
         return redirect('/')
     
     if request.user.acc_type_id != 3:
         # Generate or retrieve the latest invoice ID here
-        invoice_id = Invoice.objects.latest('id').id if Invoice.objects.exists() else 1
         
-        return render(request, 'main/add_order.html', {'products': products, 'invoice_id': invoice_id})
+        return render(request, 'main/add_order.html', {
+                'products': products,
+                'customers': customers        
+            })
     
     raise PermissionDenied()
+
+def place_order(request: HttpRequest):
+    # Generate or create an invoice associated with this order
+    invoice_id = invoice.inv_id
 
 
 def view_order(request: HttpRequest, id: int):
@@ -64,13 +74,13 @@ def submit_order(request):
                 p = request.POST['price']
                 q = request.POST['qty']
                 i = request.POST['invoice_id']
-                pro_id = request.POST['products']  # Assuming this is the ID of the product
+                pn = request.POST['productList']  
 
                 # Fetch the Invoice instance based on the provided ID
                 invoice = Invoice.objects.get(pk=i)
 
                 # Fetch the Product instance based on the provided ID
-                product = Product.objects.get(pk=pro_id)
+                product = Product.objects.get(pk=pn)
 
                 # Create the OrderList instance with the fetched instances
                 ord = OrderList.objects.create(ord_price=p, ord_qty=q, inv=invoice, prod=product)

@@ -1,8 +1,9 @@
 
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Create Invoice{% endblock %}
+{% block title %}Create Order{% endblock %}
 {% block style %}
+<link rel="stylesheet" href="{% static 'css/dataTables.min.css' %}">
 
 <style>
     input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
@@ -16,15 +17,25 @@
 {% endblock %}
 {% block content %}
 
-{% csrf_token %}
-
-
+    {% csrf_token %}
 <div class ="mb-3">
-    <h3> Add Order</h3>
+    <h3> Create Order</h3>
 </div>
 <div id = "alertMsg" class="">
 </div>
 
+<div class="mb-3">
+    <label class="form-label" for="productInput">Product Name:</label>
+    <input list="productList" id="productInput" class="form-control" aria-label="Product Name" placeholder="Select or type a product">
+    <datalist id="productList">
+        {% for res in products %}
+        <option value="{{ res.prod_name }}">
+        {% endfor %}
+    </datalist>
+
+    <div id="prodMsg">
+    </div>
+</div>
 
 <div class="mb-3">
     <label class="form-label">Price:</label>
@@ -40,43 +51,87 @@
     </div>
 </div>
 
-
-<div class="mb-3">
-    <label for="invoice_id">Invoice ID:</label>
-    <input type="text" id="invoice_id" name="invoice_id" value="{{ invoice_id }}" readonly>
-    
-    <div id="invMsg">
-    </div>
-</div>
-
-<div class="mb-3">
-    <label class="form-label">Product ID:</label> 
-    <select id="products" name='products' class="form-select" aria-label="Default select example">
-        <option selected disabled>Select Product</option>
-        {% for res in products %}
-        <option value="{{ res.prod_id }}">{{ res.prod_id }}</option>
-        {% endfor %}
-    </select>
-    
-    <div id="prodMsg">
-    </div>
-</div>
+<p>Invoice ID: {{ invoice_id }}</p>
 
 <div class="col-12">
-    <button id="btnSubmitorder" class="btn btn-dark float-end">Add</button>
+    <div class="text-end">
+        <button id="btnSubmitorder" class="btn btn-dark me-2">Add</button>
+        <button id="btnPlaceorder" class="btn btn-dark">Place Order</button>
+    </div>
+</div>
+
+
+<br><br>
+
+<div class ="mb-3">
+    <h3>List of Orders</h3>
+</div>
+<div id = "alertMsg" class="">
+</div>
+{% if user.acc_type_id != 3%}
+    {% endif %}
+    <div>
+        <table id="example" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Invoice ID</th>
+                <th>Product ID</th>
+                <th>Action</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% if result %}
+            {% for order in result %}
+            <tr class="ord-data">
+                <td class="ord-id">{{order_list.ord_id}}</td>
+                <td>{{product.prod_name}}</td>
+                <td>{{order_list.ord_qty}}</td>
+                <td>{{order_list.ord_price|floatformat:"2g"}}</td>
+                <td>{{invoice.inv}}</td>
+                <td><a href="{% url 'Orders' %}{{order_list.ord_id}}" class="btn btn-dark m-1">View</a>
+                    {% if user.acc_type_id != 3 %}
+                    <button class="btn btn-dark cus-delete">Delete</button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Order ID</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Invoice ID</th>
+                <th>Product ID</th>
+                <th>Action</th>
+                
+            </tr>
+        </tfoot>
+    </table>
 </div>
 
 
 {% endblock %}
 
-{% block script %}    
+
+{% block script %}  
+<script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script>
+        new DataTable('#example');
+    </script>
+
 <script>
 
 $('#btnSubmitorder').click(function() {
-    var p = $('#price').val();
-    var q = $('#qty').val();
-    var i = $('#invoice_id').val();
-    var  pro_id = $('#products').val();
+     pn = ['Genshin Toy', 'ggg', 'kazuha wafer card'];
+     p = $('#price').val();
+     q = $('#qty').val();
+     i = $('#invoice_id').val();
     
     $.validate_check = function (feed, input, data) {
                 txt = !data ? 'Required' : '';
@@ -90,22 +145,32 @@ $('#btnSubmitorder').click(function() {
     };
 
     // Check if there are empty fields
+    $.validate_check('#prodMsg', '#productList', pn);
     $.validate_check('#priMsg', '#price', p);
     $.validate_check('#qtyMsg', '#qty', q);
     $.validate_check('#invMsg', '#invoice_id', i);
-    $.validate_check('#prodMsg', '#products',  pro_id);
+    
 
     // Return if any field is empty
-    if (!p || !q || !i || !pro) {
+    if (!p || !q || !i || !pn ) {
         return 0;
     }
+
+    // Populate the datalist options for products
+    $('#productList').empty(); // Clear existing options in the datalist
+
+    // Loop through product names and append options to the datalist
+    pn.forEach(function(product) {
+        $('#productList').append(`<option value="${products}">`);
+    });
 
     // Submit the order via POST request
     $.post("{% url 'Submit Order' %}", {
         price: p,
         qty: q,
-        invoice_id: i, // Make sure the key matches the expected name in the Django view
-        products: pro_id
+        invoice_id: i,
+        productList: pn
+
     }, function (e) {
         if (e.code == 200) {
             $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
@@ -116,12 +181,11 @@ $('#btnSubmitorder').click(function() {
 });
 
 
-
     var today = new Date();
     var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
     document.getElementById('invDateLabel').textContent += date;
 
-   
+
 
     $('#username').on('input', function () {
         var u = $('#username').val()
@@ -170,6 +234,8 @@ $('#btnSubmitorder').click(function() {
         }
     });
 </script>
+
 {% endblock %}
 
-   
+
+
