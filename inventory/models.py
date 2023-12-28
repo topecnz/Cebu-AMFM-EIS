@@ -48,6 +48,14 @@ class ProductBrand(models.Model):
         managed = True
         db_table = 'product_brand'
 
+class InvoiceType(models.Model):
+    inv_type_id = models.AutoField(primary_key=True)
+    inv_name_type = models.CharField(max_length=1024)
+
+    class Meta:
+        managed = True
+        db_table = 'invoice_type'
+
 
 class Employee(models.Model):
     emp_id = models.AutoField(primary_key=True)
@@ -154,10 +162,13 @@ class Invoice(models.Model):
     inv_amount = models.FloatField(blank=True, null=True)
     cus = models.ForeignKey(Customer, models.DO_NOTHING, blank=True, null=True)
     emp = models.ForeignKey(Employee, models.DO_NOTHING)
+    inv_type = models.ForeignKey(InvoiceType, models.DO_NOTHING)
 
     class Meta:
         managed = True
         db_table = 'invoice'
+
+
 
 class Account(AbstractBaseUser, PermissionsMixin):
     acc_id = models.AutoField(primary_key=True)
