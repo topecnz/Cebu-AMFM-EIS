@@ -2,44 +2,134 @@
 {% block title %}Login{% endblock %}
 
 {% block head_content %}
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@750&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #ffffff; /* White background */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .gray-rectangle {
+            background-color: #D9D9D9; /* Gray color */
+            width: 100%;
+            max-width: 1060px;
+            max-height: 1060px;
+            height: 70vh;
+            border-radius: 15px;
+            display: flex;
+            text-align: center;
+        }
+
+        .blue-rectangle {
+            background-color: #141770; /* Blue color */
+            width: 100%;
+            max-width: 630px;
+            max-height: 630px;
+            height: 60vh;
+            margin-top: 5vh;
+            margin-right: 5vh;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column; /* Updated to a column layout */
+            align-items: center; /* Center items horizontally */
+            justify-content: center; /* Center items vertically */
+            text-align: center;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5); /* Add an inner shadow */
+            align-items: flex;
+            text-align: flex;
+        }
+
+        .date-time {
+            color: black;
+            font-size: 21px;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #date {
+            font-family: 'Inter', sans-serif;
+            font-weight: 10; /* Use a lighter font weight for the date */
+            font-size: 21px;
+            margin-right: 10px;
+        }
+
+        #time {
+            font-family: 'Inter', sans-serif;
+            font-size: 100px;
+            font-weight: bold;
+        }
+
+    </style>
 {% endblock %}
 
 {% block content %}
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-4 offset-md-4">
-            <div class="login-form bg-light mt-4 p-4">
-                <form action="" method="POST" class="row g-3">
-                    {% csrf_token %}
-                    <h4>Login</h4>
-                    {% if message and status %}
-                    <div class="alert alert-{{status}}" role="alert">
-                        {{message}}
-                    </div>
-                    {% endif %}
-                    <div class="col-12">
-                        <label>Username</label>
-                        <input type="text" name="username" class="form-control" placeholder="Username" required>
-                    </div>
-                    <div class="col-12">
-                        <label>Password</label>
-                        <input type="password" name="password" class="form-control" placeholder="Password" required>
-                    </div>
-                    {% comment %} <div class="col-12">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="rememberMe">
-                            <label class="form-check-label" for="rememberMe"> Remember me</label>
-                        </div>
-                    </div> {% endcomment %}
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-dark float-end">Login</button>
-                    </div>
-                </form>
-            </div>
+<div class="gray-rectangle" style="margin: auto;">
+    <div class="date-time">
+        <div id="date"></div>
+        <div id="time"></div>
+    </div>
+    <div class="blue-rectangle">
+        <div class="login-form">
+            <form action="" method="POST" class="row g-2" style="color: white; margin: 50px;">
+                {% csrf_token %}
+                <h1 style="text-align: center;"><b>Cebu AM-FM Electronics</b></h1>
+                <h2></h2>
+                <h3></h3>
+                <h4 style="text-align: left;">LOGIN</h4>
+                {% if message and status %}
+                <div class="alert alert-{{status}}" role="alert">
+                    {{message}}
+                </div>
+                {% endif %}
+                <div class="col-12" style="text-align: left;">
+                    <label>Username</label>
+                    <input type="text" name="username" class="form-control" placeholder="Username" required>
+                </div>
+                <div></div>
+                <div class="col-12" style="text-align: left;">
+                    <label>Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="Password" required>
+                </div>
+                <div></div>
+                <div></div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-light float-end">Log in</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+<script>
+    function updateDateTime() {
+        const dateElement = document.getElementById('date');
+        const timeElement = document.getElementById('time');
+        const now = new Date();
+
+        const optionsDate = { weekday: 'long', month: 'long', day: 'numeric' };
+        const formattedDate = now.toLocaleDateString('en-US', optionsDate);
+
+        const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: false };
+        const formattedTime = now.toLocaleTimeString('en-US', optionsTime);
+
+        dateElement.textContent = formattedDate;
+        timeElement.textContent = formattedTime;
+    }
+
+    updateDateTime();
+    setInterval(updateDateTime, 1000); // Update the date and time every second
+</script>
 
 {% endblock %}
 

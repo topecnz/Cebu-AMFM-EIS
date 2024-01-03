@@ -21,8 +21,9 @@
                 <tr>
                     <th>Invoice ID</th>
                     <th>Type</th>
-                    <th>Date</th>
+                    <th>Date Created</th>
                     <th>Status</th>
+                    <th>Term Date</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -33,6 +34,8 @@
                     <td class="inv-id">{{invoice.inv_id}}</td>
                     <td>{{invoice.inv_type.inv_type_id}}</td>
                     <td>{{invoice.inv_date}}</td>
+                    <td>{{invoice.inv_status}}</td>
+                    <td>{{invoice.inv_term_date}}</td>
                     <td><a href="{% url 'Invoice' %}{{invoice.inv_id}}" class="btn btn-dark m-1">View</a>
                         {% if user.acc_type_id != 3 %}
                         <button class="btn btn-dark cus-delete">Delete</button>

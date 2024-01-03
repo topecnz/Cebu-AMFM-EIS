@@ -160,9 +160,10 @@ class Invoice(models.Model):
     inv_id = models.AutoField(primary_key=True)
     inv_date = models.DateTimeField()
     inv_amount = models.FloatField(blank=True, null=True)
+    inv_type = models.ForeignKey(InvoiceType, models.DO_NOTHING, blank=True, null=True )
     cus = models.ForeignKey(Customer, models.DO_NOTHING, blank=True, null=True)
     emp = models.ForeignKey(Employee, models.DO_NOTHING)
-    inv_type = models.ForeignKey(InvoiceType, models.DO_NOTHING)
+   
 
     class Meta:
         managed = True

@@ -29,7 +29,7 @@
     <select id="inv_type" class="form-select" aria-label="Default select example" style="width: 200px;">
         <option selected disabled>Select Type</option>
         {% for res in type %}
-        <option value="{{res.inv_name_type}}">{{res.inv_name_type}}</option>
+        <option value="{{res.inv_type_id}}">{{res.inv_name_type}}</option>
         {% endfor %}
     </select>
     <div id="itMsg"></div>
@@ -44,10 +44,10 @@
 
 <div class="mb-3">
     <label class="form-label" for="product_name">Product Name</label>
-    <input list="product_list" type='text'id="product_name" class="form-control" aria-label="Product Name" placeholder="Select a product">
+    <input list="product_list" type='text' id="product_name" class="form-control" aria-label="Product Name" placeholder="Select a product">
     <datalist id="product_list">
-        {% for res in inventory %}
-        <option value="{{ res.prod_name }}">
+        {% for item in inventory %}
+        <option value="{{ item.prod.prod_name }}">
         {% endfor %}
     </datalist>
 
@@ -61,9 +61,10 @@
             <div>
                 <label class="form-label">Description:</label>
             </div>
+            <span id="productDesc"></span>
             <div id="productDesc" style="display: none;">
-                {% for res in products %}
-                <span class="desc" data-product-description="{{ res.prod_id }}">{{ res.prod_desc }}</span>
+                {% for res in inventory %}
+                <span class="desc" data-desc="{{ res.prod_name }}">{{ res.prod_desc }}</span>
                 {% endfor %}
             </div>
             <div id="descMsg"></div>
@@ -91,14 +92,24 @@
                 <div>
                     <span id="priceValuePlaceholder"></span>
                     <span id="productPrices" style="display: none;">
-                        {% for res in products %}
-                        <span class="price" data-product-name="{{ inventory.prod_id }}">{{ product.prod_price }}</span>
+                        {% for res in inventory %}
+                        <span class="price" data-price="{{ res.prod_name }}">{{ res.prod_price }}</span>
                         {% endfor %}
                     </span>
                 </div>
                 <div id="priMsg"></div>
             </div>
+
+            <div class="mb-3">
+                <div>
+                    <label class="form-label"></label>
+                </div>
+                <div id="amountLabelPlaceholder"></div>
+                <div id="amtMsg"></div>
+            </div>
         </div>
+
+        
     </div>
 
     <div>
@@ -110,7 +121,7 @@
                 <span id="availableStock"></span>
                 <span id="productStock" style="display: none;">
                     {% for res in inventory %}
-                    <span class="stock" data-product-name="{{ inventory.prod_id }}">{{ inventory.in_qty }}</span>
+                    <span class="stock" data-stock="{{res.prod_name }}">{{res.in_qty }}</span>
                     {% endfor %}
                 </span>
             </div>
@@ -189,8 +200,8 @@
                     <label class="form-label">Description:</label>
                 </div>
                 <div id="productDesc" style="display: none;">
-                    {% for description in products %}
-                    <span class="desc" data-product-description="{{ description.prod_desc }}">{{ description.prod_price }}</span>
+                    {% for description in inventory %}
+                    <span class="desc" data-description="{{ description.prod_desc }}">{{ description.prod_price }}</span>
                     {% endfor %}
                 </div>
                 <div id="descMsg"></div>
@@ -218,8 +229,8 @@
                     <div>
                         <span id="priceValuePlaceholder"></span>
                         <span id="productPrices" style="display: none;">
-                            {% for product in products %}
-                            <span class="price" data-product-name="{{ product.prod_name }}">{{ product.prod_price }}</span>
+                            {% for price in inventory %}
+                            <span class="price" data-price="{{ price.prod_name }}">{{ price.prod_price }}</span>
                             {% endfor %}
                         </span>
                     </div>
@@ -236,8 +247,8 @@
                 <div>
                     <span id="availableStock"></span>
                     <span id="productStock" style="display: none;">
-                        {% for product in products %}
-                        <span class="stock" data-product-name="{{ product.prod_name }}">{{ product.prod_stock }}</span>
+                        {% for stock in inventory %}
+                        <span class="stock" data-stock="{{ stock.prod_name }}">{{ stock.in_qty }}</span>
                         {% endfor %}
                     </span>
                 </div>
@@ -252,7 +263,7 @@
 
 
     <div class="col-12">
-        <button id="btnSubmit" class="btn btn-dark float-end">Add</button>
+        <button id="btnSubmitProject" class="btn btn-dark float-end">Add</button>
         
     </div>
 </div>
@@ -260,7 +271,6 @@
 <br><br>
 
 <div class ="mb-3">
-    <h3>List of Orders</h3>
 </div>
 <div id = "alertMsg" class="">
 </div>
@@ -283,12 +293,13 @@
         <tbody>
             {% if result %}
             {% for inventory in result %}
-            <tr class="inv-data">
-                <td class="prod-id">{{inventory.prod_id}}</td>
-                <td>{{product.prod_name}}</td>
-                <td>{{product.prod_desc}}</td>
-                <td>{{order.ord_qty}}</td>
-                <td>{{product.prod_price|floatformat:"2g"}}</td>
+            <tr class="in-data">
+                <td class="in-id">{{inventory.prod.prod_id}}</td>
+                <td>{{inventory.prod.prod_name}}</td>
+                <td>{{inventory.prod.prod_desc}}</td>
+                <td>{{invoice.order.ord_qty}}</td>
+                <td>{{inventory.prod.prod_price|floatformat:"2g"}}</td>
+                <td>{{invoice.inv_amount}}</td>
                 <td><a href="{% url 'Invoices' %}{{invoice.inv_id}}" class="btn btn-dark m-1">View</a>
                     {% if user.acc_type_id != 3 %}
                     <button class="btn btn-dark inv-delete">Remove</button>
@@ -323,16 +334,83 @@
     </script>
 
 <script>
+$(document).ready(function() {
+    $('#inv_type').change(function() {
+      var selectedOption = $(this).val();
 
+      // Clear any previous messages or sections
+      $('#itMsg').empty();
+      $('.invoice-section').hide();
+
+      if (selectedOption === '1') {
+        // Show Walk-in type section 
+        $('#walkinSection').show();
+        
+      } else if (selectedOption === '2') {
+        // Show Project-based type section 
+        $('#projectSection').show();
+       
+      } else {
+        // Handle if no option is selected or invalid selection
+        $('#itMsg').text('Please select a valid type.');
+      }
+    });
+  });
+
+
+
+
+
+$('#product_name').on('change', function() {
+    var selectedProductName = $(this).val();
+
+    //  call to fetch product details based on the selected product name
+    $.post("{% url 'Product Details' %}", {
+        selected_product: selectedProductName
+    }, function(data) {
+        // Process the received data and update the HTML elements with product details
+        $('#productDesc').text(data.description);
+        $('#priceValuePlaceholder').text(data.price);
+        $('#availableStock').text(data.stock);
+    });
+});
+
+
+
+$(document).ready(function () {
+        // Function to calculate and update the amount based on quantity and price
+        function updateAmount() {
+            const quantity = parseFloat($('#qty').val());
+            const price = parseFloat($('#priceValuePlaceholder').text());
+
+            // Calculate the total amount
+            const amount = quantity * price;
+
+            // Display the calculated amount
+            if (!isNaN(amount)) {
+                $('#amountLabelPlaceholder').text(`Amount: ${amount.toFixed(2)}`);
+            } else {
+                $('#amountLabelPlaceholder').text();
+            }
+        }
+
+        // Event listener for changes in quantity or price
+        $('#qty').on('input', updateAmount);
+        $('#priceValuePlaceholder').on('input', updateAmount);
+
+        // Initially update the amount based on the default quantity and price
+        updateAmount();
+    });
 
 
 $('#btnSubmitWalkin').click(function() {
      it = $('#inv_type').val();
-     pn = ['Genshin Toy', 'ggg', 'kazuha wafer card', 'huawei'];
-     pd = $('.desc').data('product-description');
-     p = $('.price').data('product-name');
+     pn = $('#product_name').val(); // Get the selected product name
+     pd = $('#productDesc').text(); // Get the description text
+     p = $('#priceValuePlaceholder').text(); // Get the price text
      q = $('#qty').val();
-     s =$('.stock').data('product-name'); 
+     a = $('#amountLabelPlaceholder').text(); // Consider using text() for non-input elements
+     s = $('#availableStock').text(); // Get the available stock
      
     
     $.validate_check = function (feed, input, data) {
@@ -348,36 +426,29 @@ $('#btnSubmitWalkin').click(function() {
 
     // Check if there are empty fields
     $.validate_check('#itMsg', '#inv_type', it);
-    $.validate_check('#prodMsg', '#product_list', pn);
+    $.validate_check('#prodMsg', '#product_name', pn);
     $.validate_check('#descMsg', '#productDesc', pd);
-    $.validate_check('#priMsg', '#productPrices', p);
     $.validate_check('#qtyMsg', '#qty', q);
+    $.validate_check('#priMsg', '#productPrices', p);
+    $.validate_check('#amtMsg', '#amountLabelPlaceholder', a);
     $.validate_check('#stockMsg', '#productStock', s);
    
     
-
     // Return if any field is empty
-    if (!it || !pn || !pd || !p || !q || !s ) {
+    if (!it || !pn || !pd || !p || !q || !a || !s ) {
         return 0;
     }
-
-    // Populate the datalist options for products
-    $('#product_list').empty(); // Clear existing options in the datalist
-
-    // Loop through product names and append options to the datalist
-    pn.forEach(function(product) {
-        $('#product_list').append(`<option value="${products}">`);
-    });
+    
 
     // Submit the invoice via POST request
     $.post("{% url 'Submit Invoice' %}", {
         inv_type: it,
-        product_list: pn,
+        product_name: pn,
         productDesc: pd,
-        productPrices: p,
         qty: q,
+        productPrices: p,
+        amountLabelPlaceholder: a,
         productStock: s
-       
     }, function (e) {
         if (e.code == 200) {
             $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
@@ -388,29 +459,7 @@ $('#btnSubmitWalkin').click(function() {
 });
 
 
-  $(document).ready(function() {
-    $('#inv_type').change(function() {
-      var selectedOption = $(this).val();
-
-      // Clear any previous messages or sections
-      $('#itMsg').empty();
-      $('.invoice-section').hide();
-
-      if (selectedOption === 'Walk-In') {
-        // Show Walk-in type section 
-        $('#walkinSection').show();
-        
-      } else if (selectedOption === 'Project-Based') {
-        // Show Project-based type section 
-        $('#projectSection').show();
-       
-      } else {
-        // Handle if no option is selected or invalid selection
-        $('#itMsg').text('Please select a valid type.');
-      }
-    });
-  });
-
+  
 
 
     $('#username').on('input', function () {

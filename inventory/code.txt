@@ -70,3 +70,20 @@ def create_invoice(request, customer_id):
 
 
 logged_in_employee_id = request.user.employee.id  # Assuming the user's employee ID is stored in the 'employee' field
+
+
+
+
+
+
+ inv_status = models.CharField(default ="Active", max_length=32)
+inv_term_date = models.DateTimeField(blank=True, null=True)
+
+
+ // Clear existing options in the datalist
+    $('#product_list').empty(); 
+
+    // Loop through product names and append options to the datalist
+    pn.forEach(function(product) {
+        $('#product_list').append(`<option value="${inventory}">`);
+    });
