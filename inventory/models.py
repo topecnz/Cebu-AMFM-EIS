@@ -10,7 +10,7 @@ class CustomUserManager(UserManager):
             raise ValueError("You are not provided a valid password.")
 
         username = self.model.normalize_username(username)
-        user = self.model(username=username, password=password, acc_type_id=acc_type)
+        user = self.model(username=username, acc_type_id=acc_type)
         user.set_password(password)
         user.save()
         
@@ -68,12 +68,11 @@ class Employee(models.Model):
 
 class Customer(models.Model):
     cus_id = models.AutoField(primary_key=True)
-    cus_fname = models.CharField(max_length=1024)
-    cus_mname = models.CharField(max_length=1024, blank=True, null=True)
-    cus_lname = models.CharField(max_length=1024)
+    cus_name = models.CharField(max_length=1024)
     cus_phone = models.CharField(max_length=12)
-    cus_created_at = models.DateTimeField()
-    cus_updated_at = models.DateTimeField()
+    cus_address = models.CharField(max_length=1024, blank=True, null=True)
+    cus_created_at = models.DateTimeField(default=timezone.now)
+    cus_updated_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         managed = True
@@ -84,10 +83,10 @@ class Supplier(models.Model):
     sup_id = models.AutoField(primary_key=True)
     sup_name = models.CharField(max_length=1024)
     sup_phone = models.CharField(max_length=12)
-    sup_email = models.CharField(max_length=1024)
+    sup_address = models.CharField(max_length=1024)
     sup_status = models.CharField(max_length=32, default='Active')
-    sup_created_at = models.DateTimeField()
-    sup_updated_at = models.DateTimeField()
+    sup_created_at = models.DateTimeField(default=timezone.now)
+    sup_updated_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         managed = True
@@ -98,7 +97,7 @@ class Product(models.Model):
     prod_name = models.CharField(max_length=1024)
     prod_desc = models.CharField(max_length=1024, blank=True, null=True)
     prod_price = models.FloatField(blank=True, null=True)
-    prod_status = models.CharField(max_length=32, default='Active')
+    prod_status = models.CharField(max_length=1024, default='Active')
     prod_created_at = models.DateTimeField(default=timezone.now)
     prod_updated_at = models.DateTimeField(default=timezone.now)
     prod_type = models.ForeignKey(ProductType, models.DO_NOTHING)
@@ -112,7 +111,7 @@ class Product(models.Model):
 class Inventory(models.Model):
     in_id = models.AutoField(primary_key=True)
     in_qty = models.IntegerField(blank=True, null=True)
-    in_status = models.CharField(max_length=13, blank=True, null=True)
+    in_status = models.CharField(max_length=13, default='Active', blank=True, null=True)
     in_created_at = models.DateTimeField(default=timezone.now)
     in_updated_at = models.DateTimeField(default=timezone.now)
     prod = models.OneToOneField(Product, models.DO_NOTHING)
@@ -121,15 +120,31 @@ class Inventory(models.Model):
         managed = True
         db_table = 'inventory'
 
+class PurchaseOrder(models.Model):
+    po_id = models.AutoField(primary_key=True)
+    po_date = models.DateTimeField(default=timezone.now)
+    po_amount = models.FloatField(blank=True, null=True)
+    po_del_name = models.CharField(max_length=1024)
+    po_del_phone = models.CharField(max_length=1024)
+    po_del_address = models.CharField(max_length=1024)
+    po_status = models.CharField(default="Pending", max_length=32)
+    sup = models.ForeignKey(Supplier, models.DO_NOTHING)
+    emp = models.ForeignKey(Employee, models.DO_NOTHING)
+
+    class Meta:
+        managed = True
+        db_table = 'purchase_order'
 
 class SupplierItem(models.Model):
     sup_itm_id = models.AutoField(primary_key=True)
     sup_itm_qty = models.IntegerField(blank=True, null=True)
-    sup_itm_dr = models.CharField(max_length=1024)
-    sup_itm_status = models.CharField(max_length=9, blank=True, null=True)
-    sup_itm_created_at = models.DateTimeField()
-    sup_itm_updated_at = models.DateTimeField()
+    sup_itm_price = models.FloatField(blank=True, null=True)
+    sup_itm_amount = models.FloatField(blank=True, null=True)
+    sup_itm_status = models.CharField(max_length=9, default='Active')
+    sup_itm_created_at = models.DateTimeField(default=timezone.now)
+    sup_itm_updated_at = models.DateTimeField(default=timezone.now)
     prod = models.ForeignKey(Product, models.DO_NOTHING)
+    po = models.ForeignKey(PurchaseOrder, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = True
@@ -140,6 +155,8 @@ class OrderList(models.Model):
     ord_id = models.AutoField(primary_key=True)
     ord_price = models.FloatField(blank=True, null=True)
     ord_qty = models.IntegerField(blank=True, null=True)
+    ord_amount = models.FloatField(blank=True, null=True)
+    ord_status = models.CharField(max_length=16, default="Active")
     prod = models.ForeignKey(Product, models.DO_NOTHING)
     inv = models.ForeignKey('Invoice', models.DO_NOTHING)
 
@@ -160,6 +177,9 @@ class Invoice(models.Model):
     inv_date = models.DateTimeField(default=timezone.now)
     inv_amount = models.FloatField(blank=True, null=True)
     inv_type = models.ForeignKey(InvoiceType, models.DO_NOTHING, blank=True, null=True)
+    inv_status = models.CharField(default="Unpaid", max_length=32)
+    inv_term_date = models.DateTimeField(blank=True, null=True)
+    inv_balance = models.FloatField(blank=True, null=True)
     cus = models.ForeignKey(Customer, models.DO_NOTHING, blank=True, null=True)
     emp = models.ForeignKey(Employee, models.DO_NOTHING)
 
