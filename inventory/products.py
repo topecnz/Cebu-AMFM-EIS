@@ -11,7 +11,7 @@ from .models import Employee, AccountType, Product, ProductBrand, ProductType, I
 
 @login_required(login_url='/login')
 def products(request: HttpRequest):
-    product = Product.objects.select_related('prod_type', 'prod_br')
+    product = Product.objects.select_related('prod_type', 'prod_br').filter(prod_status='Active')
     obj = {
         'result': product,
     }
@@ -33,6 +33,28 @@ def add_product(request: HttpRequest):
     raise PermissionDenied()
 
 @csrf_exempt
+def check_product_name(request: HttpRequest):
+    if request.user.is_authenticated:
+        if request.user.acc_type_id == 1:
+            if request.method == "POST":
+                p = request.POST['prod']
+                product = Product.objects.filter(prod_name=p, prod_status='Active')
+                
+                is_found = False
+                
+                for r in product:
+                    if r.prod_name.lower() == p.lower():
+                        is_found = True
+                        break
+                
+                obj = {
+                    'found': is_found
+                }
+                return JsonResponse(obj)
+
+    return redirect('/')
+
+@csrf_exempt
 def submit_product(request: HttpRequest):
     if request.user.is_authenticated:
         if request.user.acc_type_id == 1:
@@ -43,7 +65,12 @@ def submit_product(request: HttpRequest):
                 pt = request.POST['prod_type']
                 pb = request.POST['prod_br']
                 
-                pro = Product.objects.create(prod_name=p, prod_desc=d, prod_price=pr, prod_type_id=pt, prod_br_id=pb)
+                pro, created = Product.objects.get_or_create(prod_name=p)
+                pro.prod_desc = d
+                pro.prod_price = pr
+                pro.prod_status = 'Active'
+                pro.prod_type_id = pt
+                pro.prod_br_id = pb
                 pro.save()
                 
                 obj = {
@@ -63,8 +90,8 @@ def view_product(request: HttpRequest, id: int):
     prod_br = ProductBrand.objects.all()
     
     if prod:
-        for u in prod:
-            prod = u
+        for p in prod:
+            prod = p
 
         obj = {
             'product': prod,
@@ -123,7 +150,7 @@ def update_product(request: HttpRequest):
                 pr = request.POST['price']
                 pt = request.POST['prod_type']
                 pb = request.POST['prod_br']
-                s = request.POST['prod_status']
+                # s = request.POST['prod_status']
                 
                 pro = Product.objects.get(prod_id=id)
                 pro.prod_name = p
@@ -131,7 +158,7 @@ def update_product(request: HttpRequest):
                 pro.prod_price = pr
                 pro.prod_type_id = pt
                 pro.prod_br_id = pb
-                pro.prod_status = s
+                # pro.prod_status = s
                 pro.save()
                 
                 obj = {

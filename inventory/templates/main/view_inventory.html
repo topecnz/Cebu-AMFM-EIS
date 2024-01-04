@@ -24,7 +24,7 @@
     <label id="prod_name">{{inventory.prod.prod_name}}</label>
 </div>
 <div class="mb-3">
-    <label class="form-label">Price</label>
+    <label class="form-label">Quantity</label>
     <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{inventory.in_qty}}" id="qty" type="number" class="form-control" placeholder="Enter Price">
     <div id="qMsg">
     </div>
@@ -72,10 +72,10 @@
                 qty: q,
             }, function (e) {
                 if (e.code == 200) {
-                    $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
+                    $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
                 }
                 else {
-                    $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
+                    $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
                 }
             }
             );

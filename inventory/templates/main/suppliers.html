@@ -22,7 +22,7 @@
                     <th>Supplier ID</th>
                     <th>Supplier Name</th>
                     <th>Phone</th>
-                    <th>Email</th>
+                    <th>Address</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -34,7 +34,7 @@
                     <td class="sup-id">{{supplier.sup_id}}</td>
                     <td>{{supplier.sup_name}}</td>
                     <td>{{supplier.sup_phone}}</td>
-                    <td>{{supplier.sup_email}}</td>
+                    <td>{{supplier.sup_address}}</td>
                     <td class="sup-status">{{supplier.sup_status}}</td>
                     <td><a href="{% url 'Suppliers' %}{{supplier.sup_id}}" class="btn btn-dark m-1">View</a>
                         {% if supplier.sup_status == 'Active' and user.acc_type_id != 3 %}
@@ -50,7 +50,7 @@
                     <th>Supplier ID</th>
                     <th>Supplier Name</th>
                     <th>Phone</th>
-                    <th>Email</th>
+                    <th>Address</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -73,9 +73,9 @@
                     id: id
                 }, function(e) {
                     if (e.code == 200) {
-                        $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
+                        $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
                     } else {
-                        $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
+                        $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
                     }
                 })
             })

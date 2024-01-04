@@ -75,7 +75,7 @@ def submit_inventory(request: HttpRequest):
                 p = request.POST['prod']
                 q = request.POST['qty']
                 
-                inv = Inventory.objects.create(in_qty=q, in_status='Avaialble', prod_id=p)
+                inv = Inventory.objects.create(in_qty=q, in_status='Available', prod_id=p)
                 inv.save()
                 
                 obj = {

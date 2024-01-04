@@ -5,6 +5,7 @@
 {% endblock %}
 {% block content %}
 
+{% if not error %}
 {% csrf_token %}
 <div class="mb-3">
     <h3>View Product<h3>
@@ -83,6 +84,10 @@
     <button id="btnSubmit" class="btn btn-dark float-end">Update</button>
     {% endif %}
 </div>
+{% else %}
+<h1>{{error}}</h1>
+{% endif %}
+
    
 {% endblock %}
 
@@ -116,7 +121,7 @@
             $.validate_check('#pbMsg', '#prod_br', pb);
     
             // return if found
-            if (!p || !d || !pr || !pt || !pb || !s) {           
+            if (!p || !d || !pr || !pt || !pb) {           
                 return 0;
             }
     
@@ -129,10 +134,10 @@
                 prod_br: pb
             }, function (e) {
                 if (e.code == 200) {
-                    $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
+                    $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
                 }
                 else {
-                    $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
+                    $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
                 }
             }
             );

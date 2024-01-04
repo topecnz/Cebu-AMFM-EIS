@@ -37,8 +37,8 @@
     </div>
 </div>
 <div class="mb-3">
-    <label class="form-label">Supplier Email</label>
-    <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{supplier.sup_email}}" id="sup_email" type="text" class="form-control" placeholder="Enter Supplier Email">
+    <label class="form-label">Supplier Address</label>
+    <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{supplier.sup_address}}" id="sup_address" type="text" class="form-control" placeholder="Enter Supplier Address">
     <div id="emMsg">
     </div>
 </div>
@@ -57,7 +57,7 @@
             id = $('#sup_id').text();
             n = $('#sup_name').val();
             p = $('#sup_phone').val();
-            e = $('#sup_email').val();
+            e = $('#sup_address').val();
     
             $.validate_check = function (feed, input, data) {
                 txt = !data ? 'Required' : '';
@@ -87,10 +87,10 @@
                 email: e
             }, function (e) {
                 if (e.code == 200) {
-                    $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
+                    $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
                 }
                 else {
-                    $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
+                    $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
                 }
             }
             );

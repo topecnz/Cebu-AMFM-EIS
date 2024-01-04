@@ -100,10 +100,10 @@
             acc_type: at
         }, function (e) {
             if (e.code == 200) {
-                $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
+                $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
             }
             else {
-                $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
+                $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
             }
         }
         );
