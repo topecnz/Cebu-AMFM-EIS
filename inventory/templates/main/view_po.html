@@ -1,0 +1,645 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}View PO{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.min.css' %}">
+    <style>
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+        
+        td {
+            position: relative;
+            padding: 5px 10px;
+        }
+        
+        tr.strikeout td:before {
+            content: " ";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            border-bottom: 1px solid #111;
+            width: 100%;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    {% if not error %}
+    <div class="mb-3">
+        <h3>View PO<h3>
+    </div>
+    <div id="alertMsg" class="">
+    </div>
+    <div class="mb-3">
+        <h4>Supplier Information</h4>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Select Supplier</label>
+        <select id="sup-id" class="form-select w-25" aria-label="Default select example">
+            <option disabled>Select supplier</option>
+            {% for res in supplier %}
+            <option value="{{res.sup_id}}"{% if res.sup_id == po.sup.sup_id %} selected{% endif %}>{{res.sup_name}}</option>
+            {% endfor %}
+        </select>
+        <div id="typeMsg">
+        </div>
+        <div id="sup-info">
+            <div class="row mb-3">
+                <div class="col-8">
+                    <label class="form-label">Name</label>
+                    <div>
+                        <strong><label id="sup_name"></label></strong>
+                    </div>
+                </div>
+                <div class="col">
+                    <label class="form-label">Phone Number</label>
+                    <div>
+                        <strong><label id="sup_phone"></label></strong>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Address</label>
+                <div>
+                    <strong><label id="sup_address"></label></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mb-3">
+        <h4>Delivery Information</h4>
+    </div>
+    <div class="mb-3">
+        <div class="row">
+            <div class="col-8">
+                <label class="form-label">Name</label>
+                <input id="name" type="text" class="form-control" placeholder="Enter Name" value="{{po.po_del_name}}">
+                <div id="nameMsg">
+                </div>
+            </div>
+            <div class="col">
+                <label class="form-label">Phone Number</label>
+                <input id="phone" type="text" class="form-control" placeholder="Enter Phone Number" value="{{po.po_del_phone}}">
+                <div id="phoneMsg">
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <label class="form-label">Address</label>
+            <input id="addr" type="text" class="form-control" placeholder="Enter Customer Address" value="{{po.po_del_address}}">
+            <div id="addrMsg">
+            </div>
+        </div>
+    </div>
+    <div class="mb-3">
+        <h4>Item</h4>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Product Name</label>
+        <input class="form-control" list="productList" id="product" placeholder="Type to search...">
+        <datalist id="productList">
+            {% for res in prod %}
+            <option value="{{res.prod_name}}" data-value="{{res.prod_id}}">{{res.prod_name}}</option>
+            {% endfor %}
+        </datalist>
+        <div id="pMsg">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-4">
+            <label class="form-label">Description</label>
+            <div>
+                <label id="prod-desc"></label>
+            </div>
+        </div>
+        <div class="col-2">
+            <label class="form-label">Quantity</label>
+            <input id="qty" type="number" class=" form-control" placeholder="Enter Quantity" max="0">
+            <div id="qMsg">
+            </div>
+        </div>
+        <div class="col-2">
+            <label class="form-label">Price</label>
+            <div>
+                <label>PHP <span id="prod-price">0.00</span></label>
+            </div>
+        </div>
+        <div class="mt-4 col-4">
+            <button id="btnAdd" class="mb-3 btn btn-dark float-end">Add</button>
+            <button id="btnUpdate" class="mb-3 btn btn-dark float-end">Update</button>
+        </div>
+    </div>
+    
+    <div class="mb-3">
+        <table id="example" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if sup_itm %}
+                {% for res in sup_itm %}
+                <tr>
+                    <td>{{res.prod_id}}</td>
+                    <td>{{res.prod.prod_name}}</td>
+                    <td>{{res.prod.prod_desc}}</td>
+                    <td>{{res.sup_itm_qty}}</td>
+                    <td>{{res.sup_itm_price}}</td>
+                    <td>{{res.sup_itm_amount}}</td>
+                    <td><button class="btn btn-dark prod-remove">Remove</button></td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="mb-5 text-end">
+        <label class="form-label">Total Amount</label>
+        <div>
+            <p>PHP <span id="total">{{po.po_amount}}</span></p>
+        </div>
+    </div>
+    <div class="pb-5">
+        <div class="text-end">
+            <button id="btnPrint" class="btn btn-dark ">Save & Print</button>
+            <button id="btnSubmit" class="btn btn-dark ">Save</button>
+            <button type="button" class="btn btn-dark " data-bs-toggle="modal" data-bs-target="#confirmationModal">Delete</button>
+        </div>
+    </div>
+
+      <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="alertMsg2" class="">
+                </div>
+                <label>Are you sure to delete Puchase Order #{{po.po_id}}?</label>
+            </div>
+            <div class="modal-footer">
+                {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> {% endcomment %}
+                <button id="btnDel" type="button" class="btn btn-primary">Proceed</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <h1>{{error}}</h1>
+    {% endif %}
+    
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script>
+        {% comment %} $('#example').dataTable({
+            "dom": 'lrtip'
+        }); {% endcomment %}
+        const table = new DataTable('#example', {
+            select: true
+        });
+
+        $("#cus-details").hide();
+
+        $.phone_validate = function () {
+            var phone = $('#phone').val();
+            var limit = 12; // default
+
+            var output = false;
+            // validate
+            if ((phone.startsWith('09') || phone.startsWith('639')) && $.isNumeric(phone)) {
+                // change limit if starts with 09
+                if (phone.startsWith('09') && $.isNumeric(phone)) {
+                    limit = 11;
+                }
+                
+                // check limit
+                if (limit == phone.length) {
+                    $('#phoneMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                    $('#phone').addClass('is-valid').removeClass('is-invalid');
+                    output = true;
+                }
+                else {
+                    var message = 'It must be ' + limit + ' numbers.';
+                    $('#phoneMsg').text(message).addClass('invalid-feedback').removeClass('valid-feedback');
+                    $('#phone').addClass('is-invalid').removeClass('is-valid');
+                }
+            }
+            else {
+                $('#phoneMsg').text("Please enter a valid number.").addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#phone').addClass('is-invalid').removeClass('is-valid');
+            }
+
+            return output;
+        }
+
+        $('#phone').on('input', function () {
+            $.phone_validate()
+        });
+
+        // Product
+
+        $.switch_buttons = function (sw) {
+            let s = sw;
+            switch (s) {
+                case "add":
+                    $('#btnAdd').show();
+                    $('#btnUpdate').hide();
+                    break;
+                case "update":
+                    $('#btnAdd').hide();
+                    $('#btnUpdate').show();
+                    break;
+                default:
+                    $('#btnAdd').hide();
+                    $('#btnUpdate').hide();
+            }
+        }
+
+        $.switch_buttons('a');
+
+        table.on('click', 'tbody tr', (e) => {
+            let classList = e.currentTarget.classList;
+         
+            if (classList.contains('selected')) {
+                classList.remove('selected');
+
+                $('#qty').val('');
+                $('#product').val('');
+                $('#prod-desc').text('');
+                $('#prod-price').text('0.00');
+                $('#prod-qty').text('0');
+                $.switch_buttons('');
+            }
+            else {
+                table.rows('.selected').nodes().each((row) => row.classList.remove('selected'));
+                classList.add('selected');
+                $('#qty').val(table.rows('.selected').data()[0][3]);
+                $('#product').val(table.rows('.selected').data()[0][1]);
+                $.check_product();
+            }
+        });
+
+        $.check_product = function () {
+            var text = $('#product').val();
+            var id = $('#productList [value="'+text+'"]').data('value');
+
+            if (text != ''){
+                $.post("{% url 'Check Product PO' %}", {
+                    id: id
+                }, function (e) {
+                    if (e.code == 200) {
+                        $('#prod-price').text(parseFloat(e.price).toFixed(2));
+                        $('#prod-desc').text(e.desc);
+                        
+                        var btn = 'add';
+                        for (var k = 0; k < table.rows().count(); k++) {
+                            if (table.row(k).data()[0] == id && table.row(k).data()[1] == text) {
+                                btn = 'update';
+                                break
+                            }
+                        }
+
+                        $.switch_buttons(btn);
+                    } else {
+                        alert('Something went wrong!');
+                    }
+                })
+            } else {
+                $('#qty').val('');
+                $('#product').val('');
+                $('#prod-price').text('0.00');
+                $('#prod-desc').text('');
+                $('#prod-qty').text('0');
+                $.switch_buttons('a');
+            };  
+        };
+
+        $('#sup-info').hide();
+
+        $.check_supplier = function () {
+            var id = $('#sup-id').val();
+
+            if (id != null){
+                $.post("{% url 'Check Supplier' %}", {
+                    id: id
+                }, function (e) {
+                    if (e.code == 200) {
+                        $('#sup_name').text(e.name);
+                        $('#sup_phone').text(e.phone);
+                        $('#sup_address').text(e.address);
+                        $('#sup-info').show();
+                    } else {
+                        alert('Something went wrong!');
+                    }
+                })
+            } else {
+                $('#sup-info').hide();
+            };  
+        };
+
+        $.check_supplier();
+        $.check_product();
+        
+        $('#product').change(function() {
+            $.check_product();
+        });
+
+        $('#sup-id').change(function (){
+            $.check_supplier();
+        });
+
+        $.validate_check = function (feed, input, data) {
+            txt = !data ? 'Required' : '';
+            Ac = !data ? 'is-invalid' : 'is-valid';
+            Rc = !data ? 'is-valid' : 'is-invalid';
+            Af = !data ? 'invalid-feedback' : 'valid-feedback';
+            Rf = !data ? 'valid-feedback' : 'invalid-feedback';
+    
+            $(feed).text(txt).addClass(Af).removeClass(Rf);
+            $(input).addClass(Ac).removeClass(Rc);
+        };
+
+        $('#btnAdd').click(function(){
+            var qty = $('#qty').val();
+            var name = $('#product').val();
+            var id = $('#productList [value="'+name+'"]').data('value');
+            var desc = $('#prod-desc').text();
+            var price = parseFloat($('#prod-price').text()).toFixed(2);
+
+            $.validate_check('#pMsg', '#product', name);
+            $.validate_check('#qMsg', '#qty', qty);
+
+            // return if found
+            if (!name || !qty) {           
+                return 0;
+            }
+
+            var amount = parseFloat(price * qty).toFixed(2);
+
+            table.row.add([
+                id, name, desc, qty, price, amount,
+                '<button class="btn btn-dark prod-remove">Remove</button>'
+            ]).draw();
+
+            $.total_check();
+
+            $('.prod-remove').click(function() {
+                if (table.row($(this).parents('tr')).node().className.includes('strikeout')) {
+                    $(this).text('Remove');
+                    $(this).parents('tr').removeClass('strikeout');
+                }
+                else {
+                    $(this).text('Undo');
+                    $(this).parents('tr').addClass('strikeout');
+                }
+                $.total_check();
+            });
+
+            $('#qty').val('');
+            $('#product').val('');
+            $('#prod-price').text('0.00');
+            $('#prod-desc').text('');
+            $.switch_buttons('a');
+        });
+
+        $('#btnUpdate').click(function(){
+            var qty = $('#qty').val();
+            var name = $('#product').val();
+            var id = $('#productList [value="'+name+'"]').data('value');
+            var desc = $('#prod-desc').text();
+            var price = parseFloat($('#prod-price').text()).toFixed(2);
+
+            $.validate_check('#pMsg', '#product', name);
+            $.validate_check('#qMsg', '#qty', qty);
+
+            // return if found
+            if (!name || !qty) {           
+                return 0;
+            }
+
+            var amount = parseFloat(price * qty).toFixed(2);
+
+            for (var l = 0; l < table.rows().count(); l++) {
+                if (table.row(l).data()[0] == id && table.row(l).data()[1] == name) {
+                    table.row(l).data([
+                        id, name, desc, qty, price, amount,
+                        '<button class="btn btn-dark prod-remove">Remove</button>'
+                    ]).draw();
+                    break;
+                }
+            }
+
+            $.total_check();
+
+            $('.prod-remove').click(function() {
+                if (table.row($(this).parents('tr')).node().className.includes('strikeout')) {
+                    $(this).text('Remove');
+                    $(this).parents('tr').removeClass('strikeout');
+                }
+                else {
+                    $(this).text('Undo');
+                    $(this).parents('tr').addClass('strikeout');
+                }
+                $.total_check();
+            });
+
+            $('#qty').val('');
+            $('#product').val('');
+            $('#prod-price').text('0.00');
+            $('#prod-desc').text('');
+            $.switch_buttons('a');
+        });
+
+        $('#btnSubmit').click(function(){
+            var count = table.rows().count();
+
+            if (count == 0) {
+                $('#alertMsg').text('Table is empty.').addClass('alert alert-warning').removeClass('alert-success');
+                return 0;
+            }
+
+            if (count == 1 && table.row(0).node().className.includes('strikeout')) {
+                $('#alertMsg').text('Error: Please add at least 1 product.').addClass('alert alert-warning').removeClass('alert-success');
+                return 0;
+            }
+
+            var id = $('#sup-id').val();
+            var name = $('#name').val();
+            var phone = $('#phone').val();
+            var addr = $('#addr').val();
+
+            $.validate_check('#typeMsg', '#sup-id', id);
+            $.validate_check('#nameMsg', '#name', name);
+            $.validate_check('#phoneMsg', '#phone', phone);
+            $.validate_check('#addrMsg', '#addr', addr);
+
+
+            if (!id && !name && !phone && !addr) {
+                return 0;
+            }
+
+            res = []
+
+            for (var j = 0; j < count; j++) {
+                res.push({
+                    id: table.rows().data()[j][0],
+                    qty: table.rows().data()[j][3],
+                    remove: table.row(j).node().className.includes('strikeout')
+                });
+            }
+
+            console.log(res);
+
+            $.post("{% url 'Update PO' %}", {
+                data: JSON.stringify({
+                    result: res
+                }),
+                id: '{{po.po_id}}',
+                sup_id: $('#sup-id').val(),
+                name: (!$('#name').val()) ? '' : $('#name').val(),
+                phone: (!$('#phone').val()) ? '' : $('#phone').val(),
+                addr: (!$('#addr').val()) ? '' : $('#addr').val()
+            }, function(e) {
+                if (e.code == 200) {
+                    $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
+                }
+                else {
+                    $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
+                }
+            });
+        });
+
+        $('#btnPrint').click(function(){
+            var count = table.rows().count();
+
+            if (count == 0) {
+                $('#alertMsg').text('Table is empty.').addClass('alert alert-warning').removeClass('alert-success');
+                return 0;
+            }
+
+            if (count == 1 && table.row(0).node().className.includes('strikeout')) {
+                $('#alertMsg').text('Error: Please add at least 1 product.').addClass('alert alert-warning').removeClass('alert-success');
+                return 0;
+            }
+
+            var id = $('#sup-id').val();
+            var name = $('#name').val();
+            var phone = $('#phone').val();
+            var addr = $('#addr').val();
+
+            $.validate_check('#typeMsg', '#sup-id', id);
+            $.validate_check('#nameMsg', '#name', name);
+            $.validate_check('#phoneMsg', '#phone', phone);
+            $.validate_check('#addrMsg', '#addr', addr);
+
+
+            if (!id && !name && !phone && !addr) {
+                return 0;
+            }
+
+            res = []
+
+            for (var j = 0; j < count; j++) {
+                res.push({
+                    id: table.rows().data()[j][0],
+                    qty: table.rows().data()[j][3],
+                    remove: table.row(j).node().className.includes('strikeout')
+                });
+            }
+
+            console.log(res);
+
+            $.post("{% url 'Update PO' %}", {
+                data: JSON.stringify({
+                    result: res
+                }),
+                id: '{{po.po_id}}',
+                sup_id: $('#sup-id').val(),
+                name: (!$('#name').val()) ? '' : $('#name').val(),
+                phone: (!$('#phone').val()) ? '' : $('#phone').val(),
+                addr: (!$('#addr').val()) ? '' : $('#addr').val()
+            }, function(e) {
+                if (e.code == 200) {
+                    $('#alertMsg').text(e.message + ' Redirecting in 3 seconds...').addClass('alert alert-success').removeClass('alert-warning');
+                    window.location = "{% url 'Orders' %}{{po.po_id}}/print";
+                }
+                else {
+                    $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
+                }
+            });
+        });
+
+        $('#btnDel').click(function () {            
+            $.post("{% url 'Delete PO' %}", {
+                id: '{{po.po_id}}'
+            }, function(e) {
+                if (e.code == 200) {
+                    $('#alertMsg2').text(e.message + ' Redirecting to Orders page in 3 seconds...').addClass('alert alert-success').removeClass('alert-warning').fadeIn(0);
+                    $(function () {
+                        setTimeout(function() {
+                          window.location = "{% url 'Orders'%}";
+                        }, 3000);
+                      });
+                }
+                else {
+                    $('#alertMsg2').text(e.message).addClass('alert alert-warning').removeClass('alert-success').fadeIn(0).fadeOut(2000);
+                }
+            })
+        });
+
+        $('.prod-remove').click(function() {
+            //table.row($(this).parents('tr')).remove().draw();
+            if (table.row($(this).parents('tr')).node().className.includes('strikeout')) {
+                $(this).text('Remove');
+                $(this).parents('tr').removeClass('strikeout');
+            }
+            else {
+                $(this).text('Undo');
+                $(this).parents('tr').addClass('strikeout');
+            }
+            $.total_check();
+        });
+
+        // total count
+        $.total_check = function () {
+            var total = 0;
+            for (var i = 0; i < table.rows().count(); i++) {
+                total += parseFloat(table.rows().data()[i][5]);
+            }
+            $('#total').text(parseFloat(total).toFixed(2));
+        }
+
+    </script>
+{% endblock %}

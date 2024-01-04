@@ -1,0 +1,505 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Create Invoice{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.min.css' %}">
+    <style>
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="mb-3">
+        <h3>Create Invoice<h3>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Invoice Type</label>
+        <select id="inv_type" class="form-select w-25" aria-label="Default select example">
+            <option selected disabled>Select type</option>
+            {% for res in type %}
+            <option value="{{res.inv_type_id}}">{{res.inv_type_name}}</option>
+            {% endfor %}
+        </select>
+        <div id="typeMsg">
+        </div>
+    </div>
+
+    <div id="cus-details">
+        <div>
+            <h4>Customer Information</h4>
+        </div>
+        <div class="row mb-3">
+            <div class="col-8">
+                <label class="form-label">Name</label>
+                <input id="cus-name" type="text" class="form-control" placeholder="Enter Name">
+                <div id="nameMsg">
+                </div>
+            </div>
+            <div class="col">
+                <label class="form-label">Phone Number</label>
+                <input id="phone" type="text" class="form-control" placeholder="Enter Phone Number">
+                <div id="phoneMsg">
+                </div>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Address</label>
+            <input id="addr" type="text" class="form-control" placeholder="Enter Customer Address">
+            <div id="addrMsg">
+            </div>
+        </div>
+    </div>
+    <div class="mb-3">
+        <h4>Item</h4>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Product Name</label>
+        <input class="form-control" list="productList" id="product" placeholder="Type to search...">
+        <datalist id="productList">
+            {% for res in inventory %}
+            <option value="{{res.prod.prod_name}}" data-value="{{res.prod.prod_id}}">{{res.prod.prod_name}}</option>
+            {% endfor %}
+        </datalist>
+        <div id="pMsg">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-4">
+            <label class="form-label">Description</label>
+            <div>
+                <label id="prod-desc"></label>
+            </div>
+        </div>
+        <div class="col-2">
+            <label class="form-label">Quantity</label>
+            <input id="qty" type="number" class=" form-control" placeholder="Enter Quantity" max="0">
+            <div id="qMsg">
+            </div>
+        </div>
+        <div class="col-2">
+            <label class="form-label">Price</label>
+            <div>
+                <label>PHP <span id="prod-price">0.00</span></label>
+            </div>
+        </div>
+        <div class="col-2">
+            <label class="form-label">Available Stock</label>
+            <div>
+                <label><span id="prod-qty">0</span></label>
+            </div>
+        </div>
+        <div class="mt-4 col-2">
+            <button id="btnAdd" class="mb-3 btn btn-dark float-end">Add</button>
+            <button id="btnUpdate" class="mb-3 btn btn-dark float-end">Update</button>
+        </div>
+    </div>
+    
+    <div class="mb-3">
+        <table id="example" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="mb-5 text-end">
+        <label class="form-label">Total Amount</label>
+        <div>
+            <p>PHP <span id="total">0.00</span></p>
+        </div>
+    </div>
+    <div class="p-3">
+        <div class="text-end">
+            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal">Create</button>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="alertMsg" class="">
+                </div>
+                <label>Are you sure to create invoice?</label>
+            </div>
+            <div class="modal-footer">
+              {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> {% endcomment %}
+              <button id="btnSubmit" type="button" class="btn btn-primary">Proceed</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script>
+        {% comment %} $('#example').dataTable({
+            "dom": 'lrtip'
+        }); {% endcomment %}
+        const table = new DataTable('#example', {
+            select: true
+        });
+
+        $("#cus-details").hide();
+
+        // Customer 
+
+        var t = $('#inv_type').val();
+
+        if (t == 2) {
+            $("#cus-details").show();
+        }
+
+        $("#inv_type").change(function(){
+            var tp = $('#inv_type').val();
+            if (tp == 2) {
+                $("#cus-details").show();
+            } else {
+                $("#cus-details").hide();
+                $('#cus-name').val('');
+                $('#phone').val('');
+            }
+        });
+
+        $.phone_validate = function () {
+            var phone = $('#phone').val();
+            var limit = 12; // default
+
+            var output = false;
+            // validate
+            if ((phone.startsWith('09') || phone.startsWith('639')) && $.isNumeric(phone)) {
+                // change limit if starts with 09
+                if (phone.startsWith('09') && $.isNumeric(phone)) {
+                    limit = 11;
+                }
+                
+                // check limit
+                if (limit == phone.length) {
+                    $('#phoneMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                    $('#phone').addClass('is-valid').removeClass('is-invalid');
+                    output = true;
+                }
+                else {
+                    var message = 'It must be ' + limit + ' numbers.';
+                    $('#phoneMsg').text(message).addClass('invalid-feedback').removeClass('valid-feedback');
+                    $('#phone').addClass('is-invalid').removeClass('is-valid');
+                }
+            }
+            else {
+                $('#phoneMsg').text("Please enter a valid number.").addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#phone').addClass('is-invalid').removeClass('is-valid');
+            }
+
+            return output;
+        }
+
+        $('#phone').on('input', function () {
+            $.phone_validate()
+        });
+
+        // Product
+
+        $.switch_buttons = function (sw) {
+            let s = sw;
+            switch (s) {
+                case "add":
+                    $('#btnAdd').show();
+                    $('#btnUpdate').hide();
+                    break;
+                case "update":
+                    $('#btnAdd').hide();
+                    $('#btnUpdate').show();
+                    break;
+                default:
+                    $('#btnAdd').hide();
+                    $('#btnUpdate').hide();
+            }
+        }
+
+        $.switch_buttons('a');
+
+        table.on('click', 'tbody tr', (e) => {
+            let classList = e.currentTarget.classList;
+         
+            if (classList.contains('selected')) {
+                classList.remove('selected');
+
+                $('#qty').val('');
+                $('#product').val('');
+                $('#prod-desc').text('');
+                $('#prod-price').text('0.00');
+                $('#prod-qty').text('0');
+                $.switch_buttons('');
+            }
+            else {
+                table.rows('.selected').nodes().each((row) => row.classList.remove('selected'));
+                classList.add('selected');
+                $('#qty').val(table.rows('.selected').data()[0][3]);
+                $('#product').val(table.rows('.selected').data()[0][1]);
+                $.check_product();
+            }
+        });
+
+        $.check_product = function () {
+            var text = $('#product').val();
+            var id = $('#productList [value="'+text+'"]').data('value');
+
+            if (text != ''){
+                $.post("{% url 'Check Product' %}", {
+                    id: id
+                }, function (e) {
+                    if (e.code == 200) {
+                        $('#prod-price').text(parseFloat(e.price).toFixed(2));
+                        $('#prod-desc').text(e.desc);
+                        $('#prod-qty').text(e.qty);
+                        
+                        var btn = 'add';
+                        for (var k = 0; k < table.rows().count(); k++) {
+                            if (table.row(k).data()[0] == id && table.row(k).data()[1] == text) {
+                                btn = 'update';
+                                break
+                            }
+                        }
+
+                        $.switch_buttons(btn);
+                    } else {
+                        alert('Something went wrong!');
+                    }
+                })
+            } else {
+                $('#qty').val('');
+                $('#product').val('');
+                $('#prod-price').text('0.00');
+                $('#prod-desc').text('');
+                $('#prod-qty').text('0');
+                $.switch_buttons('a');
+            };  
+        };
+
+        $.check_product();
+        
+        $('#product').change(function() {
+            $.check_product();
+        });
+
+        $.validate_check = function (feed, input, data) {
+            txt = !data ? 'Required' : '';
+            Ac = !data ? 'is-invalid' : 'is-valid';
+            Rc = !data ? 'is-valid' : 'is-invalid';
+            Af = !data ? 'invalid-feedback' : 'valid-feedback';
+            Rf = !data ? 'valid-feedback' : 'invalid-feedback';
+    
+            $(feed).text(txt).addClass(Af).removeClass(Rf);
+            $(input).addClass(Ac).removeClass(Rc);
+        };
+
+        $('#btnAdd').click(function(){
+            var qty = $('#qty').val();
+            var s = $('#prod-qty').text();
+            var name = $('#product').val();
+            var id = $('#productList [value="'+name+'"]').data('value');
+            var desc = $('#prod-desc').text();
+            var price = parseFloat($('#prod-price').text()).toFixed(2);
+
+            $.validate_check('#pMsg', '#product', name);
+            $.validate_check('#qMsg', '#qty', qty);
+
+            // return if found
+            if (!name || !qty) {           
+                return 0;
+            }
+
+            if (parseInt(qty) > parseInt(s)) {
+                $('#qMsg').text('You can only add up to ' + s + ' quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0
+            }
+
+            var amount = parseFloat(price * qty).toFixed(2);
+
+            table.row.add([
+                id, name, desc, qty, price, amount,
+                '<button class="btn btn-dark prod-remove">Remove</button>'
+            ]).draw();
+
+            $.total_check();
+
+            $('.prod-remove').click(function() {
+                table.row($(this).parents('tr')).remove().draw();
+                $.total_check();
+            });
+
+            $('#qty').val('');
+            $('#product').val('');
+            $('#prod-price').text('0.00');
+            $('#prod-desc').text('');
+            $('#prod-qty').text('0');
+            $.switch_buttons('a');
+        });
+
+        $('#btnUpdate').click(function(){
+            var qty = $('#qty').val();
+            var s = $('#prod-qty').text();
+            var name = $('#product').val();
+            var id = $('#productList [value="'+name+'"]').data('value');
+            var desc = $('#prod-desc').text();
+            var price = parseFloat($('#prod-price').text()).toFixed(2);
+
+            $.validate_check('#pMsg', '#product', name);
+            $.validate_check('#qMsg', '#qty', qty);
+
+            // return if found
+            if (!name || !qty) {           
+                return 0;
+            }
+
+            if (parseInt(qty) > parseInt(s)) {
+                $('#qMsg').text('You can only add up to ' + s + ' quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0
+            }
+
+            var amount = parseFloat(price * qty).toFixed(2);
+
+            for (var l = 0; l < table.rows().count(); l++) {
+                if (table.row(l).data()[0] == id && table.row(l).data()[1] == name) {
+                    table.row(l).data([
+                        id, name, desc, qty, price, amount,
+                        '<button class="btn btn-dark prod-remove">Remove</button>'
+                    ]).draw();
+                    break;
+                }
+            }
+
+            $.total_check();
+
+            $('.prod-remove').click(function() {
+                table.row($(this).parents('tr')).remove().draw();
+                $.total_check();
+            });
+
+            $('#qty').val('');
+            $('#product').val('');
+            $('#prod-price').text('0.00');
+            $('#prod-desc').text('');
+            $('#prod-qty').text('0');
+            $.switch_buttons('a');
+        });
+
+        $('#btnSubmit').click(function(){
+            var count = table.rows().count();
+
+            if (count == 0) {
+                $('#alertMsg').text('Table is empty.').addClass('alert alert-warning').removeClass('alert-success').fadeIn(0).fadeOut(2000);
+                return 0;
+            }
+
+            var type = $('#inv_type').val();
+
+            $.validate_check('#typeMsg', '#inv_type', type);
+
+            $.cus_validate = function() {
+                var output = true;
+                
+                var name = $('#cus-name').val();
+                var phone = $('#phone').val();
+                var addr = $('#addr').val();
+
+                $.validate_check('#nameMsg', '#cus-name', name);
+                $.validate_check('#addrMsg', '#addr', addr);
+                var ph = $.phone_validate();
+
+                if (!name && !ph && !addr) {
+                    output = false;
+                }
+
+                return output;
+            }
+
+            var cus_data = true; // default (exeption if project-based is not selected.)
+
+            if (type == 2) {
+                cus_data = $.cus_validate();
+            }
+
+            if (!type && !cus_data) {
+                return 0;
+            }
+
+            res = []
+
+            for (var j = 0; j < count; j++) {
+                res.push({
+                    id: table.rows().data()[j][0],
+                    qty: table.rows().data()[j][3],
+                });
+            }
+
+            console.log(res);
+
+            $.post("{% url 'Submit Invoice' %}", {
+                data: JSON.stringify({
+                    result: res
+                }),
+                type: $('#inv_type').val(),
+                cus_name: (!$('#cus-name').val()) ? '' : $('#cus-name').val(),
+                phone: (!$('#phone').val()) ? '' : $('#phone').val(),
+                addr: (!$('#addr').val()) ? '' : $('#addr').val()
+            }, function(e) {
+                if (e.code == 200) {
+                    $('#alertMsg').text(e.message + ' Redirecting in 3 seconds...').addClass('alert alert-success').removeClass('alert-warning').fadeIn(0);
+                    $(function () {
+                        setTimeout(function() {
+                          window.location = "{% url 'Invoices'%}" + e.id;
+                        }, 3000);
+                      });
+                }
+                else {
+                    $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success').fadeIn(0).fadeOut(2000);
+                }
+            });
+        });
+
+        // total count
+        $.total_check = function () {
+            var total = 0;
+            for (var i = 0; i < table.rows().count(); i++) {
+                total += parseFloat(table.rows().data()[i][5]);
+            }
+            $('#total').text(parseFloat(total).toFixed(2));
+        }
+
+    </script>
+{% endblock %}

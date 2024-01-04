@@ -1,5 +1,5 @@
 from django.urls import path 
-from . import views, accounts, products, inventory, supplier
+from . import views, accounts, products, inventory, supplier, invoice, purchase_order
 
 urlpatterns = [
     path('', views.home, name="Home"),
@@ -16,8 +16,9 @@ urlpatterns = [
     path('products/<int:id>/', products.view_product, name="View Product"),
     path('products/update_product/', products.update_product, name="Update Product"),
     path('products/delete_product/', products.delete_product, name="Delete Product"),
+    path('products/check_product_name/', products.check_product_name, name="Check Product Name"),
     path('inventory/', inventory.inventory, name="Inventory"),
-    path('inventory/add', inventory.add_inventory, name="Add Inventory"),
+    path('inventory/add/', inventory.add_inventory, name="Add Inventory"),
     path('inventory/submit_inventory', inventory.submit_inventory, name="Submit Inventory"),
     path('inventory/update_product/', inventory.update_inventory, name="Update Inventory"),
     path('inventory/<int:id>/', inventory.view_inventory, name="View Inventory"),
@@ -27,4 +28,21 @@ urlpatterns = [
     path('suppliers/<int:id>/', supplier.view_supplier, name="View Supplier"),
     path('suppliers/update_supplier/', supplier.update_supplier, name="Update Supplier"),
     path('suppliers/delete_supplier/', supplier.delete_supplier, name="Delete Supplier"),
+    path('invoices/', invoice.invoices, name="Invoices"),
+    path('invoices/create/', invoice.create_invoice, name="Create Invoice"),
+    path('invoices/check_product/', invoice.check_product, name="Check Product"),
+    path('invoices/submit_invoice/', invoice.submit_invoice, name="Submit Invoice"),
+    path('invoices/update_invoice/', invoice.update_invoice, name="Update Invoice"),
+    path('invoices/<int:id>/', invoice.view_invoice, name="View Invoice"),
+    path('invoices/<int:id>/print', invoice.print_invoice, name="Print Invoice"),
+    path('invoices/delete_invoice/', invoice.delete_invoice, name="Delete Invoice"),
+    path('orders/', purchase_order.orders, name="Orders"),
+    path('orders/create/', purchase_order.create_po, name="Create PO"),
+    path('orders/check_product/', purchase_order.check_product, name="Check Product PO"),
+    path('orders/check_supplier/', purchase_order.check_supplier, name="Check Supplier"),
+    path('orders/submit_order/', purchase_order.submit_order, name="Submit Order"),
+    path('orders/<int:id>/', purchase_order.view_po, name="View PO"),
+    path('orders/<int:id>/print', purchase_order.print_po, name="Print PO"),
+    path('orders/update_po/', purchase_order.update_po, name="Update PO"),
+    path('orders/delete_po/', purchase_order.delete_po, name="Delete PO"),
 ]
