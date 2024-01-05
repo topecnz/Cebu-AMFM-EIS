@@ -46,6 +46,42 @@
 
 {% block script %}
 <script>
+    $.phone_validate = function () {
+        var phone = $('#phone').val();
+        var limit = 12; // default
+
+        var output = false;
+        // validate
+        if ((phone.startsWith('09') || phone.startsWith('639')) && $.isNumeric(phone)) {
+            // change limit if starts with 09
+            if (phone.startsWith('09') && $.isNumeric(phone)) {
+                limit = 11;
+            }
+            
+            // check limit
+            if (limit == phone.length) {
+                $('#phoneMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                $('#phone').addClass('is-valid').removeClass('is-invalid');
+                output = true;
+            }
+            else {
+                var message = 'It must be ' + limit + ' numbers.';
+                $('#phoneMsg').text(message).addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#phone').addClass('is-invalid').removeClass('is-valid');
+            }
+        }
+        else {
+            $('#phoneMsg').text("Please enter a valid number.").addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#phone').addClass('is-invalid').removeClass('is-valid');
+        }
+
+        return output;
+    }
+
+    $('#phone').on('input', function () {
+        $.phone_validate()
+    });
+
     $('#btnSubmit').click(function () {
         n = $('#name').val();
         p = $('#phone').val();

@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist, SuspiciousOperation
+from django.utils import timezone
 from .forms import *
 from .models import Employee, AccountType, Product, ProductBrand, ProductType, Inventory
 
@@ -61,16 +62,25 @@ def submit_product(request: HttpRequest):
             if request.method == "POST":
                 p = request.POST['prod']
                 d = request.POST['desc']
-                pr = request.POST['price']
+                pr = float("{:.2f}".format(request.POST['price']))
                 pt = request.POST['prod_type']
                 pb = request.POST['prod_br']
                 
                 pro, created = Product.objects.get_or_create(prod_name=p)
+                
                 pro.prod_desc = d
                 pro.prod_price = pr
                 pro.prod_status = 'Active'
-                pro.prod_type_id = pt
-                pro.prod_br_id = pb
+                
+                ptype, pt_created = ProductType.objects.get_or_create(prod_type_name=pt)
+                pbr, pb_created = ProductBrand.objects.get_or_create(prod_br_name=pb)
+                
+                ptype.save()
+                pbr.save()
+                
+                pro.prod_type_id = ptype.prod_type_id
+                pro.prod_br_id = pbr.prod_br_id
+                pro.prod_updated_at = timezone.now() if not created else pro.prod_updated_at
                 pro.save()
                 
                 obj = {
@@ -122,6 +132,7 @@ def delete_product(request: HttpRequest):
                     prod = u
                     
                 prod.prod_status = 'Removed'
+                prod.prod_updated_at = timezone.now()
                 inv = Inventory.objects.get(prod_id=prod.prod_id)
                 inv.in_status = 'Removed'
                 prod.save()
@@ -147,7 +158,7 @@ def update_product(request: HttpRequest):
                 id = request.POST['id']
                 p = request.POST['prod']
                 d = request.POST['desc']
-                pr = request.POST['price']
+                pr = float("{:.2f}".format(request.POST['price']))
                 pt = request.POST['prod_type']
                 pb = request.POST['prod_br']
                 # s = request.POST['prod_status']
@@ -156,9 +167,16 @@ def update_product(request: HttpRequest):
                 pro.prod_name = p
                 pro.prod_desc = d
                 pro.prod_price = pr
-                pro.prod_type_id = pt
-                pro.prod_br_id = pb
-                # pro.prod_status = s
+                ptype, pt_created = ProductType.objects.get_or_create(prod_type_name=pt)
+                pbr, pb_created = ProductBrand.objects.get_or_create(prod_br_name=pb)
+                
+                ptype.save()
+                pbr.save()
+                
+                pro.prod_type_id = ptype.prod_type_id
+                pro.prod_br_id = pbr.prod_br_id
+                pro.prod_updated_at = timezone.now()
+                
                 pro.save()
                 
                 obj = {

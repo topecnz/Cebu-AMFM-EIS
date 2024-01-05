@@ -34,15 +34,24 @@
 {% block content %}
     {% if not error %}
     <div class="mb-3">
-        <h3>View PO<h3>
+        <h3>View Purchase Order</h3>
     </div>
     <div id="alertMsg" class="">
+    </div>
+    <div class="mb-3">
+        <h4><strong>PO#: {{po.po_id}}</strong></h4>
+        <div class="mb-3">
+            <label class="form-label">Status</label>
+            <div>
+                <strong><label>{{po.po_status}}</label></strong>
+            </div>
+        </div>
     </div>
     <div class="mb-3">
         <h4>Supplier Information</h4>
     </div>
     <div class="mb-3">
-        <label class="form-label">Select Supplier</label>
+        {% comment %} <label class="form-label">Select Supplier</label>
         <select id="sup-id" class="form-select w-25" aria-label="Default select example">
             <option disabled>Select supplier</option>
             {% for res in supplier %}
@@ -50,26 +59,26 @@
             {% endfor %}
         </select>
         <div id="typeMsg">
-        </div>
-        <div id="sup-info">
+        </div> {% endcomment %}
+        <div>
             <div class="row mb-3">
                 <div class="col-8">
                     <label class="form-label">Name</label>
                     <div>
-                        <strong><label id="sup_name"></label></strong>
+                        <strong><label id="sup_name">{{po.sup.sup_name}}</label></strong>
                     </div>
                 </div>
                 <div class="col">
                     <label class="form-label">Phone Number</label>
                     <div>
-                        <strong><label id="sup_phone"></label></strong>
+                        <strong><label id="sup_phone">{{po.sup.sup_phone}}</label></strong>
                     </div>
                 </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Address</label>
                 <div>
-                    <strong><label id="sup_address"></label></strong>
+                    <strong><label id="sup_address">{{po.sup.sup_address}}</label></strong>
                 </div>
             </div>
         </div>
@@ -78,30 +87,31 @@
         <h4>Delivery Information</h4>
     </div>
     <div class="mb-3">
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-8">
                 <label class="form-label">Name</label>
-                <input id="name" type="text" class="form-control" placeholder="Enter Name" value="{{po.po_del_name}}">
-                <div id="nameMsg">
+                <div>
+                    <strong><label id="name">{{po.po_del_name}}</label></strong>
                 </div>
             </div>
             <div class="col">
                 <label class="form-label">Phone Number</label>
-                <input id="phone" type="text" class="form-control" placeholder="Enter Phone Number" value="{{po.po_del_phone}}">
-                <div id="phoneMsg">
+                <div>
+                    <strong><label id="phone">{{po.po_del_phone}}</label></strong>
                 </div>
             </div>
         </div>
-        <div class="col">
+        <div class="mb-3">
             <label class="form-label">Address</label>
-            <input id="addr" type="text" class="form-control" placeholder="Enter Customer Address" value="{{po.po_del_address}}">
-            <div id="addrMsg">
+            <div>
+                <strong><label id="addr">{{po.po_del_address}}</label></strong>
             </div>
         </div>
     </div>
     <div class="mb-3">
         <h4>Item</h4>
     </div>
+    {% comment %} {% if po.po_status == 'Pending' %}
     <div class="mb-3">
         <label class="form-label">Product Name</label>
         <input class="form-control" list="productList" id="product" placeholder="Type to search...">
@@ -127,9 +137,9 @@
             </div>
         </div>
         <div class="col-2">
-            <label class="form-label">Price</label>
-            <div>
-                <label>PHP <span id="prod-price">0.00</span></label>
+            <label class="form-label">Price Quotation</label>
+            <input id="prod-price" type="number" class=" form-control" placeholder="Enter Price Quotation" max="0">
+            <div id="prMsg">
             </div>
         </div>
         <div class="mt-4 col-4">
@@ -137,6 +147,7 @@
             <button id="btnUpdate" class="mb-3 btn btn-dark float-end">Update</button>
         </div>
     </div>
+    {% endif %} {% endcomment %}
     
     <div class="mb-3">
         <table id="example" class="display" style="width:100%">
@@ -148,7 +159,7 @@
                     <th>Quantity</th>
                     <th>Unit Price</th>
                     <th>Amount</th>
-                    <th>Action</th>
+                    {% comment %} <th>Action</th> {% endcomment %}
                 </tr>
             </thead>
             <tbody>
@@ -161,7 +172,9 @@
                     <td>{{res.sup_itm_qty}}</td>
                     <td>{{res.sup_itm_price}}</td>
                     <td>{{res.sup_itm_amount}}</td>
-                    <td><button class="btn btn-dark prod-remove">Remove</button></td>
+                    {% comment %} <td>{% if po.po_status == 'Pending' %}<button class="btn btn-dark prod-remove">Remove</button>{% endif %}
+                        {% if po.po_status == 'Received' %}<button class="btn btn-dark prod-add-in">Add to Inventory</button>{% endif %}
+                    </td> {% endcomment %}
                 </tr>
                 {% endfor %}
                 {% endif %}
@@ -174,7 +187,7 @@
                     <th>Quantity</th>
                     <th>Unit Price</th>
                     <th>Amount</th>
-                    <th>Action</th>
+                    {% comment %} <th>Action</th> {% endcomment %}
                 </tr>
             </tfoot>
         </table>
@@ -187,13 +200,19 @@
     </div>
     <div class="pb-5">
         <div class="text-end">
-            <button id="btnPrint" class="btn btn-dark ">Save & Print</button>
-            <button id="btnSubmit" class="btn btn-dark ">Save</button>
-            <button type="button" class="btn btn-dark " data-bs-toggle="modal" data-bs-target="#confirmationModal">Delete</button>
+            <button id="btnPrint" class="btn btn-dark ">Print</button>
+            {% if po.po_status == 'Pending' %}
+            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Confirm Order</button>
+            {% elif po.po_status == 'Approved' %}
+            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Receive Order</button>
+            {% endif %}
+            {% if po.po_status != 'Cancelled' or po.po_status != 'Received' %}
+            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal">Cancel</button>
+            {% endif %}
         </div>
     </div>
 
-      <!-- Confirmation Modal -->
+    <!-- Confirmation Modal -->
     <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -204,11 +223,31 @@
             <div class="modal-body">
                 <div id="alertMsg2" class="">
                 </div>
-                <label>Are you sure to delete Puchase Order #{{po.po_id}}?</label>
+                <label>Are you sure to cancel Puchase Order #{{po.po_id}}?</label>
             </div>
             <div class="modal-footer">
                 {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> {% endcomment %}
                 <button id="btnDel" type="button" class="btn btn-primary">Proceed</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="confirmationModal1" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="alertMsg3" class="">
+                </div>
+                <label>{% if po.po_status == 'Pending' %}Are you sure to confirm order{% elif po.po_status == 'Approved' %}Receive order{% endif %} #{{po.po_id}}?</label>
+            </div>
+            <div class="modal-footer">
+                {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> {% endcomment %}
+                <button id="btnSubmit" type="button" class="btn btn-primary">Proceed</button>
             </div>
             </div>
         </div>
@@ -298,7 +337,7 @@
                 $('#qty').val('');
                 $('#product').val('');
                 $('#prod-desc').text('');
-                $('#prod-price').text('0.00');
+                $('#prod-price').val('');
                 $('#prod-qty').text('0');
                 $.switch_buttons('');
             }
@@ -320,13 +359,14 @@
                     id: id
                 }, function (e) {
                     if (e.code == 200) {
-                        $('#prod-price').text(parseFloat(e.price).toFixed(2));
+                        $('#prod-price').val(parseFloat(e.price).toFixed(2));
                         $('#prod-desc').text(e.desc);
                         
                         var btn = 'add';
                         for (var k = 0; k < table.rows().count(); k++) {
                             if (table.row(k).data()[0] == id && table.row(k).data()[1] == text) {
                                 btn = 'update';
+                                $('#prod-price').val(table.row(k).data()[4]);
                                 break
                             }
                         }
@@ -339,11 +379,11 @@
             } else {
                 $('#qty').val('');
                 $('#product').val('');
-                $('#prod-price').text('0.00');
+                $('#prod-price').val('');
                 $('#prod-desc').text('');
                 $('#prod-qty').text('0');
                 $.switch_buttons('a');
-            };  
+            };
         };
 
         $('#sup-info').hide();
@@ -369,8 +409,8 @@
             };  
         };
 
-        $.check_supplier();
-        $.check_product();
+        //$.check_supplier();
+        //$.check_product();
         
         $('#product').change(function() {
             $.check_product();
@@ -396,13 +436,40 @@
             var name = $('#product').val();
             var id = $('#productList [value="'+name+'"]').data('value');
             var desc = $('#prod-desc').text();
-            var price = parseFloat($('#prod-price').text()).toFixed(2);
+            var price = parseFloat($('#prod-price').val()).toFixed(2);
 
             $.validate_check('#pMsg', '#product', name);
-            $.validate_check('#qMsg', '#qty', qty);
+
+            if (!$.isNumeric(qty)) {
+                $('#qMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (qty <= 0) {
+                $('#qMsg').text('You need to input at least 1 quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else {
+                $.validate_check('#qMsg', '#qty', qty);
+            }
+
+            if (!$.isNumeric(price)) {
+                $('#prMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#prod-price').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (price <= 0) {
+                $('#prMsg').text('Field must be non-zero.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#prod-price').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else {
+                $.validate_check('#prMsg', '#prod-price', price);
+            }
 
             // return if found
-            if (!name || !qty) {           
+            if (!name || !qty || !price) {           
                 return 0;
             }
 
@@ -439,13 +506,40 @@
             var name = $('#product').val();
             var id = $('#productList [value="'+name+'"]').data('value');
             var desc = $('#prod-desc').text();
-            var price = parseFloat($('#prod-price').text()).toFixed(2);
+            var price = parseFloat($('#prod-price').val()).toFixed(2);
 
             $.validate_check('#pMsg', '#product', name);
-            $.validate_check('#qMsg', '#qty', qty);
+
+            if (!$.isNumeric(qty)) {
+                $('#qMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (qty <= 0) {
+                $('#qMsg').text('You need to input at least 1 quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else {
+                $.validate_check('#qMsg', '#qty', qty);
+            }
+
+            if (!$.isNumeric(price)) {
+                $('#prMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#prod-price').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (price <= 0) {
+                $('#prMsg').text('Field must be non-zero.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#prod-price').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else {
+                $.validate_check('#prMsg', '#prod-price', price);
+            }
 
             // return if found
-            if (!name || !qty) {           
+            if (!name || !qty || !price) {           
                 return 0;
             }
 
@@ -495,27 +589,13 @@
                 return 0;
             }
 
-            var id = $('#sup-id').val();
-            var name = $('#name').val();
-            var phone = $('#phone').val();
-            var addr = $('#addr').val();
-
-            $.validate_check('#typeMsg', '#sup-id', id);
-            $.validate_check('#nameMsg', '#name', name);
-            $.validate_check('#phoneMsg', '#phone', phone);
-            $.validate_check('#addrMsg', '#addr', addr);
-
-
-            if (!id && !name && !phone && !addr) {
-                return 0;
-            }
-
             res = []
 
             for (var j = 0; j < count; j++) {
                 res.push({
                     id: table.rows().data()[j][0],
                     qty: table.rows().data()[j][3],
+                    price: table.rows().data()[j][4],
                     remove: table.row(j).node().className.includes('strikeout')
                 });
             }
@@ -526,22 +606,22 @@
                 data: JSON.stringify({
                     result: res
                 }),
-                id: '{{po.po_id}}',
-                sup_id: $('#sup-id').val(),
-                name: (!$('#name').val()) ? '' : $('#name').val(),
-                phone: (!$('#phone').val()) ? '' : $('#phone').val(),
-                addr: (!$('#addr').val()) ? '' : $('#addr').val()
+                id: '{{po.po_id}}'
             }, function(e) {
                 if (e.code == 200) {
-                    $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
+                    $('#alertMsg3').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
                 }
                 else {
-                    $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
+                    $('#alertMsg3').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
                 }
             });
         });
 
-        $('#btnPrint').click(function(){
+        $('#btnPrint').click(function() {
+            window.location = "{% url 'Orders' %}{{po.po_id}}/print";
+        });
+
+        {% comment %} $('#btnPrint1').click(function(){
             var count = table.rows().count();
 
             if (count == 0) {
@@ -558,11 +638,13 @@
             var name = $('#name').val();
             var phone = $('#phone').val();
             var addr = $('#addr').val();
+            var type = $('#po_status').val();
 
             $.validate_check('#typeMsg', '#sup-id', id);
             $.validate_check('#nameMsg', '#name', name);
             $.validate_check('#phoneMsg', '#phone', phone);
             $.validate_check('#addrMsg', '#addr', addr);
+            $.validate_check('#statMsg', '#po_status', type);
 
 
             if (!id && !name && !phone && !addr) {
@@ -575,6 +657,7 @@
                 res.push({
                     id: table.rows().data()[j][0],
                     qty: table.rows().data()[j][3],
+                    price: table.rows().data()[j][4],
                     remove: table.row(j).node().className.includes('strikeout')
                 });
             }
@@ -586,20 +669,21 @@
                     result: res
                 }),
                 id: '{{po.po_id}}',
+                status: (!$('#po_status').val()) ? '' : $('#po_status').val(),
                 sup_id: $('#sup-id').val(),
                 name: (!$('#name').val()) ? '' : $('#name').val(),
                 phone: (!$('#phone').val()) ? '' : $('#phone').val(),
                 addr: (!$('#addr').val()) ? '' : $('#addr').val()
             }, function(e) {
                 if (e.code == 200) {
-                    $('#alertMsg').text(e.message + ' Redirecting in 3 seconds...').addClass('alert alert-success').removeClass('alert-warning');
+                    $('#alertMsg3').text(e.message + ' Redirecting in 3 seconds...').addClass('alert alert-success').removeClass('alert-warning');
                     window.location = "{% url 'Orders' %}{{po.po_id}}/print";
                 }
                 else {
-                    $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
+                    $('#alertMsg3').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
                 }
             });
-        });
+        }); {% endcomment %}
 
         $('#btnDel').click(function () {            
             $.post("{% url 'Delete PO' %}", {

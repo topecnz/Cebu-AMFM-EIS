@@ -242,17 +242,9 @@ def update_invoice(request: HttpRequest):
 
             data.save()
             
-            
-        # check if overpaid
-        if invoice.inv_amount > total:
-            invoice.inv_balance = invoice.inv_amount
-        elif invoice.inv_amount < total:
-            invoice.inv_balance += float("{:.2f}".format(total - invoice.inv_amount))
-        else:
-            invoice.inv_balance = invoice.inv_balance if invoice.inv_type == 1 else "{:.2f}".format(total)
-            
+        
         invoice.inv_amount = "{:.2f}".format(total)
-        invoice.inv_status = 'Paid' if invoice.inv_type.inv_type_id == 1 else 'Unpaid'
+        invoice.inv_status = request.POST['inv_status']
         
         # default as boolean if customer is excluded (for walk-in)
         customer = True

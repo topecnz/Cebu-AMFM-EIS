@@ -341,10 +341,23 @@
                 return 0;
             }
 
-            if (parseInt(qty) > parseInt(s)) {
+            if (!$.isNumeric(qty)) {
+                $('#qMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (qty <= 0) {
+                $('#qMsg').text('You need to input at least 1 quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (qty > s){
                 $('#qMsg').text('You can only add up to ' + s + ' quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
                 $('#qty').addClass('is-invalid').removeClass('is-valid');
-                return 0
+                return 0;
+            }
+            else {
+                $.validate_check('#qMsg', '#qty', qty);
             }
 
             var amount = parseFloat(price * qty).toFixed(2);
@@ -385,10 +398,23 @@
                 return 0;
             }
 
-            if (parseInt(qty) > parseInt(s)) {
+            if (!$.isNumeric(qty)) {
+                $('#qMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (qty <= 0) {
+                $('#qMsg').text('You need to input at least 1 quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (qty > s){
                 $('#qMsg').text('You can only add up to ' + s + ' quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
                 $('#qty').addClass('is-invalid').removeClass('is-valid');
-                return 0
+                return 0;
+            }
+            else {
+                $.validate_check('#qMsg', '#qty', qty);
             }
 
             var amount = parseFloat(price * qty).toFixed(2);

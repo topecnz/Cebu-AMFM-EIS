@@ -60,6 +60,16 @@
     </div>
 
     {% if invoice.cus %}
+    <div class="mb-3">
+        <label class="form-label">Invoice Status</label>
+        <select id="inv_status" class="form-select w-25" aria-label="Default select example">
+            <option disabled>Select type</option>
+            <option value="Unpaid" {% if invoice.inv_status == 'Unpaid' %}selected{% endif %}>Unpaid</option>
+            <option value="Paid" {% if invoice.inv_status == 'Paid' %}selected{% endif %}>Paid</option>
+        </select>
+        <div id="statMsg">
+        </div>
+    </div>
     <div id="cus-details">
         <div>
             <h4>Customer Information</h4>
@@ -381,10 +391,23 @@
                 return 0;
             }
 
-            if (parseInt(qty) > parseInt(s)) {
+            if (!$.isNumeric(qty)) {
+                $('#qMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (qty <= 0) {
+                $('#qMsg').text('You need to input at least 1 quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (qty > s) {
                 $('#qMsg').text('You can only add up to ' + s + ' quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
                 $('#qty').addClass('is-invalid').removeClass('is-valid');
-                return 0
+                return 0;
+            }
+            else {
+                $.validate_check('#qMsg', '#qty', qty);
             }
 
             var amount = parseFloat(price * qty).toFixed(2);
@@ -433,11 +456,26 @@
                 return 0;
             }
 
-            if (parseInt(qty) > parseInt(s)) {
+            if (!$.isNumeric(qty)) {
+                $('#qMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (qty <= 0) {
+                $('#qMsg').text('You need to input at least 1 quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (qty > s) {
                 $('#qMsg').text('You can only add up to ' + s + ' quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
                 $('#qty').addClass('is-invalid').removeClass('is-valid');
-                return 0
+                return 0;
             }
+            else {
+                $.validate_check('#qMsg', '#qty', qty);
+            }
+
+            
 
             var amount = parseFloat(price * qty).toFixed(2);
 
@@ -488,9 +526,9 @@
                 return 0;
             }
 
-            var type = $('#inv_type').val();
+            var type = $('#inv_status').val();
 
-            $.validate_check('#typeMsg', '#inv_type', type);
+            $.validate_check('#statMsg', '#inv_status', type);
 
             $.cus_validate = function() {
                 var output = true;
@@ -535,6 +573,7 @@
                     result: res
                 }),
                 inv_id: '{{invoice.inv_id}}',
+                inv_status: (!$('#inv_status').val()) ? '' : $('#inv_status').val(),
                 cus_id: {% if invoice.cus %}'{{invoice.cus.cus_id}}'{% else %} '' {% endif %},
                 cus_name: (!$('#name').val()) ? '' : $('#name').val(),
                 phone: (!$('#phone').val()) ? '' : $('#phone').val(),
@@ -562,9 +601,9 @@
                 return 0;
             }
 
-            var type = $('#inv_type').val();
+            var type = $('#inv_status').val();
 
-            $.validate_check('#typeMsg', '#inv_type', type);
+            $.validate_check('#statMsg', '#inv_status', type);
 
             $.cus_validate = function() {
                 var output = true;
@@ -609,6 +648,7 @@
                     result: res
                 }),
                 inv_id: '{{invoice.inv_id}}',
+                inv_status: (!$('#inv_status').val()) ? '' : $('#inv_status').val(),
                 cus_id: {% if invoice.cus %}'{{invoice.cus.cus_id}}'{% else %} '' {% endif %},
                 cus_name: (!$('#name').val()) ? '' : $('#name').val(),
                 phone: (!$('#phone').val()) ? '' : $('#phone').val(),

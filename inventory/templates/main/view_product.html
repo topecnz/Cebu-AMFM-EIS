@@ -30,7 +30,7 @@
 </div>
 <div class="mb-3">
     <label class="form-label">Price</label>
-    <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{product.prod_price}}" id="price" type="number" class="form-control" placeholder="Enter Price">
+    <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{product.prod_price|floatformat:'2'}}" id="price" type="number" class="form-control" placeholder="Enter Price">
     <div id="prMsg">
     </div>
 </div>
@@ -49,34 +49,44 @@
     <div id="sMsg">
     </div>
 </div> {% endcomment %}
-<div class="mb-3">
-    <label class="form-label">Type</label>
-    <select {% if user.acc_type_id == 3 %}disabled{% endif %} id="prod_type" class="form-select" aria-label="Default select example">
-        <option disabled>Select Type</option>
-        {% for res in type %}
-        {% if res.prod_type_id == product.prod_type_id %}
-        <option selected value="{{res.prod_type_id}}">{{res.prod_type_name}}</option>
-        {% else %}
-        <option value="{{res.prod_type_id}}">{{res.prod_type_name}}</option>
-        {% endif %}
-        {% endfor %}
-    </select>
-    <div id="ptMsg">
+<div class="row mb-3">
+    <div class="col-6">
+        <label class="form-label">Type</label>
+        <select id="prod_type" class="form-select" aria-label="Default select example">
+            <option disabled>Select Type</option>
+            {% for res in type %}
+            <option {% if res.prod_type_id == product.prod_type_id%}selected{% endif %} value="{{res.prod_type_name}}">{{res.prod_type_name}}</option>
+            {% endfor %}
+            <option value="other">Other</option>
+        </select>
+        <div id="ptMsg">
+        </div>
+    </div>
+    <div id="other-type" class="col-6">
+        <label class="form-label">Other Type</label>
+        <input id="other-type-data" type="text" class="form-control" placeholder="Enter Type Name">
+        <div id="prMsg">
+        </div>
     </div>
 </div>
-<div class="mb-3">
-    <label class="form-label">Brand</label>
-    <select {% if user.acc_type_id == 3 %}disabled{% endif %} id="prod_br" class="form-select" aria-label="Default select example">
-        <option disabled>Select brand</option>
-        {% for res in brand %}
-        {% if res.prod_br_id == product.prod_br_id %}
-        <option selected value="{{res.prod_br_id}}">{{res.prod_br_name}}</option>
-        {% else %}
-        <option value="{{res.prod_br_id}}">{{res.prod_br_name}}</option>
-        {% endif %}
-        {% endfor %}
-    </select>
-    <div id="brMsg">
+<div class="row mb-3">
+    <div class="col-6">
+        <label class="form-label">Brand</label>
+        <select id="prod_br" class="form-select" aria-label="Default select example">
+            <option disabled>Select brand</option>
+            {% for res in brand %}
+            <option {% if res.prod_br_id == product.prod_br_id%}selected{% endif %} value="{{res.prod_br_name}}">{{res.prod_br_name}}</option>
+            {% endfor %}
+            <option value="other">Other</option>
+        </select>
+        <div id="brMsg">
+        </div>
+    </div>
+    <div id="other-brand" class="col-6">
+        <label class="form-label">Other Brand</label>
+        <input id="other-brand-data" type="text" class="form-control" placeholder="Enter Type Name">
+        <div id="prMsg">
+        </div>
     </div>
 </div>
 <div class="col-12">
@@ -94,13 +104,27 @@
 {% block script %}
     {% if user.acc_type_id != 3 %}
     <script>
+        if ($('#prod_type').val() == 'other') {
+            $('#other-type').show();
+        }
+        else {
+            $('#other-type').hide();
+        }
+    
+        if ($('#prod_br').val() == 'other') {
+            $('#other-brand').show();
+        }
+        else {
+            $('#other-brand').hide();
+        }
+
         $('#btnSubmit').click(function () {
             id = $('#prod_id').text();
             p = $('#prod').val();
             d = $('#desc').val();
             pr = $('#price').val();
-            pt = $('#prod_type').val();
-            pb = $('#prod_br').val();
+            pt = ($('#prod_type').val() != 'other')? $('#prod_type').val() : $('#other-type-data').val();
+            pb = ($('#prod_br').val() != 'other')? $('#prod_br').val() : $('#other-brand-data').val();
     
             $.validate_check = function (feed, input, data) {
                 txt = !data ? 'Required' : '';
@@ -116,9 +140,29 @@
             // Check if there's an empty fields
             $.validate_check('#pMsg', '#prod', p);
             $.validate_check('#dMsg', '#desc', d);
-            $.validate_check('#prMsg', '#price', pr);
             $.validate_check('#ptMsg', '#prod_type', pt);
             $.validate_check('#pbMsg', '#prod_br', pb);
+
+            if (!$.isNumeric(pr)) {
+                $('#prMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#price').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (pr <= 0) {
+                $('#prMsg').text('Field must be non-zero.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#price').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else {
+                $.validate_check('#prMsg', '#price', pr);
+            }
+
+            if ($('#prod_type').val() == 'other') {
+                $.validate_check('#prMsg', '#other-type-data', pt);
+            }
+            if ($('#prod_br').val() == 'other') {
+                $.validate_check('#brMsg', '#other-brand-data', pb);
+            }
     
             // return if found
             if (!p || !d || !pr || !pt || !pb) {           
@@ -141,6 +185,24 @@
                 }
             }
             );
+        });
+
+        $('#prod_type').change(function() {
+            if ($('#prod_type').val() == 'other') {
+                $('#other-type').show();
+            }
+            else {
+                $('#other-type').hide();
+            }
+        });
+        $('#prod_br').change(function() {
+            console.log('asdasdasd')
+            if ($('#prod_br').val() == 'other') {
+                $('#other-brand').show();
+            }
+            else {
+                $('#other-brand').hide();
+            }
         });
     </script>
     {% endif %}

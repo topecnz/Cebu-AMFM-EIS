@@ -106,9 +106,9 @@
             </div>
         </div>
         <div class="col-2">
-            <label class="form-label">Price</label>
-            <div>
-                <label>PHP <span id="prod-price">0.00</span></label>
+            <label class="form-label">Price Quotation</label>
+            <input id="prod-price" type="number" class=" form-control" placeholder="Enter Price Quotation" max="0">
+            <div id="prMsg">
             </div>
         </div>
         <div class="mt-4 col-4">
@@ -258,7 +258,7 @@
                 $('#qty').val('');
                 $('#product').val('');
                 $('#prod-desc').text('');
-                $('#prod-price').text('0.00');
+                $('#prod-price').val('');
                 $('#prod-qty').text('0');
                 $.switch_buttons('');
             }
@@ -280,13 +280,14 @@
                     id: id
                 }, function (e) {
                     if (e.code == 200) {
-                        $('#prod-price').text(parseFloat(e.price).toFixed(2));
+                        $('#prod-price').val(parseFloat(e.price).toFixed(2));
                         $('#prod-desc').text(e.desc);
                         
                         var btn = 'add';
                         for (var k = 0; k < table.rows().count(); k++) {
                             if (table.row(k).data()[0] == id && table.row(k).data()[1] == text) {
                                 btn = 'update';
+                                $('#prod-price').val(table.row(k).data()[4]);
                                 break
                             }
                         }
@@ -299,7 +300,7 @@
             } else {
                 $('#qty').val('');
                 $('#product').val('');
-                $('#prod-price').text('0.00');
+                $('#prod-price').val('');
                 $('#prod-desc').text('');
                 $('#prod-qty').text('0');
                 $.switch_buttons('a');
@@ -356,13 +357,40 @@
             var name = $('#product').val();
             var id = $('#productList [value="'+name+'"]').data('value');
             var desc = $('#prod-desc').text();
-            var price = parseFloat($('#prod-price').text()).toFixed(2);
+            var price = parseFloat($('#prod-price').val()).toFixed(2);
 
             $.validate_check('#pMsg', '#product', name);
-            $.validate_check('#qMsg', '#qty', qty);
+
+            if (!$.isNumeric(qty)) {
+                $('#qMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (qty <= 0) {
+                $('#qMsg').text('You need to input at least 1 quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else {
+                $.validate_check('#qMsg', '#qty', qty);
+            }
+
+            if (!$.isNumeric(price)) {
+                $('#prMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#prod-price').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (price <= 0) {
+                $('#prMsg').text('Field must be non-zero.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#prod-price').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else {
+                $.validate_check('#prMsg', '#prod-price', price);
+            }
 
             // return if found
-            if (!name || !qty) {           
+            if (!name || !qty || !price) {           
                 return 0;
             }
 
@@ -382,7 +410,7 @@
 
             $('#qty').val('');
             $('#product').val('');
-            $('#prod-price').text('0.00');
+            $('#prod-price').val('')
             $('#prod-desc').text('');
             $.switch_buttons('a');
         });
@@ -392,13 +420,40 @@
             var name = $('#product').val();
             var id = $('#productList [value="'+name+'"]').data('value');
             var desc = $('#prod-desc').text();
-            var price = parseFloat($('#prod-price').text()).toFixed(2);
+            var price = parseFloat($('#prod-price').val()).toFixed(2);
 
             $.validate_check('#pMsg', '#product', name);
-            $.validate_check('#qMsg', '#qty', qty);
+
+            if (!$.isNumeric(qty)) {
+                $('#qMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (qty <= 0) {
+                $('#qMsg').text('You need to input at least 1 quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else {
+                $.validate_check('#qMsg', '#qty', qty);
+            }
+
+            if (!$.isNumeric(price)) {
+                $('#prMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#prod-price').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (price <= 0) {
+                $('#prMsg').text('Field must be non-zero.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#prod-price').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else {
+                $.validate_check('#prMsg', '#prod-price', price);
+            }
 
             // return if found
-            if (!name || !qty) {           
+            if (!name || !qty || !price) {           
                 return 0;
             }
 
@@ -423,7 +478,7 @@
 
             $('#qty').val('');
             $('#product').val('');
-            $('#prod-price').text('0.00');
+            $('#prod-price').val('');
             $('#prod-desc').text('');
             $.switch_buttons('a');
         });
@@ -457,6 +512,7 @@
                 res.push({
                     id: table.rows().data()[j][0],
                     qty: table.rows().data()[j][3],
+                    price: table.rows().data()[j][4]
                 });
             }
 

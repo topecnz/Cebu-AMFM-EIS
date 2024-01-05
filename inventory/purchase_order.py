@@ -112,15 +112,15 @@ def submit_order(request: HttpRequest):
             data = product.get(prod_id= r['id'])
             
             sup_item = SupplierItem.objects.create(
-                sup_itm_price = data.prod_price,
+                sup_itm_price = "{:.2f}".format(float(r['price'])),
                 sup_itm_qty = r['qty'],
-                sup_itm_amount= "{:.2f}".format(float(data.prod_price) * float(r['qty'])),
+                sup_itm_amount= "{:.2f}".format(float(r['price']) * float(r['qty'])),
                 po_id = po.po_id,
                 prod_id = data.prod_id
             )
             sup_item.save()
             
-            total += float(data.prod_price) * float(r['qty'])
+            total += float(r['price']) * float(r['qty'])
             
         po.po_amount = "{:.2f}".format(total)
 
@@ -174,7 +174,7 @@ def print_po(request: HttpRequest, id: int):
         for p in po:
             po = p
 
-        sup_itm = SupplierItem.objects.select_related('prod').filter(po_id = id)
+        sup_itm = SupplierItem.objects.select_related('prod').filter(po_id = id, sup_itm_status='Active')
         
         if po.po_status != 'Removed':
             obj = {
@@ -207,10 +207,11 @@ def update_po(request: HttpRequest):
             })
             
         po = PurchaseOrder.objects.get(po_id=request.POST['id'])
+        inventory = Inventory.objects.select_related('prod')
+        po.po_status = 'Approved' if po.po_status == 'Pending' else 'Received'
         
         total = 0
         for r in j['result']:
-            
             sup_itm, created = SupplierItem.objects.get_or_create(
                 po_id = po.po_id,
                 prod_id = r['id']
@@ -220,15 +221,20 @@ def update_po(request: HttpRequest):
             
             if not r['remove']:
                 sup_itm.sup_itm_qty = r['qty']
-                sup_itm.sup_itm_amount = float("{:.2f}".format(sup_itm.prod.prod_price * float(r['qty'])),)
-                sup_itm.save()
-
-                total += float(sup_itm.prod.prod_price * float(r['qty']))
+                sup_itm.sup_itm_price = float("{:.2f}".format(float(r['price'])))
+                sup_itm.sup_itm_amount = float("{:.2f}".format(float(r['price']) * float(r['qty'])),)
+                total += float(float(r['price']) * float(r['qty']))
             else:
                 sup_itm.sup_itm_status = 'Removed'
-                sup_itm.save()
+
+            sup_itm.save()
+        
+            if po.po_status == 'Received':
+                data, in_created = inventory.get_or_create(prod_id = sup_itm.prod.prod_id)
             
-            
+                data.in_qty = data.in_qty + int(r['qty']) if not in_created else int(r['qty'])
+                data.save()
+        
         po.po_amount = "{:.2f}".format(total)
 
         po.save()
@@ -257,11 +263,11 @@ def delete_po(request: HttpRequest):
                 for u in po:
                     po = u
                     
-                po.po_status = 'Removed'
+                po.po_status = 'Cancelled'
                 po.save()
                 
                 code = 200
-                message = 'Invoice is successfully deleted!'
+                message = 'Purchase order is successfully deleted!'
 
             obj = {
                     'code': code if code else 204,
