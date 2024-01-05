@@ -1,4 +1,4 @@
-from django.urls import path 
+from django.urls import path
 from . import views, accounts, products, inventory, supplier
 
 urlpatterns = [
@@ -7,6 +7,8 @@ urlpatterns = [
     path('logout/', views.user_logout, name="Logout"),    
     path('accounts/', accounts.all_accounts, name="Account Management"),
     path('accounts/add/', accounts.add_account, name="Add Account"),
+    path('accounts/delete_account/', accounts.delete_account, name="Delete Account"),
+    path('accounts/update_account/', accounts.update_account, name="Update Account"),
     path('accounts/check_username/', accounts.check_username, name="Check Username"),
     path('accounts/submit_account/', accounts.submit_account, name="Submit Account"),
     path('accounts/<int:id>/', accounts.view_account, name="View Account"),
@@ -27,4 +29,5 @@ urlpatterns = [
     path('suppliers/<int:id>/', supplier.view_supplier, name="View Supplier"),
     path('suppliers/update_supplier/', supplier.update_supplier, name="Update Supplier"),
     path('suppliers/delete_supplier/', supplier.delete_supplier, name="Delete Supplier"),
+    path('accounts/settings', accounts.update_account_2, name="Account Settings"),
 ]

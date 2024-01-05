@@ -123,7 +123,6 @@ def update_product(request: HttpRequest):
                 pr = request.POST['price']
                 pt = request.POST['prod_type']
                 pb = request.POST['prod_br']
-                s = request.POST['prod_status']
                 
                 pro = Product.objects.get(prod_id=id)
                 pro.prod_name = p
@@ -131,7 +130,6 @@ def update_product(request: HttpRequest):
                 pro.prod_price = pr
                 pro.prod_type_id = pt
                 pro.prod_br_id = pb
-                pro.prod_status = s
                 pro.save()
                 
                 obj = {
