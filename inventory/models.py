@@ -57,7 +57,6 @@ class Employee(models.Model):
     emp_birthdate = models.DateField(blank=True, null=True)
     emp_phone = models.CharField(max_length=12, blank=True, null=True)
     emp_email = models.CharField(max_length=1024, blank=True, null=True)
-    emp_address = models.CharField(max_length=1024, blank=True, null=True)
     emp_created_at = models.DateTimeField(default=timezone.now)
     emp_updated_at = models.DateTimeField(default=timezone.now)
 
@@ -71,6 +70,7 @@ class Customer(models.Model):
     cus_name = models.CharField(max_length=1024)
     cus_phone = models.CharField(max_length=12)
     cus_address = models.CharField(max_length=1024, blank=True, null=True)
+    cus_city = models.CharField(max_length=1024, blank=True, null=True)
     cus_created_at = models.DateTimeField(default=timezone.now)
     cus_updated_at = models.DateTimeField(default=timezone.now)
 
@@ -84,6 +84,7 @@ class Supplier(models.Model):
     sup_name = models.CharField(max_length=1024)
     sup_phone = models.CharField(max_length=12)
     sup_address = models.CharField(max_length=1024)
+    sup_city = models.CharField(max_length=1024, blank=True, null=True)
     sup_status = models.CharField(max_length=32, default='Active')
     sup_created_at = models.DateTimeField(default=timezone.now)
     sup_updated_at = models.DateTimeField(default=timezone.now)
@@ -100,7 +101,7 @@ class Product(models.Model):
     prod_status = models.CharField(max_length=1024, default='Active')
     prod_created_at = models.DateTimeField(default=timezone.now)
     prod_updated_at = models.DateTimeField(default=timezone.now)
-    prod_type = models.ForeignKey(ProductType, models.DO_NOTHING)
+    prod_type = models.ForeignKey(ProductType, models.DO_NOTHING, blank=True, null=True)
     prod_br = models.ForeignKey(ProductBrand, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
@@ -127,6 +128,7 @@ class PurchaseOrder(models.Model):
     po_del_name = models.CharField(max_length=1024)
     po_del_phone = models.CharField(max_length=1024)
     po_del_address = models.CharField(max_length=1024)
+    po_del_city = models.CharField(max_length=1024, blank=True, null=True)
     po_status = models.CharField(default="Pending", max_length=32)
     sup = models.ForeignKey(Supplier, models.DO_NOTHING)
     emp = models.ForeignKey(Employee, models.DO_NOTHING)
@@ -157,6 +159,8 @@ class OrderList(models.Model):
     ord_qty = models.IntegerField(blank=True, null=True)
     ord_amount = models.FloatField(blank=True, null=True)
     ord_status = models.CharField(max_length=16, default="Active")
+    ord_created_at = models.DateTimeField(default=timezone.now)
+    ord_updated_at = models.DateTimeField(default=timezone.now)
     prod = models.ForeignKey(Product, models.DO_NOTHING)
     inv = models.ForeignKey('Invoice', models.DO_NOTHING)
 
@@ -180,6 +184,7 @@ class Invoice(models.Model):
     inv_status = models.CharField(default="Unpaid", max_length=32)
     inv_term_date = models.DateTimeField(blank=True, null=True)
     inv_balance = models.FloatField(blank=True, null=True)
+    inv_updated_at = models.DateTimeField(default=timezone.now)
     cus = models.ForeignKey(Customer, models.DO_NOTHING, blank=True, null=True)
     emp = models.ForeignKey(Employee, models.DO_NOTHING)
 
