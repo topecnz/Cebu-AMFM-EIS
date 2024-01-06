@@ -102,7 +102,6 @@
     }
 
     $('#btnSubmit').click(function () {
-        p = $('#prod').val();
         d = $('#desc').val();
         pr = $('#price').val();
         pt = ($('#prod_type').val() != 'other')? $('#prod_type').val() : $('#other-type-data').val();
@@ -120,7 +119,6 @@
         };
 
         // Check if there's an empty fields
-        $.validate_check('#pMsg', '#prod', p);
         $.validate_check('#dMsg', '#desc', d);
         $.validate_check('#ptMsg', '#prod_type', pt);
         $.validate_check('#pbMsg', '#prod_br', pb);
@@ -147,12 +145,11 @@
         }
 
         // return if found
-        if (!p || !d || !pr || !pt || !pb) {           
+        if (!d || !pr || !pt || !pb) {           
             return 0;
         }
 
         $.post("{% url 'Submit Product' %}", {
-            prod: p,
             desc: d,
             price: pr,
             prod_type: pt,

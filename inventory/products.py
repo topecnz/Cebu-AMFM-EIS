@@ -62,7 +62,7 @@ def submit_product(request: HttpRequest):
             if request.method == "POST":
                 # p = request.POST['prod']
                 d = request.POST['desc']
-                pr = float("{:.2f}".format(request.POST['price']))
+                pr = float(request.POST['price'])
                 pt = request.POST['prod_type']
                 pb = request.POST['prod_br']
                 
