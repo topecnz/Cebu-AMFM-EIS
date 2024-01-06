@@ -7,14 +7,14 @@
 {% block content %}
 
 {% with current_hour=user.last_login.hour %}
-    {% if current_hour >= 0 and current_hour < 12 %}
+    {% if current_hour >= 4  and current_hour < 12 %}
         <h1 class="card-title"><b>Good Morning, {{ user.username }}!</b></h1>
     {% elif current_hour == 12 %}
         <h1 class="card-title"><b>Good Noon, {{ user.username }}!</b></h1>
     {% elif current_hour >= 13 and current_hour < 18 %}
         <h1 class="card-title"><b>Good Afternoon, {{ user.username }}!</b></h1>
     {% else %}
-        <h1 class="card-title">Good Evening, {{ user.username }}!</h1>
+        <h1 class="card-title"><b>Good Evening, {{ user.username }}!</b></h1>
     {% endif %}
 {% endwith %}
 
@@ -44,7 +44,7 @@
             <div class="card-body">
                 <h4>Account Overview</h4>
                 <p class="card-text">Account ID: {{ user.acc_id }}</p>
-                <p class="card-text">Account Position Type: {{ user.acc_type_id }}</p>
+                <p class="card-text">Account Position Type: <b>{{ user.acc_type.acc_type_name }}</b></p>
             </div>
         </div>
     </div>

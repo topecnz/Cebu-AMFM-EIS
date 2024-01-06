@@ -37,7 +37,7 @@ def add_inventory(request: HttpRequest):
             if not found:
                 result.append({
                     'id': p.prod_id,
-                    'name': p.prod_name
+                    'name': p.prod_desc
                 })
         
         obj = {
