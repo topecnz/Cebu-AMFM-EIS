@@ -51,6 +51,7 @@ def check_product(request: HttpRequest):
                 'code': 200, 
                 'price': product.prod_price,
                 'desc': product.prod_desc,
+                'brand': product.prod_br.prod_br_name
             }
             
             return JsonResponse(obj)

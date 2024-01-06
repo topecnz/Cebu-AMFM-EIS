@@ -86,14 +86,20 @@
         <input class="form-control" list="productList" id="product" placeholder="Type to search...">
         <datalist id="productList">
             {% for res in product %}
-            <option value="{{res.prod_name}}" data-value="{{res.prod_id}}">{{res.prod_name}}</option>
+            <option value="{{res.prod_br.prod_br_name}} {{res.prod_desc}}" data-value="{{res.prod_id}}">{{res.prod_br.prod_br_name}} {{res.prod_desc}}</option>
             {% endfor %}
         </datalist>
         <div id="pMsg">
         </div>
     </div>
     <div class="row mb-3">
-        <div class="col-4">
+        <div class="col-2">
+            <label class="form-label">Brand</label>
+            <div>
+                <label id="prod-br"></label>
+            </div>
+        </div>
+        <div class="col-2">
             <label class="form-label">Description</label>
             <div>
                 <label id="prod-desc"></label>
@@ -122,7 +128,7 @@
             <thead>
                 <tr>
                     <th>Product ID</th>
-                    <th>Product Name</th>
+                    <th>Product Brand</th>
                     <th>Description</th>
                     <th>Quantity</th>
                     <th>Unit Price</th>
@@ -135,7 +141,7 @@
             <tfoot>
                 <tr>
                     <th>Product ID</th>
-                    <th>Product Name</th>
+                    <th>Product Brand</th>
                     <th>Description</th>
                     <th>Quantity</th>
                     <th>Unit Price</th>
@@ -258,6 +264,7 @@
 
                 $('#qty').val('');
                 $('#product').val('');
+                $('#prod-br').text('');
                 $('#prod-desc').text('');
                 $('#prod-price').val('');
                 $('#prod-qty').text('0');
@@ -267,7 +274,7 @@
                 table.rows('.selected').nodes().each((row) => row.classList.remove('selected'));
                 classList.add('selected');
                 $('#qty').val(table.rows('.selected').data()[0][3]);
-                $('#product').val(table.rows('.selected').data()[0][1]);
+                $('#product').val(table.rows('.selected').data()[0][1] + ' ' + table.rows('.selected').data()[0][2]);
                 $.check_product();
             }
         });
@@ -283,6 +290,7 @@
                     if (e.code == 200) {
                         $('#prod-price').val(parseFloat(e.price).toFixed(2));
                         $('#prod-desc').text(e.desc);
+                        $('#prod-br').text(e.brand);
                         
                         var btn = 'add';
                         for (var k = 0; k < table.rows().count(); k++) {
@@ -301,6 +309,7 @@
             } else {
                 $('#qty').val('');
                 $('#product').val('');
+                $('#prod-br').text('');
                 $('#prod-price').val('');
                 $('#prod-desc').text('');
                 $('#prod-qty').text('0');
@@ -356,6 +365,7 @@
         $('#btnAdd').click(function(){
             var qty = $('#qty').val();
             var name = $('#product').val();
+            var br = $('#prod-br').text();
             var id = $('#productList [value="'+name+'"]').data('value');
             var desc = $('#prod-desc').text();
             var price = parseFloat($('#prod-price').val()).toFixed(2);
@@ -398,7 +408,7 @@
             var amount = parseFloat(price * qty).toFixed(2);
 
             table.row.add([
-                id, name, desc, qty, price, amount,
+                id, br, desc, qty, price, amount,
                 '<button class="btn btn-dark prod-remove">Remove</button>'
             ]).draw();
 
@@ -419,6 +429,7 @@
         $('#btnUpdate').click(function(){
             var qty = $('#qty').val();
             var name = $('#product').val();
+            var br = $('#prod-br').text();
             var id = $('#productList [value="'+name+'"]').data('value');
             var desc = $('#prod-desc').text();
             var price = parseFloat($('#prod-price').val()).toFixed(2);
@@ -463,7 +474,7 @@
             for (var l = 0; l < table.rows().count(); l++) {
                 if (table.row(l).data()[0] == id && table.row(l).data()[1] == name) {
                     table.row(l).data([
-                        id, name, desc, qty, price, amount,
+                        id, br, desc, qty, price, amount,
                         '<button class="btn btn-dark prod-remove">Remove</button>'
                     ]).draw();
                     break;

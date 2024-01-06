@@ -16,12 +16,12 @@
     <label class="form-label">Product ID:</label>
     <label id="prod_id">{{product.prod_id}}</label>
 </div>
-<div class="mb-3">
+{% comment %} <div class="mb-3">
     <label class="form-label">Product Name</label>
     <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{product.prod_name}}" id="prod" type="text" class="form-control" placeholder="Enter Product Name">
     <div id="pMsg">
     </div>
-</div>
+</div> {% endcomment %}
 <div class="mb-3">
     <label class="form-label">Description</label>
     <textarea {% if user.acc_type_id == 3 %}disabled{% endif %}   id="desc" style="resize: none;" class="form-control" rows="3">{{product.prod_desc}}</textarea>
@@ -120,7 +120,7 @@
 
         $('#btnSubmit').click(function () {
             id = $('#prod_id').text();
-            p = $('#prod').val();
+            //p = $('#prod').val();
             d = $('#desc').val();
             pr = $('#price').val();
             pt = ($('#prod_type').val() != 'other')? $('#prod_type').val() : $('#other-type-data').val();
@@ -138,7 +138,7 @@
             };
     
             // Check if there's an empty fields
-            $.validate_check('#pMsg', '#prod', p);
+            // $.validate_check('#pMsg', '#prod', p);
             $.validate_check('#dMsg', '#desc', d);
             $.validate_check('#ptMsg', '#prod_type', pt);
             $.validate_check('#pbMsg', '#prod_br', pb);
@@ -165,13 +165,12 @@
             }
     
             // return if found
-            if (!p || !d || !pr || !pt || !pb) {           
+            if (!d || !pr || !pt || !pb) {           
                 return 0;
             }
     
             $.post("{% url 'Update Product' %}", {
                 id: id,
-                prod: p,
                 desc: d,
                 price: pr,
                 prod_type: pt,

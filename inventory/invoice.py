@@ -52,7 +52,8 @@ def check_product(request: HttpRequest):
                 'code': 200, 
                 'price': inventory.prod.prod_price,
                 'desc': inventory.prod.prod_desc,
-                'qty': inventory.in_qty
+                'qty': inventory.in_qty,
+                'brand': inventory.prod.prod_br.prod_br_name
             }
             
             return JsonResponse(obj)

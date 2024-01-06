@@ -184,7 +184,7 @@
 
                     {% for ord in order %}
                     <tr class="item">
-                        <td>{{ord.prod.prod_name}}</td>
+                        <td>{{ord.prod.prod_br.prod_br_name}} {{ord.prod.prod_desc}}</td>
                         <td>{{ord.ord_qty}}</td>
                         <td>PHP {{ord.ord_price|floatformat:"2g"}}</td>
                         <td>PHP {{ord.ord_amount|floatformat:"2g"}}</td>
