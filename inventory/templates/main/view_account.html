@@ -7,7 +7,7 @@
 
 {% csrf_token %}
 <div class="mb-3">
-    <h3>View Account<h3>
+    <h3>View Account</h3>
 </div>
 <div id="alertMsg" class="">
 </div>
@@ -17,7 +17,17 @@
 </div>
 <div class="mb-1">
     <label class="form-label">Account Position Type:</label>
+<<<<<<< Updated upstream
     <b><label id="user_type">{{user.acc_type.acc_type_name}}</label></b> 
+=======
+    {% comment %} <b><label id="user_type">{{user.acc_type_id}}</label></b> {% endcomment %}
+    <select id="user_type" class="form-select" aria-label="Default select example">
+        <option disabled>Select Type</option>
+        {% for res in type %}
+        <option {% if res.acc_type_id == user.acc_type_id %}selected{% endif %} value="{{res.acc_type_id}}">{{res.acc_type_name}}</option>
+        {% endfor %}
+    </select>
+>>>>>>> Stashed changes
 </div>
 <div class="mb-1">
     <label class="form-label">Account Created:</label>
@@ -37,8 +47,9 @@
     <label class="form-label">Password:</label> <!-- PASSWORD -->
     <input value="" id="password" type="password" class="form-control mb-4" placeholder="Password">
     <div id="pwMsg">
+</div>
 <div class="mb-3">
-    <h3>Account Information<h3>
+    <h3>Account Information</h3>
 </div>
 <div class="mb-3">
     <label class="form-label">First Name:</label>
@@ -52,24 +63,22 @@
     <input value="{{user.emp.emp_lname}}" id="lname" type="text" class="form-control mb-4" placeholder="Update Account Last Name">
     <div id="lMsg">
 </div>
-<div class="col-12">
-    {% if user.acc_type_id != 3 %}
+<div class="pb-5 col-12">
     <button id="btnSubmit" class="btn btn-dark float-end">Update</button>
-    {% endif %}
 </div>
 
 {% endblock %}
 
 {% block script %}
-    {% if user.acc_type_id != 3 %}
     <script>
         $('#btnSubmit').click(function () {
+            console.log('test')
             id = $('#user_id').text();
             fn = $('#fname').val();
             ln = $('#lname').val();
             u = $('#username').val();
             p = $('#password').val();
-            acc_type = $('#user_type').text();
+            acc_type = $('#user_type').val();
 
             $.validate_check = function (feed, input, data) {
                 txt = !data ? 'Required' : '';
@@ -112,5 +121,4 @@
         });
         
     </script>
-    {% endif %}
 {% endblock %}

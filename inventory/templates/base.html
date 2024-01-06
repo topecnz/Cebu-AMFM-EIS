@@ -28,17 +28,18 @@
         
         <script src="{% static 'js/jquery.min.js' %}"></script>
         <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script>
+          $('#btnSwitch_toggle').click(function(){
+            if (document.documentElement.getAttribute('data-bs-theme') == 'dark') {
+              document.documentElement.setAttribute('data-bs-theme','light')
+            }
+            else {
+              document.documentElement.setAttribute('data-bs-theme','dark')
+            }
+          });
+        </script>
         {% block script %}{% endblock %}
           
+    
     </body>
-    <script>
-      $('#btnSwitch_toggle').click(function(){
-        if (document.documentElement.getAttribute('data-bs-theme') == 'dark') {
-          document.documentElement.setAttribute('data-bs-theme','light')
-        }
-        else {
-          document.documentElement.setAttribute('data-bs-theme','dark')
-        }
-      })<
-    </script>
 </html>

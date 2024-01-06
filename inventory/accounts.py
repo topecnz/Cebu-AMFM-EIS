@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist, SuspiciousOperation
 from .forms import *
 from .models import Employee, AccountType, Account
@@ -131,13 +132,15 @@ def view_account(request: HttpRequest, id: int):
     if request.user.acc_type_id == 1:
         User = get_user_model()
         user = User.objects.filter(acc_id=id) # results in multiple query
+        atype = AccountType.objects.all()
         
         if user:
             for u in user:
                 user = u
 
             obj = {
-                'user': user
+                'user': user,
+                'type': atype
             }
         
             return render(request, 'main/view_account.html', obj)
@@ -205,9 +208,10 @@ def update_account(request: HttpRequest):
                 acc_type = request.POST['acc_type']
 
                 acc = Account.objects.get(acc_id=id)
-                emp = Employee.objects.get(emp_id=acc.emp.emp_id)
+                emp, created = Employee.objects.get_or_create(emp_fname=fn, emp_lname=ln)
                 emp.emp_fname = fn
                 emp.emp_lname = ln
+                emp.emp_updated_at = timezone.now()
                 acc.username = u
                 acc.password = make_password(p)
                 acc.acc_type_id = acc_type
