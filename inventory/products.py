@@ -60,15 +60,13 @@ def submit_product(request: HttpRequest):
     if request.user.is_authenticated:
         if request.user.acc_type_id == 1:
             if request.method == "POST":
-                p = request.POST['prod']
+                # p = request.POST['prod']
                 d = request.POST['desc']
                 pr = float("{:.2f}".format(request.POST['price']))
                 pt = request.POST['prod_type']
                 pb = request.POST['prod_br']
                 
-                pro, created = Product.objects.get_or_create(prod_name=p)
-                
-                pro.prod_desc = d
+                pro, created = Product.objects.get_or_create(prod_desc=d)
                 pro.prod_price = pr
                 pro.prod_status = 'Active'
                 
@@ -156,15 +154,15 @@ def update_product(request: HttpRequest):
         if request.user.acc_type_id != 3:
             if request.method == "POST":
                 id = request.POST['id']
-                p = request.POST['prod']
+                # p = request.POST['prod']
                 d = request.POST['desc']
-                pr = float("{:.2f}".format(request.POST['price']))
+                pr = float(request.POST['price'])
                 pt = request.POST['prod_type']
                 pb = request.POST['prod_br']
                 # s = request.POST['prod_status']
                 
                 pro = Product.objects.get(prod_id=id)
-                pro.prod_name = p
+                # pro.prod_name = p
                 pro.prod_desc = d
                 pro.prod_price = pr
                 ptype, pt_created = ProductType.objects.get_or_create(prod_type_name=pt)

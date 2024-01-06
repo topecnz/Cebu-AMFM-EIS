@@ -20,7 +20,7 @@
             <thead>
                 <tr>
                     <th>Product ID</th>
-                    <th>Name</th>
+                    {% comment %} <th>Name</th> {% endcomment %}
                     <th>Description</th>
                     <th>Price</th>
                     <th>Status</th>
@@ -34,7 +34,7 @@
                 {% for product in result %}
                 <tr class="prod-data">
                     <td class="prod-id">{{product.prod_id}}</td>
-                    <td>{{product.prod_name}}</td>
+                    {% comment %} <td>{{product.prod_name}}</td> {% endcomment %}
                     <td>{{product.prod_desc}}</td>
                     <td>{{product.prod_price|floatformat:"2g"}}</td>
                     <td class="prod-status">{{product.prod_status}}</td>
@@ -52,7 +52,7 @@
             <tfoot>
                 <tr>
                     <th>Product ID</th>
-                    <th>Name</th>
+                    {% comment %} <th>Name</th> {% endcomment %}
                     <th>Description</th>
                     <th>Price</th>
                     <th>Status</th>

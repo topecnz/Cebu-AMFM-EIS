@@ -154,7 +154,7 @@
             <thead>
                 <tr>
                     <th>Product ID</th>
-                    <th>Product Name</th>
+                    <th>Product Brand</th>
                     <th>Description</th>
                     <th>Quantity</th>
                     <th>Unit Price</th>
@@ -167,7 +167,7 @@
                 {% for res in sup_itm %}
                 <tr>
                     <td>{{res.prod_id}}</td>
-                    <td>{{res.prod.prod_name}}</td>
+                    <td>{{res.prod.prod_br.prod_br_name}}</td>
                     <td>{{res.prod.prod_desc}}</td>
                     <td>{{res.sup_itm_qty}}</td>
                     <td>{{res.sup_itm_price}}</td>
@@ -182,7 +182,7 @@
             <tfoot>
                 <tr>
                     <th>Product ID</th>
-                    <th>Product Name</th>
+                    <th>Product Brand</th>
                     <th>Description</th>
                     <th>Quantity</th>
                     <th>Unit Price</th>
