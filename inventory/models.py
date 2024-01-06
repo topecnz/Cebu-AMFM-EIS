@@ -95,9 +95,10 @@ class Supplier(models.Model):
 
 class Product(models.Model):
     prod_id = models.AutoField(primary_key=True)
-    prod_name = models.CharField(max_length=1024)
+    # prod_name = models.CharField(max_length=1024)
     prod_desc = models.CharField(max_length=1024, blank=True, null=True)
     prod_price = models.FloatField(blank=True, null=True)
+    prod_remarks = models.CharField(max_length=1024, blank=True, null=True)
     prod_status = models.CharField(max_length=1024, default='Active')
     prod_created_at = models.DateTimeField(default=timezone.now)
     prod_updated_at = models.DateTimeField(default=timezone.now)
