@@ -1,10 +1,6 @@
 {% load static %}
-<!doctype html>
-<html data-bs-theme="light">
-
+<html>
     <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Cebu AM/FM Eletronics Inventory System | {% block title %}{% endblock %}</title>
         <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
         {% block head_content %}{% endblock %}
@@ -13,6 +9,7 @@
           .text-small {
             font-size: 85%;
           }
+          
           .dropdown-toggle:not(:focus) {
             outline: 0;
           }
@@ -31,23 +28,6 @@
         
         <script src="{% static 'js/jquery.min.js' %}"></script>
         <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-        
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.css" />
-        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
-
-        <script>
-          $('#btnSwitch').click(function(){
-            if (document.documentElement.getAttribute('data-bs-theme') == 'dark') {
-              document.documentElement.setAttribute('data-bs-theme','light')
-            }
-            else {
-              document.documentElement.setAttribute('data-bs-theme','dark')
-            }
-          })
-        </script>
-        
         {% block script %}{% endblock %}
           
     </body>

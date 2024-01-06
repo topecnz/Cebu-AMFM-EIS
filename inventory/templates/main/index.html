@@ -3,111 +3,21 @@
 {% block content %}
 
 {% with current_hour=user.last_login.hour %}
-    {% if current_hour >= 0 and current_hour < 12 %}
-        <h1 class="card-title"><b>Good Morning, {{ user.username }}!</b></h1>
-    {% elif current_hour == 12 %}
-        <h1 class="card-title"><b>Good Noon, {{ user.username }}!</b></h1>
-    {% elif current_hour >= 13 and current_hour < 18 %}
-        <h1 class="card-title"><b>Good Afternoon, {{ user.username }}!</b></h1>
+    {% if current_hour >= 6 and current_hour < 12 %}
+        <h1 class="card-title">Good Morning, {{ user.username }}!</h1>
+    {% elif current_hour >= 12 and current_hour < 16 %}
+        <h1 class="card-title">Good Afternoon, {{ user.username }}!</h1>
     {% else %}
         <h1 class="card-title">Good Evening, {{ user.username }}!</h1>
     {% endif %}
 {% endwith %}
 
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.css" />
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
-
-<style>
-    .card-body h4 {
-        margin-bottom: 15px;
-    }
-
-    .card-body p.card-text {
-        margin-bottom: 1px;
-    }
-
-    #calendar {
-        width: auto;
-        height: auto; /* Auto height based on content */
-    }
-
-    #liveTime {
-        font-size: 20px;
-        margin-top: 10px;
-    }
-</style>
-
-<div class="row">
-    <div class="col-md-6">
-        <div class="card mt-3 rounded-top rounded-2">
-            <div class="card-body">
-                <h4>Account Overview</h4>
-                <p class="card-text">Account ID: {{ user.acc_id }}</p>
-                <p class="card-text">Account Position Type: {{ user.acc_type_id }}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card mt-3 rounded-top rounded-2">
-            <div class="card-body">
-                <h4>Account Log</h4>
-                <p class="card-text">Account Created: {{ user.acc_created_at }}</p>
-                <p class="card-text">Last Login: {{ user.last_login }}</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Updated Cards -->
-    <div class="col-md-6">
-        <div class="card mt-3 rounded-top rounded-2">
-            <div class="card-body">
-                <h4>Today</h4>
-                
-                <div id="calendar"></div>
-                <p id="liveTime"></p>
-
-                <script>
-                    function updateLiveTime() {
-                        var currentTime = new Date();
-                        var hours = currentTime.getHours();
-                        var minutes = currentTime.getMinutes();
-                        var ampm = hours >= 12 ? 'PM' : 'AM';
-
-                        hours = hours % 12 || 12;
-
-                        minutes = minutes < 10 ? '0' + minutes : minutes;
-
-                        document.getElementById('liveTime').innerHTML = hours + ':' + minutes + ' ' + ampm;
-                    }
-
-                    setInterval(updateLiveTime, 1000);
-                    updateLiveTime();
-
-                    $(document).ready(function () {
-                        $('#calendar').fullCalendar({
-                            contentHeight: 'auto'
-                        });
-                    });
-                </script>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="card mt-3 rounded-top rounded-2">
-            <div class="card-body">
-                <h4>Shortcuts</h4>
-                    <div class="mb-2 float-start">
-                        <a href="{% url 'Add Product' %}" class="btn btn-dark me-2" style="background-color: #141770;">Add Product</a>
-                        <a href="{% url 'Add Supplier' %}" class="btn btn-dark me-2" style="background-color: #141770;">Add Suplier</a>
-                        <a href="{% url 'Add Account' %}" class="btn btn-dark me-2" style="background-color: #141770;">Add Account</a>
-                        <a href="{% url 'Add Inventory' %}" class="btn btn-dark me-2" style="background-color: #141770;">Add Inventory</a>
-                    </div>
-            </div>
-        </div>
+<div class="card mt-3 rounded-top rounded-2">
+    <div class="card-body">
+        <p class="card-text">ID: {{ user.acc_id }}</p>
+        <p class="card-text">Last Login: {{ user.last_login }}</p>
+        <p class="card-text">Created: {{ user.acc_created_at }}</p>
+        <p class="card-text">Position Type: {{ user.acc_type_id }}</p>
     </div>
 </div>
 

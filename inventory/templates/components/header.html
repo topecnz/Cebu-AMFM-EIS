@@ -1,41 +1,17 @@
 {% load static %}
-<style>
-  .nav-link {
-    position: relative;
-    color: white;
-    text-decoration: none;
-  }
-
-  .nav-link::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 2px;
-    bottom: 0;
-    left: 0;
-    bottom: 1px;
-    background-color: transparent;
-    transition: background-color .4s ease 0s; /* Add transition for smooth animation */
-  }
-
-  .nav-link:hover::after {
-    background-color: #ffc107; /* Change this color to your desired line color */
-  }
-</style>
 <header class="p-3 mb-3 border-bottom" style="background-color: #141770;">
     <div class="container">
       <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start" style="background-color: #141770;">
-        {% comment %} <a href="/" class="d-flex align-items-center mb-3 mb-lg-0 text-dark text-decoration-none">
+        {% comment %} <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
           <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
         </a> {% endcomment %}
-        
-        
+
         <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-          <h5 style="margin-right: 460px; margin-top: 8px;"><a style="color: white; "><b>Cebu AM-FM Electronics</b></a></h5>
-          <li><a href="{% url 'Home' %}" class="nav-link px-2 link-dark" style="color: white;">Home</a></li>
+          <li style="margin-right: 480px;"><a class="nav-link px-1 link-dark" style="color: white;"><b>Cebu AM-FM Electronics</b></a></li>
+          <li><a href="{% url 'Home' %}" class="nav-link px-2 link-dark" style="color: white;">Overview</a></li>
           <li><a href="{% url 'Inventory' %}" class="nav-link px-2 link-dark" style="color: white;">Inventory</a></li>
           <li><a href="#" class="nav-link px-2 link-dark" style="color: white;">Customers</a></li>
-          <li><a href="#" class="nav-link px-2 link-dark" style="color: white;">Invoices</a></li>
+          <li><a href="#" class="nav-link px-2 link-dark" style="color: white;">Orders</a></li>
           <li><a href="{% url 'Suppliers' %}" class="nav-link px-2 link-dark" style="color: white;">Suppliers</a></li>
           <li><a href="{% url 'Products' %}" class="nav-link px-2 link-dark" style="color: white;">Products</a></li>
           {% if user.acc_type_id == 1 %}
@@ -45,27 +21,15 @@
 
         <div class="dropdown text-end">
           <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style="color: white;">
-              <img src="{% static 'assets/images/kyaru.gif' %}" alt="mdo" width="32" height="32" class="rounded-circle">
+            <img src="{% static 'assets/images/kyaru.gif' %}" alt="mdo" width="32" height="32" class="rounded-circle">
           </a>
           <ul class="dropdown-menu text-small" aria-labelledby="dropdownMenuButton1">
-              <li><a class="dropdown-item" href="{% url 'Account Settings' %}">Settings</a></li>
-              <li><a class="dropdown-item" href="#">Profile</a></li>
-              <li><a class="dropdown-item" href="#">About</a></li>
-              <li><hr class="dropdown-divider"></li>
-      
-              <!-- Toggle mode button -->
-              <li>
-                  <button id="btnSwitch" class="dropdown-item" type="button" style="body.dark-mode {
-                    background-color: #121212; /* Dark background color */
-                    color: #ffffff; /* Light text color */
-                }">Enable Dark Theme</button>
-              </li>
-              <li><hr class="dropdown-divider"></li>
-      
-              <li><a class="dropdown-item" href="{% url 'Logout' %}">Sign out</a></li>
+            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'Logout' %}">Sign out</a></li>
           </ul>
-      </div>
-
+        </div>
       </div>
     </div>
   </header>

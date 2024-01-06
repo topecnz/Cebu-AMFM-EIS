@@ -6,7 +6,6 @@ from .forms import *
 
 # Create your views here.
 
-
 def user_login(request: HttpRequest):    
     if request.method == 'POST':
         form = UserLoginForm(request.POST)

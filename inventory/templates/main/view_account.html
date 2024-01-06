@@ -4,114 +4,13 @@
 {% block style %}
 {% endblock %}
 {% block content %}
-
-{% csrf_token %}
-<div class="mb-3">
-    <h3>View Account<h3>
-</div>
-<div id="alertMsg" class="">
-</div>
-<div class="mb-1">
-    <label class="form-label">Account ID:</label>
-    <label id="user_id">{{user.acc_id}}</label>
-</div>
-<div class="mb-1">
-    <label class="form-label">Account Position Type:</label>
-    <label id="user_type">{{user.acc_type_id}}</label>   
-</div>
-<div class="mb-1">
-    <label class="form-label">Account Created:</label>
-    <label id="user_created">{{user.acc_created_at}}</label>   
-</div>
-<div class="mb-1">
-    <label class="form-label">Last Login:</label>
-    <label id="user_lastlogin">{{user.last_login}}</label>  
-</div>
-<div class="mb-1">
-    <label class="form-label">Account Userame:</label>
-    <b><label id="user_name">{{user.username}}</label></b>
-    <input value="{{user.username}}" id="username" type="text" class="form-control mb-4" placeholder="Update Account Username">
-    <div id="auMsg">
-</div>
-<div class="mb-1">
-    <label class="form-label">Password:</label> <!-- PASSWORD -->
-    <input value="" id="password" type="password" class="form-control mb-4" placeholder="Password">
-    <div id="pwMsg">
-<div class="mb-3">
-    <h3>Account Information<h3>
-</div>
-<div class="mb-3">
-    <label class="form-label">First Name:</label>
-    <label id="user_fname">{{user.emp.emp_fname}}</label>  
-    <input value="{{user.emp.emp_fname}}" id="fname" type="text" class="form-control mb-4" placeholder="Update Account First Name">
-    <div id="fMsg">
-</div>
-<div class="mb-3">
-    <label class="form-label">Last Name:</label>
-    <label id="user_lname">{{user.emp.emp_lname}}</label>
-    <input value="{{user.emp.emp_lname}}" id="lname" type="text" class="form-control mb-4" placeholder="Update Account Last Name">
-    <div id="lMsg">
-</div>
-<div class="col-12">
-    {% if user.acc_type_id != 3 %}
-    <button id="btnSubmit" class="btn btn-dark float-end">Update</button>
+    {% if not error %}
+        <h1>{{user.username}}</h1>
+    {% else %}
+        <h1>{{error}}</h1>
     {% endif %}
-</div>
-
+   
 {% endblock %}
 
 {% block script %}
-    {% if user.acc_type_id != 3 %}
-    <script>
-        $('#btnSubmit').click(function () {
-            id = $('#user_id').text();
-            fn = $('#fname').val();
-            ln = $('#lname').val();
-            u = $('#username').val();
-            p = $('#password').val();
-            acc_type = $('#user_type').text();
-
-            $.validate_check = function (feed, input, data) {
-                txt = !data ? 'Required' : '';
-                Ac = !data ? 'is-invalid' : 'is-valid';
-                Rc = !data ? 'is-valid' : 'is-invalid';
-                Af = !data ? 'invalid-feedback' : 'valid-feedback';
-                Rf = !data ? 'valid-feedback' : 'invalid-feedback';
-        
-                $(feed).text(txt).addClass(Af).removeClass(Rf);
-                $(input).addClass(Ac).removeClass(Rc);
-            };
-
-            // Check if there's an empty fields
-            $.validate_check('#auMsg', '#username', u);
-            $.validate_check('#fMsg', '#fname', fn);
-            $.validate_check('#lMsg', '#lname', ln);
-            $.validate_check('#pwMsg', '#password', p);
-
-            // return if found
-            if (!u || !fn || !ln || !p) {           
-                return 0;
-            }
-
-            $.post("{% url 'Update Account' %}", {
-                id: id,
-                fname: fn,
-                lname: ln,
-                username: u,
-                password: p,
-                acc_type: acc_type
-            }, function (e) {
-                if (e.code == 200) {
-                    $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
-                }
-                else {
-                    $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
-                }
-            }
-            );
-        });
-        
-    </script>
-    {% endif %}
 {% endblock %}
-
