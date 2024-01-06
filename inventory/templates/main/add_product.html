@@ -79,6 +79,7 @@
         </div>
     </div>
     <div class="col-12">
+        <button id="btnBack" class="btn btn-dark me-2">Go Back</button>
         <button id="btnSubmit" class="btn btn-dark float-end">Add</button>
     </div>
 
@@ -197,6 +198,10 @@
         else {
             $('#other-brand').hide();
         }
+    });
+
+    $('#btnBack').click(function () {
+        window.location.href = "{% url 'Products' %}"
     });
 </script>
 {% endblock %}

@@ -38,6 +38,7 @@
         </div>
     </div>
     <div class="col-12">
+        <button id="btnBack" class="btn btn-dark me-2">Go Back</button>
         <button id="btnSubmit" class="btn btn-dark float-end">Add</button>
     </div>
 
@@ -129,5 +130,10 @@
             $('#password').addClass('is-valid').removeClass('is-invalid');
         }
     });
+
+    $('#btnBack').click(function () {
+        window.location.href = "{% url 'Inventory' %}"
+    });
+
 </script>
 {% endblock %}

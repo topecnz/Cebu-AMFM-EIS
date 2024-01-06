@@ -250,12 +250,3 @@ def update_account_2(request: HttpRequest):
     #             return JsonResponse(obj)
             
     return render(request, 'main/settings.html')          
-                
-
-
-# def update_account(request: HttpRequest):
-#     if not request.user.is_authenticated:
-#         return redirect('/')
-    
-#     if request.user.acc_type_id == 2:
-#         pass
