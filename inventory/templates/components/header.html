@@ -52,6 +52,13 @@
             <ul class="dropdown-menu text-small" aria-labelledby="dropdownMenuButton1">
               <li><a class="dropdown-item" href="#">Settings</a></li>
               <li><a class="dropdown-item" href="#">Profile</a></li>
+              <!-- Toggle mode button -->
+              <li>
+                <button id="btnSwitch_toggle" class="dropdown-item" type="button" style="body.dark-mode {
+                  background-color: #121212; /* Dark background color */
+                  color: #ffffff; /* Light text color */
+                  }">Enable Dark Theme</button>
+              </li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{% url 'Logout' %}">Sign out</a></li>
             </ul>
