@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist, SuspiciousOperation
 from .forms import *
-from .models import Employee, AccountType
+from .models import Employee, AccountType, Account
 
 def add_account(request: HttpRequest):
     if not request.user.is_authenticated:
@@ -152,6 +152,7 @@ def view_account(request: HttpRequest, id: int):
     # Error code 403
     raise PermissionDenied()
 
+@csrf_exempt
 def delete_account(request: HttpRequest):
     if not request.user.is_authenticated:
         return redirect('/')
@@ -159,15 +160,14 @@ def delete_account(request: HttpRequest):
     if request.user.acc_type_id == 1:
         if request.method == 'POST':
             id = request.POST['id']
+            print(id)
 
             User = get_user_model()
-            user = User.objects.filter(username=usr)
+            user = User.objects.filter(acc_id=id)
 
-            uname = False
-            for usr in user:
-                if usr.username == usr:
-                    uname = True
-                    break
+            if user:
+                for u in user:
+                    user=u
 
             user.acc_is_active = False
             user.save()
@@ -178,30 +178,84 @@ def delete_account(request: HttpRequest):
             obj = {
                     'code': code if code else 204,
                     'message': message if message else 'Error!',
-                    'status': 'success' if code else 'warning',
+                    'status': 'success' if code else 'Warning',
                 }
             return JsonResponse(obj)
 
-def update_account(request: HttpRequest):
-    if not request.user.is_authenticated:
-        return redirect('/')
+# def update_account(request: HttpRequest):
+#     if not request.user.is_authenticated:
+#         return redirect('/')
     
-    if request.method == 'POST':
-        pass
+#     if request.method == 'POST':
+#         pass
     
-    # Error code 403
-    raise PermissionDenied()
+#     # Error code 403
+#     raise PermissionDenied()
 
+@csrf_exempt
 def update_account(request: HttpRequest):
-    if not request.user.is_authenticated:
-        return redirect('/')
-    
-    if request.user.acc_type_id == 1:
-        pass
+    if request.user.is_authenticated:
+        if request.user.acc_type_id == 1: # Super Admin
+            if request.method == "POST":
+                id = request.POST['id']
+                fn = request.POST['fname']
+                ln = request.POST['lname']
+                u = request.POST['username'].lower()
+                p = request.POST['password']
+                acc_type = request.POST['acc_type']
 
-def update_account(request: HttpRequest):
-    if not request.user.is_authenticated:
-        return redirect('/')
+                acc = Account.objects.get(acc_id=id)
+                emp = Employee.objects.get(emp_id=acc.emp.emp_id)
+                emp.emp_fname = fn
+                emp.emp_lname = ln
+                acc.username = u
+                acc.password = make_password(p)
+                acc.acc_type_id = acc_type
+                acc.save()
+                emp.save()
+                
+                obj = {
+                    'code': 200 if acc else 204,
+                    'message': 'Account is successfully updated!' if acc else 'Error!',
+                }
+                return JsonResponse(obj)
+            
+    return redirect('/')
+
+def update_account_2(request: HttpRequest):
+    # if request.user.is_authenticated:
+    #     if request.user.acc_type_id == 2: # Admin
+    #         if request.method == "POST":
+    #             id = request.POST['id']
+    #             fn = request.POST['fname']
+    #             ln = request.POST['lname']
+    #             u = request.POST['username'].lower()
+    #             p = request.POST['password']
+    #             acc_type = request.POST['acc_type']
+
+    #             acc = Account.objects.get(acc_id=id)
+    #             emp = Employee.objects.get(emp_id=acc.emp.emp_id)
+    #             emp.emp_fname = fn
+    #             emp.emp_lname = ln
+    #             acc.username = u
+    #             acc.password = p
+    #             acc.acc_type = acc_type
+    #             acc.save()
+    #             emp.save()
+                
+    #             obj = {
+    #                 'code': 200 if acc else 204,
+    #                 'message': 'Account is successfully updated!' if acc else 'Error!',
+    #             }
+    #             return JsonResponse(obj)
+            
+    return render(request, 'main/settings.html')          
+                
+
+
+# def update_account(request: HttpRequest):
+#     if not request.user.is_authenticated:
+#         return redirect('/')
     
-    if request.user.acc_type_id == 2:
-        pass
+#     if request.user.acc_type_id == 2:
+#         pass

@@ -2,6 +2,8 @@ from django.contrib.auth.models import UserManager, AbstractBaseUser, Permission
 from django.db import models
 from django.utils import timezone
 
+
+
 class CustomUserManager(UserManager):
     def _create_user(self, username, password, acc_type):
         if not username:
@@ -58,8 +60,8 @@ class Employee(models.Model):
     emp_phone = models.CharField(max_length=12, blank=True, null=True)
     emp_email = models.CharField(max_length=1024, blank=True, null=True)
     emp_address = models.CharField(max_length=1024, blank=True, null=True)
-    emp_created_at = models.DateTimeField()
-    emp_updated_at = models.DateTimeField()
+    emp_created_at = models.DateTimeField(default=timezone.now)
+    emp_updated_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         managed = True
@@ -72,8 +74,8 @@ class Customer(models.Model):
     cus_mname = models.CharField(max_length=1024, blank=True, null=True)
     cus_lname = models.CharField(max_length=1024)
     cus_phone = models.CharField(max_length=12)
-    cus_created_at = models.DateTimeField()
-    cus_updated_at = models.DateTimeField()
+    cus_created_at = models.DateTimeField(default=timezone.now)
+    cus_updated_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         managed = True
@@ -86,8 +88,8 @@ class Supplier(models.Model):
     sup_phone = models.CharField(max_length=12)
     sup_email = models.CharField(max_length=1024)
     sup_status = models.CharField(max_length=32, default='Active')
-    sup_created_at = models.DateTimeField()
-    sup_updated_at = models.DateTimeField()
+    sup_created_at = models.DateTimeField(default=timezone.now)
+    sup_updated_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         managed = True
@@ -99,8 +101,8 @@ class Product(models.Model):
     prod_desc = models.CharField(max_length=1024, blank=True, null=True)
     prod_price = models.FloatField(blank=True, null=True)
     prod_status = models.CharField(max_length=32, default='Active')
-    prod_created_at = models.DateTimeField()
-    prod_updated_at = models.DateTimeField()
+    prod_created_at = models.DateTimeField(default=timezone.now)
+    prod_updated_at = models.DateTimeField(default=timezone.now)
     prod_type = models.ForeignKey(ProductType, models.DO_NOTHING)
     prod_br = models.ForeignKey(ProductBrand, models.DO_NOTHING, blank=True, null=True)
 
@@ -113,8 +115,8 @@ class Inventory(models.Model):
     in_id = models.AutoField(primary_key=True)
     in_qty = models.IntegerField(blank=True, null=True)
     in_status = models.CharField(max_length=13, blank=True, null=True)
-    in_created_at = models.DateTimeField()
-    in_updated_at = models.DateTimeField()
+    in_created_at = models.DateTimeField(default=timezone.now)
+    in_updated_at = models.DateTimeField(default=timezone.now)
     prod = models.OneToOneField(Product, models.DO_NOTHING)
 
     class Meta:
@@ -127,8 +129,8 @@ class SupplierItem(models.Model):
     sup_itm_qty = models.IntegerField(blank=True, null=True)
     sup_itm_dr = models.CharField(max_length=1024)
     sup_itm_status = models.CharField(max_length=9, blank=True, null=True)
-    sup_itm_created_at = models.DateTimeField()
-    sup_itm_updated_at = models.DateTimeField()
+    sup_itm_created_at = models.DateTimeField(default=timezone.now)
+    sup_itm_updated_at = models.DateTimeField(default=timezone.now)
     prod = models.ForeignKey(Product, models.DO_NOTHING)
 
     class Meta:
