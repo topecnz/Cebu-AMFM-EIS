@@ -139,7 +139,7 @@ def view_account(request: HttpRequest, id: int):
                 user = u
 
             obj = {
-                'user': user,
+                'userdata': user,
                 'type': atype
             }
         
@@ -185,16 +185,6 @@ def delete_account(request: HttpRequest):
                 }
             return JsonResponse(obj)
 
-# def update_account(request: HttpRequest):
-#     if not request.user.is_authenticated:
-#         return redirect('/')
-    
-#     if request.method == 'POST':
-#         pass
-    
-#     # Error code 403
-#     raise PermissionDenied()
-
 @csrf_exempt
 def update_account(request: HttpRequest):
     if request.user.is_authenticated:
@@ -217,8 +207,9 @@ def update_account(request: HttpRequest):
                 acc.password = make_password(p)
                 acc.acc_type_id = acc_type
                 acc.emp_id = emp.emp_id
+                acc.acc_type_id = int(acc_type)
+                acc.emp_id = emp.emp_id
                 acc.save()
-
                 
                 obj = {
                     'code': 200 if acc else 204,

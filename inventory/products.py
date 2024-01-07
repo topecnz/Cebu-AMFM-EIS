@@ -159,12 +159,14 @@ def update_product(request: HttpRequest):
                 pr = float(request.POST['price'])
                 pt = request.POST['prod_type']
                 pb = request.POST['prod_br']
+                rm = request.POST['remarks']
                 # s = request.POST['prod_status']
                 
                 pro = Product.objects.get(prod_id=id)
                 # pro.prod_name = p
                 pro.prod_desc = d
                 pro.prod_price = pr
+                pro.prod_remarks = rm
                 ptype, pt_created = ProductType.objects.get_or_create(prod_type_name=pt)
                 pbr, pb_created = ProductBrand.objects.get_or_create(prod_br_name=pb)
                 

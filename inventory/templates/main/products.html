@@ -26,6 +26,7 @@
                     <th>Status</th>
                     <th>Type</th>
                     <th>Brand</th>
+                    <th>Remarks</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -40,6 +41,7 @@
                     <td class="prod-status">{{product.prod_status}}</td>
                     <td>{{product.prod_type.prod_type_name}}</td>
                     <td>{{product.prod_br.prod_br_name}}</td>
+                    <td>{% if product.prod_remarks %}{{product.prod_remarks}}{% endif %}</td>
                     <td><a href="{% url 'Products' %}{{product.prod_id}}" class="btn btn-dark m-1">View</a>
                         {% if product.prod_status == 'Active' and user.acc_type_id != 3 %}
                         <button href="{% url 'Products' %}{{product.prod_id}}" class="btn btn-dark prod-delete">Delete</button>
@@ -58,6 +60,7 @@
                     <th>Status</th>
                     <th>Type</th>
                     <th>Brand</th>
+                    <th>Remarks</th>
                     <th>Action</th>
                 </tr>
             </tfoot>

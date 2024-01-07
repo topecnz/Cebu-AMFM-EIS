@@ -113,7 +113,7 @@ class Product(models.Model):
 class Inventory(models.Model):
     in_id = models.AutoField(primary_key=True)
     in_qty = models.IntegerField(blank=True, null=True)
-    in_status = models.CharField(max_length=13, default='Active', blank=True, null=True)
+    in_status = models.CharField(max_length=13, default='Available', blank=True, null=True)
     in_created_at = models.DateTimeField(default=timezone.now)
     in_updated_at = models.DateTimeField(default=timezone.now)
     prod = models.OneToOneField(Product, models.DO_NOTHING)

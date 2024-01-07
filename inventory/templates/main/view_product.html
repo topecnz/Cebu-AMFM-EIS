@@ -34,25 +34,10 @@
     <div id="prMsg">
     </div>
 </div>
-{% comment %} <div class="mb-3">
-    <label class="form-label">Status</label>
-    <select {% if user.acc_type_id == 3 %}disabled{% endif %} id="prod_status" class="form-select" aria-label="Default select example">
-        <option disabled>Select Type</option>
-        {% if product.prod_status == 'Active' %}
-        <option selected value="Active">Active</option>
-        <option value="Removed">Removed</option>
-        {% else %}
-        <option value="Active">Active</option>
-        <option selected value="Removed">Removed</option>
-        {% endif %}
-    </select>
-    <div id="sMsg">
-    </div>
-</div> {% endcomment %}
 <div class="row mb-3">
     <div class="col-6">
         <label class="form-label">Type</label>
-        <select id="prod_type" class="form-select" aria-label="Default select example">
+        <select {% if user.acc_type_id == 3 %}disabled{% endif %} id="prod_type" class="form-select" aria-label="Default select example">
             <option disabled>Select Type</option>
             {% for res in type %}
             <option {% if res.prod_type_id == product.prod_type_id%}selected{% endif %} value="{{res.prod_type_name}}">{{res.prod_type_name}}</option>
@@ -72,7 +57,7 @@
 <div class="row mb-3">
     <div class="col-6">
         <label class="form-label">Brand</label>
-        <select id="prod_br" class="form-select" aria-label="Default select example">
+        <select {% if user.acc_type_id == 3 %}disabled{% endif %} id="prod_br" class="form-select" aria-label="Default select example">
             <option disabled>Select brand</option>
             {% for res in brand %}
             <option {% if res.prod_br_id == product.prod_br_id%}selected{% endif %} value="{{res.prod_br_name}}">{{res.prod_br_name}}</option>
@@ -89,6 +74,12 @@
         </div>
     </div>
 </div>
+<div class="mb-3">
+    <label class="form-label">Remarks</label>
+    <textarea {% if user.acc_type_id == 3 %}disabled{% endif %}   id="remarks" style="resize: none;" class="form-control" rows="3">{% if product.prod_remarks %}{{product.prod_remarks}}{% endif %}</textarea>
+    <div id="rmMsg">
+    </div>
+</div>
 <div class="col-12">
     {% if user.acc_type_id != 3 %}
     <button id="btnBack" class="btn btn-dark me-2">Go Back</button>
@@ -103,7 +94,6 @@
 {% endblock %}
 
 {% block script %}
-    {% if user.acc_type_id != 3 %}
     <script>
         if ($('#prod_type').val() == 'other') {
             $('#other-type').show();
@@ -118,6 +108,10 @@
         else {
             $('#other-brand').hide();
         }
+    </script>
+    {% if user.acc_type_id != 3 %}
+    <script>
+        
 
         $('#btnSubmit').click(function () {
             id = $('#prod_id').text();
@@ -126,6 +120,7 @@
             pr = $('#price').val();
             pt = ($('#prod_type').val() != 'other')? $('#prod_type').val() : $('#other-type-data').val();
             pb = ($('#prod_br').val() != 'other')? $('#prod_br').val() : $('#other-brand-data').val();
+            rm = $('#remarks').val();
     
             $.validate_check = function (feed, input, data) {
                 txt = !data ? 'Required' : '';
@@ -175,7 +170,8 @@
                 desc: d,
                 price: pr,
                 prod_type: pt,
-                prod_br: pb
+                prod_br: pb,
+                remarks: rm
             }, function (e) {
                 if (e.code == 200) {
                     $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');

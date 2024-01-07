@@ -108,6 +108,7 @@
         </div>
     </div>
     {% endif %}
+    {% if invoice.inv_status == 'Unpaid' %}
     <div class="mb-3">
         <h4>Item</h4>
     </div>
@@ -158,6 +159,7 @@
             <button id="btnUpdate" class="mb-3 btn btn-dark float-end">Update</button>
         </div>
     </div>
+    {% endif %}
     
     <div class="mb-3">
         <table id="example" class="display" style="width:100%">
@@ -208,8 +210,11 @@
     </div>
     <div class="pb-5">
         <div class="text-end">
+            {% if invoice.inv_status != 'Cancelled' %}
             <button id="btnPrint" class="btn btn-dark ">Save & Print</button>
             <button id="btnSubmit" class="btn btn-dark ">Save</button>
+            <button type="button" class="btn btn-dark " data-bs-toggle="modal" data-bs-target="#confirmationModal1">Cancel</button>
+            {% endif %}
             <button type="button" class="btn btn-dark " data-bs-toggle="modal" data-bs-target="#confirmationModal">Delete</button>
         </div>
     </div>
@@ -230,6 +235,26 @@
             <div class="modal-footer">
                 {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> {% endcomment %}
                 <button id="btnDel" type="button" class="btn btn-primary">Proceed</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmationModal1" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="alertMsg3" class="">
+                </div>
+                <label>Are you sure to cancel Invoice #{{invoice.inv_id}}?</label>
+            </div>
+            <div class="modal-footer">
+                {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> {% endcomment %}
+                <button id="btnCancel" type="button" class="btn btn-primary">Proceed</button>
             </div>
             </div>
         </div>
@@ -688,6 +713,24 @@
                 }
                 else {
                     $('#alertMsg2').text(e.message).addClass('alert alert-warning').removeClass('alert-success').fadeIn(0).fadeOut(2000);
+                }
+            })
+        });
+        
+        $('#btnCancel').click(function () {            
+            $.post("{% url 'Cancel Invoice' %}", {
+                id: '{{invoice.inv_id}}'
+            }, function(e) {
+                if (e.code == 200) {
+                    $('#alertMsg3').text(e.message + ' Redirecting to Invoices page in 3 seconds...').addClass('alert alert-success').removeClass('alert-warning').fadeIn(0);
+                    $(function () {
+                        setTimeout(function() {
+                          window.location = "{% url 'Invoices'%}{{invoice.inv_id}}";
+                        }, 3000);
+                      });
+                }
+                else {
+                    $('#alertMsg3').text(e.message).addClass('alert alert-warning').removeClass('alert-success').fadeIn(0).fadeOut(2000);
                 }
             })
         });

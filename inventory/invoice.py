@@ -102,13 +102,14 @@ def submit_invoice(request: HttpRequest):
             
             # Qty deduction
             data.in_qty = data.in_qty - int(r['qty']) if data.in_qty > 0 else 0
+            data.in_status = 'Available' if data.in_qty else 'Out of Stock'
             data.save()
             
             total += float(data.prod.prod_price) * float(r['qty'])
             
         invoice.inv_amount = "{:.2f}".format(total)
         invoice.inv_balance = 0 if invoice.inv_type == 1 else "{:.2f}".format(total)
-        invoice.inv_status = 'Paid' if invoice.inv_type == 1 else 'Unpaid'
+        invoice.inv_status = 'Paid' if invoice.inv_type.inv_type_id == 1 else 'Unpaid'
         
         # default as boolean if customer is excluded (for walk-in)
         customer = True
@@ -240,7 +241,8 @@ def update_invoice(request: HttpRequest):
                 order.ord_qty = 0
                 data.in_qty += int(r['qty'])
                 order.save()
-
+                
+            data.in_status = 'Available' if data.in_qty else 'Out of Stock'
             data.save()
             
         
@@ -284,11 +286,66 @@ def delete_invoice(request: HttpRequest):
                 for u in inv:
                     inv = u
                     
-                inv.inv_status = 'Removed'
+                inv.inv_status = 'Deleted'
                 inv.save()
                 
                 code = 200
                 message = 'Invoice is successfully deleted!'
+                
+                # Return item to inventory if cancelled or deleted
+                order = OrderList.objects.get(inv_id=inv.inv_id)
+                inventory = Inventory.objects.select_related('prod').all()
+                
+                for ord in order:
+                    data = inventory.get(prod_id= ord.prod_id)
+                    
+                    data.in_qty += ord.ord_qty
+                    data.in_status = 'Available'
+                    data.save()
+                    
+
+            obj = {
+                    'code': code if code else 204,
+                    'message': message if message else 'Error!',
+                    'status': 'success' if code else 'warning',
+                }
+            return JsonResponse(obj)
+        
+    raise redirect('/')
+
+@csrf_exempt
+def cancel_invoice(request: HttpRequest):
+    if not request.user.is_authenticated:
+        return redirect('/')
+    
+    if request.user.acc_type_id != 3:
+        if request.method == 'POST':
+            id = request.POST['id']
+            inv = Invoice.objects.filter(inv_id=id) # results in multiple query
+            
+            code = None
+            message = None
+            if inv:
+                for u in inv:
+                    inv = u
+                    
+                inv.inv_status = 'Cancelled'
+                inv.save()
+                
+                code = 200
+                message = 'Invoice is successfully cancelled!'
+                
+                # Return item to inventory if cancelled or deleted
+                order = OrderList.objects.filter(inv_id=inv.inv_id)
+                inventory = Inventory.objects.select_related('prod').all()
+                
+                for ord in order:
+                    data = inventory.get(prod_id= ord.prod.prod_id)
+                    
+                    data.in_qty += ord.ord_qty
+                    data.in_status = 'Available'
+                    data.save()
+                    
 
             obj = {
                     'code': code if code else 204,
