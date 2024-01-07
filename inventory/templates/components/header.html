@@ -37,7 +37,9 @@
               <li><a href="{% url 'Home' %}" class="nav-link px-2 text-light">Home</a></li>
               <li><a href="{% url 'Inventory' %}" class="nav-link px-2 text-light">Inventory</a></li>
               <li><a href="{% url 'Invoices' %}" class="nav-link px-2 text-light">Invoices</a></li>
+              {% if user.acc_type_id == 1%}
               <li><a href="{% url 'Orders' %}" class="nav-link px-2 text-light">Orders</a></li>
+              {% endif %}
               <li><a href="{% url 'Suppliers' %}" class="nav-link px-2 text-light">Suppliers</a></li>
               <li><a href="{% url 'Products' %}" class="nav-link px-2 text-light">Products</a></li>
               {% if user.acc_type_id == 1 %}
