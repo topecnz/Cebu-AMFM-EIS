@@ -38,6 +38,7 @@ urlpatterns = [
     path('invoices/update_invoice/', invoice.update_invoice, name="Update Invoice"),
     path('invoices/<int:id>/', invoice.view_invoice, name="View Invoice"),
     path('invoices/<int:id>/print', invoice.print_invoice, name="Print Invoice"),
+    path('invoices/delete_invoice/', invoice.cancel_invoice, name="Cancel Invoice"),
     path('invoices/delete_invoice/', invoice.delete_invoice, name="Delete Invoice"),
     path('orders/', purchase_order.orders, name="Orders"),
     path('orders/create/', purchase_order.create_po, name="Create PO"),

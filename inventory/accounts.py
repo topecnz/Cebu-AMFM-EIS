@@ -217,8 +217,9 @@ def update_account(request: HttpRequest):
                 acc.password = make_password(p)
                 acc.acc_type_id = acc_type
                 acc.emp_id = emp.emp_id
+                acc.acc_type_id = int(acc_type)
+                acc.emp_id = emp.emp_id
                 acc.save()
-
                 
                 obj = {
                     'code': 200 if acc else 204,
