@@ -109,7 +109,7 @@ def submit_invoice(request: HttpRequest):
             
         invoice.inv_amount = "{:.2f}".format(total)
         invoice.inv_balance = 0 if invoice.inv_type == 1 else "{:.2f}".format(total)
-        invoice.inv_status = 'Paid' if invoice.inv_type == 1 else 'Unpaid'
+        invoice.inv_status = 'Paid' if invoice.inv_type.inv_type_id == 1 else 'Unpaid'
         
         # default as boolean if customer is excluded (for walk-in)
         customer = True
