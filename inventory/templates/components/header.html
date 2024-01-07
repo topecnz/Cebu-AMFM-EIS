@@ -51,15 +51,8 @@
               <img src="{% static 'assets/images/profile-placeholder.png' %}" alt="mdo" width="32" height="32" class="rounded-circle">
             </a>
             <ul class="dropdown-menu text-small" aria-labelledby="dropdownMenuButton1">
-              <li><a class="dropdown-item" href="{% url 'Account Settings' %}">Settings</a></li>
+              <li><a class="dropdown-item" href="{% url 'Account Settings' %}">Account Settings</a></li>
               <li><a class="dropdown-item" href="#">Profile</a></li>
-              <!-- Toggle mode button -->
-              <li>
-                <button id="btnSwitch_toggle" class="dropdown-item" type="button" style="body.dark-mode {
-                  background-color: #121212; /* Dark background color */
-                  color: #ffffff; /* Light text color */
-                  }">Enable Dark Theme</button>
-              </li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{% url 'Logout' %}">Sign out</a></li>
             </ul>

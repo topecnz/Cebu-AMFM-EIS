@@ -17,9 +17,9 @@
 </div>
 <div class="mb-1">
     <label class="form-label">Account Position Type:</label>
-<<<<<<< Updated upstream
+
     <b><label id="user_type">{{user.acc_type.acc_type_name}}</label></b> 
-=======
+
     {% comment %} <b><label id="user_type">{{user.acc_type_id}}</label></b> {% endcomment %}
     <select id="user_type" class="form-select" aria-label="Default select example">
         <option disabled>Select Type</option>
@@ -27,7 +27,7 @@
         <option {% if res.acc_type_id == user.acc_type_id %}selected{% endif %} value="{{res.acc_type_id}}">{{res.acc_type_name}}</option>
         {% endfor %}
     </select>
->>>>>>> Stashed changes
+
 </div>
 <div class="mb-1">
     <label class="form-label">Account Created:</label>

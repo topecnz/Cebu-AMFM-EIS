@@ -212,11 +212,13 @@ def update_account(request: HttpRequest):
                 emp.emp_fname = fn
                 emp.emp_lname = ln
                 emp.emp_updated_at = timezone.now()
+                emp.save()
                 acc.username = u
                 acc.password = make_password(p)
                 acc.acc_type_id = acc_type
+                acc.emp_id = emp.emp_id
                 acc.save()
-                emp.save()
+
                 
                 obj = {
                     'code': 200 if acc else 204,
