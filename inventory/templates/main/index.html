@@ -25,11 +25,25 @@
 
     .card-body p.card-text {
         margin-bottom: 1px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-body p.card-text .label {
+        flex: 1;
+        text-align: right;
+        margin-right: 10px; /* Adjust the gap between label and value */
+    }
+
+    .card-body p.card-text .value {
+        flex: 1;
+        text-align: left;
     }
 
     #calendar {
         width: auto;
-        height: auto; /* Auto height based on content */
+        height: auto;
     }
 
     #liveTime {
@@ -43,56 +57,82 @@
         <div class="card mt-3 rounded-top rounded-2">
             <div class="card-body">
                 <h4>Account Overview</h4>
-                <p class="card-text">Account ID: {{ user.acc_id }}</p>
-                <p class="card-text">Account Position Type: <b>{{ user.acc_type.acc_type_name }}</b></p>
+                <p class="card-text">
+                    <span class="label">Account ID:</span>
+                    <span class="value">{{ user.acc_id }}</span>
+                </p>
+                <p class="card-text">
+                    <span class="label">Account Position Type:</span>
+                    <span class="value"><b>{{ user.acc_type.acc_type_name }}</b></span>
+                </p>
             </div>
         </div>
-    </div>
+    </div>    
     <div class="col-md-6">
         <div class="card mt-3 rounded-top rounded-2">
             <div class="card-body">
                 <h4>Account Log</h4>
-                <p class="card-text">Account Created: {{ user.acc_created_at }}</p>
-                <p class="card-text">Last Login: {{ user.last_login }}</p>
+                <p class="card-text">
+                    <span class="label">Account Created:</span>
+                    <span class="value">{{ user.acc_created_at }}</span>
+                </p>
+                <p class="card-text">
+                    <span class="label">Last Login:</span>
+                    <span class="value">{{ user.last_login }}</span>
+                </p>
             </div>
         </div>
-    </div>
-
-    <!-- Updated Cards -->
+    </div>    
+    
     <div class="col-md-6">
         <div class="card mt-3 rounded-top rounded-2">
             <div class="card-body">
-                <h4>Today</h4>
-                
+                <h4>Today</h4><h6 id="liveTime"></h6>
                 <div id="calendar"></div>
-                <p id="liveTime"></p>
             </div>
         </div>
     </div>
 
-    <!-- Add this in the head of your HTML file to include Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
-<!-- ... your existing HTML code ... -->
-
-    <div class="col-md-6">
-        <div class="card mt-3 rounded-top rounded-2">
-            <div class="card-body">
-                <h4>Shortcuts</h4>
-                    <div class="mb-2 d-flex float-start">
-                        <a href="{% url 'Add Product' %}" class="btn btn-lg btn-primary btn-dark me-2 mb-2" style="background-color: #141770;">Add Product</a>
-                        <a href="{% url 'Add Account' %}" class="btn btn-lg btn-primary btn-dark me-2 mb-2" style="background-color: #141770;">Add Account</a>
-                        <a href="{% url 'Add Inventory' %}" class="btn btn-lg btn-primary btn-dark me-2 mb-2" style="background-color: #141770;">Add Inventory</a>
-                        <a href="{% url 'Create Invoice' %}" class="btn btn-lg btn-primary btn-dark me-2 mb-2" style="background-color: #141770;">Create Invoice</a>
-                        <a href="{% url 'Orders' %}" class="btn btn-lg btn-primary btn-dark me-2 mb-2" style="background-color: #141770;">Create PO</a>
-                    </div>
+<div class="col-md-6">
+    <div class="card mt-3 rounded-top rounded-2">
+        <div class="card-body">
+            <h4>Shortcuts</h4>
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <a href="{% url 'Add Product' %}" class="btn btn-lg btn-primary btn-dark w-100 mb-2" style="background-color: #141770;">
+                        <i class="fas fa-plus-circle fa-lg me-3"></i> Add Product
+                    </a>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <a href="{% url 'Add Account' %}" class="btn btn-lg btn-primary btn-dark w-100" style="background-color: #141770;">
+                        <i class="fas fa-user fa-lg me-3"></i> Add Account
+                    </a>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <a href="{% url 'Add Inventory' %}" class="btn btn-lg btn-primary btn-dark w-100 mb-2" style="background-color: #141770;">
+                        <i class="fas fa-box fa-lg me-3"></i> Add Inventory
+                    </a>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <a href="{% url 'Create Invoice' %}" class="btn btn-lg btn-primary btn-dark w-100" style="background-color: #141770;">
+                        <i class="fas fa-file-invoice fa-lg me-3"></i> Create Invoice
+                    </a>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <a href="{% url 'Orders' %}" class="btn btn-lg btn-primary btn-dark w-100" style="background-color: #141770;">
+                        <i class="fas fa-file-alt fa-lg me-3"></i> Create PO
+                    </a>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <a href="{% url 'Add Supplier' %}" class="btn btn-lg btn-primary btn-dark w-100" style="background-color: #141770;">
+                        <i class="fas fa-shopping-cart fa-lg me-3"></i> Add Supplier
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-       
-    
 </div>
 
 {% endblock %}
