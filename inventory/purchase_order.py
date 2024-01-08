@@ -14,11 +14,14 @@ import json
 
 @login_required(login_url='/login')
 def orders(request: HttpRequest):
-    po = PurchaseOrder.objects.select_related('emp', 'sup')
-    obj = {
-        'result': po,
-    }
-    return render(request, 'main/orders.html', obj)
+    if request.user.acc_type_id != 3:    
+        po = PurchaseOrder.objects.select_related('emp', 'sup')
+        obj = {
+            'result': po,
+        }
+        return render(request, 'main/orders.html', obj)
+    
+    raise PermissionDenied()
 
 def create_po(request:HttpRequest):
     if not request.user.is_authenticated:
