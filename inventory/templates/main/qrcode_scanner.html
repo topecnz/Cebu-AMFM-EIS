@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Add Account{% endblock %}
+{% block style %}
+<style>
+    
+</style>
+{% endblock %}
+{% block content %}
+
+    {% csrf_token %}
+    <div id="alertMsg" class="mb-3">
+    </div>
+    <div class="text-center">
+        <div class="mb-5">
+            <button id="btnQR" class="btn btn-dark">Start</button>
+        </div>
+        <video id="test"></video>
+    </div>
+    {% comment %} <div id="reader" width="600px"></div> {% endcomment %}
+
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/qr-scanner.umd.min.js' %}"></script>
+{% comment %} <script src="{% static 'js/html5-qrcode.min.js' %}"></script> {% endcomment %}
+<script>
+    var video = document.getElementById("test");
+
+    const qrs = new QrScanner(video,
+        result => $.resultdata(result), {},
+    );
+
+    var switchcam = false;
+    $.switch = function() {
+        if (!switchcam) {
+            qrs.start();
+            $('#btnQR').text('Stop');
+            switchcam = true;
+        } else {
+            qrs.stop();
+            $('#btnQR').text('Start');
+            switchcam = false;
+        }
+    }
+
+    $('#btnQR').click(function(){
+        $('#alertMsg').hide();
+        $.switch();
+    });
+
+    $.resultdata = function(data) {
+        //console.log("{% url 'Invoices' %}" + data.data.split('-')[1])
+        var name = data.data.split('=')[0];
+        var result = data.data.split('=')[1].split('-');
+        var type = result[0];
+        var id = result[1];
+
+        console.log(data, result, type, id);
+
+        $.switch();
+        if (name == "CEBU AMFM ELECTRONICS CENTER DATA")
+            if (type == 'invoice') {
+                window.location = "{% url 'Invoices' %}" + id;
+            } else if (type == 'po') {
+                window.location = "{% url 'Orders' %}" + id;
+            } else {
+                $('#alertMsg').text('Invalid data!').addClass('alert alert-warning').removeClass('alert-success').show();
+            }
+        else {
+            $('#alertMsg').text('Not recognized!').addClass('alert alert-warning').removeClass('alert-success').show();
+        }
+    };
+</script>
+{% endblock %}

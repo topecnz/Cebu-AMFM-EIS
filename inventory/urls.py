@@ -1,5 +1,5 @@
 from django.urls import path 
-from . import views, accounts, products, inventory, supplier, invoice, purchase_order
+from . import views, accounts, products, inventory, supplier, invoice, purchase_order, qrcode
 
 urlpatterns = [
     path('', views.home, name="Home"),
@@ -45,4 +45,5 @@ urlpatterns = [
     path('orders/<int:id>/print', purchase_order.print_po, name="Print PO"),
     path('orders/update_po/', purchase_order.update_po, name="Update PO"),
     path('orders/delete_po/', purchase_order.delete_po, name="Delete PO"),
+    path('qrcode/', qrcode.qrcode, name="Scanner"),
 ]

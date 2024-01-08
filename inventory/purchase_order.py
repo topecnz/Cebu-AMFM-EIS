@@ -11,6 +11,7 @@ from .forms import *
 from .models import Employee, AccountType, Product, ProductBrand, ProductType, Inventory, Invoice, InvoiceType, OrderList, Customer, Supplier, SupplierItem, PurchaseOrder
 
 import json
+import qrcode
 
 @login_required(login_url='/login')
 def orders(request: HttpRequest):
@@ -126,6 +127,10 @@ def submit_order(request: HttpRequest):
         po.po_amount = "{:.2f}".format(total)
 
         po.save()
+        
+        # generate qrcode
+        img = qrcode.make(f"CEBU AMFM ELECTRONICS CENTER DATA=po-{po.po_id}")
+        img.save(f'./static/assets/qrcode/po-{po.po_id}')
             
         obj = {
             'code': 200 if po else 204,

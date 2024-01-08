@@ -12,6 +12,7 @@ from .models import Employee, AccountType, Product, ProductBrand, ProductType, I
 
 import json
 from datetime import timedelta, datetime
+import qrcode
 
 @login_required(login_url='/login')
 def invoices(request: HttpRequest):
@@ -121,6 +122,10 @@ def submit_invoice(request: HttpRequest):
             invoice.cus_id = customer.cus_id
 
         invoice.save()
+        
+        # generate qrcode
+        img = qrcode.make(f"CEBU AMFM ELECTRONICS CENTER DATA=invoice-{invoice.inv_id}")
+        img.save(f'./static/assets/qrcode/invoice-{invoice.inv_id}')
             
         obj = {
             'code': 200 if invoice and customer else 204,
@@ -172,7 +177,8 @@ def print_invoice(request: HttpRequest, id: int):
         if invoice.inv_status != 'Removed':
             obj = {
                 'invoice': invoice,
-                'order': order
+                'order': order,
+                'qr': f'assets/qrcode/invoice-{invoice.inv_id}.png'
             }
             
             return render(request, 'print/invoice.html', obj)
