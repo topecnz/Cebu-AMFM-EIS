@@ -24,15 +24,17 @@ def invoices(request: HttpRequest):
 def create_invoice(request:HttpRequest):
     if not request.user.is_authenticated:
         return redirect('/')
+    if request.user.acc_type_id != 3:
+        inv_type = InvoiceType.objects.all()
+        inventory = Inventory.objects.select_related('prod').filter(in_status='Available')
+        
+        obj = {
+            'type': inv_type,
+            'inventory': inventory
+        }
+        return render(request, 'main/create_invoice.html', obj)
     
-    inv_type = InvoiceType.objects.all()
-    inventory = Inventory.objects.select_related('prod').filter(in_status='Available')
-    
-    obj = {
-        'type': inv_type,
-        'inventory': inventory
-    }
-    return render(request, 'main/create_invoice.html', obj)
+    raise PermissionDenied()
 
 @csrf_exempt
 def check_product(request: HttpRequest):
