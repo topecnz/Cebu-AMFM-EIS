@@ -13,6 +13,6 @@ from .models import Employee, AccountType, Product, ProductBrand, ProductType, I
 import json
 from datetime import timedelta, datetime
 
-@login_required(login_url='/')
+@login_required(login_url='/login')
 def qrcode(request: HttpRequest):
     return render(request, 'main/qrcode_scanner.html')

@@ -51,15 +51,14 @@
 
     $.resultdata = function(data) {
         //console.log("{% url 'Invoices' %}" + data.data.split('-')[1])
-        var name = data.data.split('=')[0];
-        var result = data.data.split('=')[1].split('-');
-        var type = result[0];
-        var id = result[1];
-
         console.log(data, result, type, id);
 
         $.switch();
-        if (name == "CEBU AMFM ELECTRONICS CENTER DATA")
+        if (data.data.includes("CEBU AMFM ELECTRONICS CENTER DATA")) {
+            var name = data.data.split('=')[0];
+            var result = data.data.split('=')[1].split('-');
+            var type = result[0];
+            var id = result[1];
             if (type == 'invoice') {
                 window.location = "{% url 'Invoices' %}" + id;
             } else if (type == 'po') {
@@ -67,6 +66,7 @@
             } else {
                 $('#alertMsg').text('Invalid data!').addClass('alert alert-warning').removeClass('alert-success').show();
             }
+        }
         else {
             $('#alertMsg').text('Not recognized!').addClass('alert alert-warning').removeClass('alert-success').show();
         }
