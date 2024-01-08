@@ -3,8 +3,7 @@
 {% block title %}Home{% endblock %}
 {% block style %}
     <link rel="stylesheet" href="{% static 'css/fullcalendar.min.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
+    <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
 {% endblock %}
 {% block content %}
 
@@ -93,8 +92,6 @@
         </div>
     </div>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
 <div class="col-md-6">
     <div class="card mt-3 rounded-top rounded-2">
         <div class="card-body">
@@ -139,6 +136,7 @@
 {% block script %}
 <script src="{% static 'js/moment.min.js' %}"></script>
 <script src="{% static 'js/fullcalendar.min.js' %}"></script>
+<script src="{% static 'js/all.min.js' %}"></script>
 <script>
     function updateLiveTime() {
         var currentTime = new Date();
