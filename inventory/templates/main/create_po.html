@@ -159,6 +159,7 @@
     </div>
     <div class="p-3">
         <div class="text-end">
+            <button id="btnBack" class="btn btn-dark me-2">Go Back</button>
             <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal">Create</button>
         </div>
     </div>
@@ -560,6 +561,10 @@
             }
             $('#total').text(parseFloat(total).toFixed(2));
         }
+
+        $('#btnBack').click(function () {
+            window.location.href = "{% url 'Orders' %}"
+        });
 
     </script>
 {% endblock %}

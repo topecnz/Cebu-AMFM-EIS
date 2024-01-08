@@ -33,11 +33,12 @@
     </div>
     <div class="mb-3">
         <label class="form-label">Quantity</label>
-        <input id="qty" type="number" class="form-control" placeholder="Enter Price">
+        <input id="qty" type="number" class="form-control" placeholder="Enter Quantity">
         <div id="qMsg">
         </div>
     </div>
     <div class="col-12">
+        <button id="btnBack" class="btn btn-dark me-2">Go Back</button>
         <button id="btnSubmit" class="btn btn-dark float-end">Add</button>
     </div>
 
@@ -62,7 +63,26 @@
 
         // Check if there's an empty fields
         $.validate_check('#pMsg', '#prod_id', p);
-        $.validate_check('#qMsg', '#qty', q);
+        //$.validate_check('#qMsg', '#qty', p);
+
+        if (!$.isNumeric(q)) {
+            $('#qMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#qty').addClass('is-invalid').removeClass('is-valid');
+            return 0;
+        }
+        else if (q <= 0) {
+            $('#qMsg').text('You need to input at least 1 quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#qty').addClass('is-invalid').removeClass('is-valid');
+            return 0;
+        }
+        else if (q > s) {
+            $('#qMsg').text('You can only add up to ' + s + ' quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#qty').addClass('is-invalid').removeClass('is-valid');
+            return 0;
+        }
+        else {
+            $.validate_check('#qMsg', '#qty', qty);
+        }
 
         // return if found
         if (!p || !q) {           
@@ -129,5 +149,10 @@
             $('#password').addClass('is-valid').removeClass('is-invalid');
         }
     });
+
+    $('#btnBack').click(function () {
+        window.location.href = "{% url 'Inventory' %}"
+    });
+
 </script>
 {% endblock %}

@@ -6,7 +6,4 @@ migrations
 .venv
 *.sqlite3
 *.sqlite3-journal
-dummy_models
-Note.txt
-*.gif
 *.sql
