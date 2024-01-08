@@ -14,24 +14,30 @@ import json
 
 @login_required(login_url='/login')
 def orders(request: HttpRequest):
-    po = PurchaseOrder.objects.select_related('emp', 'sup')
-    obj = {
-        'result': po,
-    }
-    return render(request, 'main/orders.html', obj)
+    if request.user.acc_type_id != 3:    
+        po = PurchaseOrder.objects.select_related('emp', 'sup')
+        obj = {
+            'result': po,
+        }
+        return render(request, 'main/orders.html', obj)
+    
+    raise PermissionDenied()
 
 def create_po(request:HttpRequest):
     if not request.user.is_authenticated:
         return redirect('/')
     
-    supplier = Supplier.objects.filter(sup_status='Active')
-    prod = Product.objects.select_related('prod_type', 'prod_br').filter(prod_status='Active')
+    if request.user.acc_type_id != 3:
+        supplier = Supplier.objects.filter(sup_status='Active')
+        prod = Product.objects.select_related('prod_type', 'prod_br').filter(prod_status='Active')
+        
+        obj = {
+            'product': prod,
+            'supplier': supplier
+        }
+        return render(request, 'main/create_po.html', obj)
     
-    obj = {
-        'product': prod,
-        'supplier': supplier
-    }
-    return render(request, 'main/create_po.html', obj)
+    raise PermissionDenied()
 
 @csrf_exempt
 def check_product(request: HttpRequest):
