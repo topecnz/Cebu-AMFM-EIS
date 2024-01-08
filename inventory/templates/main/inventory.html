@@ -31,7 +31,7 @@
                 {% for inventory in result %}
                 <tr class="inv-data">
                     <td class="inv-id">{{inventory.in_id}}</td>
-                    <td>{{inventory.prod.prod_name}}</td>
+                    <td>{{inventory.prod.prod_desc}}</td>
                     <td>{{inventory.in_qty}}</td>
                     <td class="inv-status">{{inventory.in_status}}</td>
                     <td><a href="{% url 'Inventory' %}{{inventory.in_id}}" class="btn btn-dark m-1">View</a>

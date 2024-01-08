@@ -1,16 +1,163 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Home{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/fullcalendar.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+{% endblock %}
 {% block content %}
 
-<h1 class="card-title">{{ greet }}, {{ user.emp.emp_fname }}!</h1>
+{% now "H" as current_hour %}
+{% if current_hour >= 4 < 12 %}
+    <h1 class="card-title"><b>Good Morning, {{ user.username }}!</b></h1>
+{% elif current_hour < 18 %}
+    <h1 class="card-title"><b>Good Afternoon, {{ user.username }}!</b></h1>
+{% else %}
+    <h1 class="card-title"><b>Good Evening, {{ user.username }}!</b></h1>
+{% endif %}
 
-<div class="card mt-3 rounded-top rounded-2">
-    <div class="card-body">
-        <p class="card-text">ID: {{ user.acc_id }}</p>
-        <p class="card-text">Last Login: {{ user.last_login }}</p>
-        <p class="card-text">Created: {{ user.acc_created_at }}</p>
-        <p class="card-text">Position Type: {{ type }}</p>
+<style>
+    .card-body h4 {
+        margin-bottom: 15px;
+        color: #141770;
+    }
+
+    .card-body p.card-text {
+        margin-bottom: 1px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-body p.card-text .label {
+        flex: 1;
+        text-align: right;
+        margin-right: 10px; /* Adjust the gap between label and value */
+    }
+
+    .card-body p.card-text .value {
+        flex: 1;
+        text-align: left;
+    }
+
+    #calendar {
+        width: auto;
+        height: auto;
+    }
+
+    #liveTime {
+        font-size: 20px;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mt-3 rounded-top rounded-2">
+            <div class="card-body">
+                <h4>Account Overview</h4>
+                <p class="card-text">
+                    <span class="label">Account ID:</span>
+                    <span class="value">{{ user.acc_id }}</span>
+                </p>
+                <p class="card-text">
+                    <span class="label">Account Position Type:</span>
+                    <span class="value"><b>{{ user.acc_type.acc_type_name }}</b></span>
+                </p>
+            </div>
+        </div>
+    </div>    
+    <div class="col-md-6">
+        <div class="card mt-3 rounded-top rounded-2">
+            <div class="card-body">
+                <h4>Account Log</h4>
+                <p class="card-text">
+                    <span class="label">Account Created:</span>
+                    <span class="value">{{ user.acc_created_at }}</span>
+                </p>
+                <p class="card-text">
+                    <span class="label">Last Login:</span>
+                    <span class="value">{{ user.last_login }}</span>
+                </p>
+            </div>
+        </div>
+    </div>    
+    
+    <div class="col-md-6">
+        <div class="card mt-3 rounded-top rounded-2">
+            <div class="card-body">
+                <h4>Today</h4><h6 id="liveTime"></h6>
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+
+<div class="col-md-6">
+    <div class="card mt-3 rounded-top rounded-2">
+        <div class="card-body">
+            <h4>Shortcuts</h4>
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <a href="{% url 'Add Product' %}" class="btn btn-lg btn-primary btn-dark w-100 mb-2" style="background-color: #141770;">
+                        <i class="fas fa-plus-circle fa-lg me-3"></i> Add Product
+                    </a>
+                </div>
+                {% if user.acc_type_id == 1%}
+                <div class="col-md-6 mb-2">
+                    <a href="{% url 'Add Account' %}" class="btn btn-lg btn-primary btn-dark w-100" style="background-color: #141770;">
+                        <i class="fas fa-user fa-lg me-3"></i> Add Account
+                    </a>
+                </div>
+                {% endif %}
+                <div class="col-md-6 mb-2">
+                    <a href="{% url 'Add Inventory' %}" class="btn btn-lg btn-primary btn-dark w-100 mb-2" style="background-color: #141770;">
+                        <i class="fas fa-box fa-lg me-3"></i> Add Inventory
+                    </a>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <a href="{% url 'Create Invoice' %}" class="btn btn-lg btn-primary btn-dark w-100" style="background-color: #141770;">
+                        <i class="fas fa-file-invoice fa-lg me-3"></i> Create Invoice
+                    </a>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <a href="{% url 'Create PO' %}" class="btn btn-lg btn-primary btn-dark w-100" style="background-color: #141770;">
+                        <i class="fas fa-file-alt fa-lg me-3"></i> Create PO
+                    </a>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <a href="{% url 'Add Supplier' %}" class="btn btn-lg btn-primary btn-dark w-100" style="background-color: #141770;">
+                        <i class="fas fa-shopping-cart fa-lg me-3"></i> Add Supplier
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/moment.min.js' %}"></script>
+<script src="{% static 'js/fullcalendar.min.js' %}"></script>
+<script src="{% static 'js/all.min.js' %}"></script>
+<script>
+    function updateLiveTime() {
+        var currentTime = new Date();
+        var hours = currentTime.getHours();
+        var minutes = currentTime.getMinutes();
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+
+        hours = hours % 12 || 12;
+
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+
+        document.getElementById('liveTime').innerHTML = hours + ':' + minutes + ' ' + ampm;
+    }
+
+    setInterval(updateLiveTime, 1000);
+    updateLiveTime();
+
+    $('#calendar').fullCalendar({
+        contentHeight: 'auto'
+    });
+</script>
 {% endblock %}

@@ -53,6 +53,7 @@
         </div>
     </div>
     <div class="col-12">
+        <button id="btnBack" class="btn btn-dark me-2">Go Back</button>
         <button id="btnSubmit" class="btn btn-dark float-end">Add</button>
     </div>
 
@@ -100,10 +101,10 @@
             acc_type: at
         }, function (e) {
             if (e.code == 200) {
-                $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
+                $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
             }
             else {
-                $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
+                $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
             }
         }
         );
@@ -154,6 +155,10 @@
             $('#passMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
             $('#password').addClass('is-valid').removeClass('is-invalid');
         }
+    });
+
+    $('#btnBack').click(function () {
+        window.location.href = "{% url 'Account Management' %}"
     });
 </script>
 {% endblock %}

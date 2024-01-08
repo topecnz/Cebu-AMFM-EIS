@@ -8,6 +8,8 @@
     <div class="mb-3">
         <h3>Account Management<h3>
     </div>
+    <div id="alertMsg" class="">
+    </div>
     <div class="mb-5">
         <a href="{% url 'Add Account' %}" class="btn btn-dark">Add Account</a>
     </div>
@@ -15,6 +17,7 @@
         <table id="example" class="display" style="width:100%">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Name</th>
                     <th>Position</th>
                     <th>Status</th>
@@ -25,9 +28,19 @@
                 </tr>
             </thead>
             <tbody>
+                {% comment %} <tr>
+                    <td>Tiger Nixon</td>
+                    <td>System Architect</td>
+                    <td>Edinburgh</td>
+                    <td>61</td>
+                    <td>2011-04-25</td>
+                    <td>$320,800</td>
+                </tr> {% endcomment %}
                 {% if result %}
                 {% for user in result %}
-                <tr>
+                {% if user.acc_is_active %}
+                <tr class="acc-data">
+                    <td class="acc-id">{{user.acc_id}}</td>
                     <td>{{user.username}}</td>
                     <td>{{user.acc_type.acc_type_name}}</td>
                     <td>{% if user.acc_is_active %}
@@ -39,13 +52,17 @@
                     <td>{{user.last_login}}</td>
                     <td>{{user.acc_created_at}}</td>
                     <td>{{user.acc_updated_at}}</td>
-                    <td><a href="{% url 'Account Management' %}{{user.acc_id}}" class="btn btn-dark">View</a></td>
+                    <td><a href="{% url 'Account Management' %}{{user.acc_id}}" class="btn btn-dark">View</a>
+                        <button class="btn btn-dark acc-delete">Delete</button>
+                    </td>
                 </tr>
+                {% endif %}
                 {% endfor %}
                 {% endif %}
             </tbody>
             <tfoot>
                 <tr>
+                    <th>ID</th>
                     <th>Name</th>
                     <th>Position</th>
                     <th>Status</th>
@@ -63,5 +80,22 @@
     <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
     <script>
         new DataTable('#example');
+    </script>
+    <script>
+        $('.acc-delete').each(function () {
+            $(this).click(function () {
+                id = $(this).closest('.acc-data').find('.acc-id').text();
+                console.log(id)
+                $.post("{% url 'Delete Account' %}", {
+                    id: id
+                }, function(e) {
+                    if (e.code == 200) {
+                        $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
+                    } else {
+                        $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
+                    }
+                })
+            })
+        });
     </script>
 {% endblock %}

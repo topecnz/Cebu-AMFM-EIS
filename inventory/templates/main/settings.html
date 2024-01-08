@@ -1,43 +1,37 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}View Account{% endblock %}
+{% block title %}Settings{% endblock %}
 {% block style %}
 {% endblock %}
 {% block content %}
 
 {% csrf_token %}
 <div class="mb-3">
-    <h3>View Account</h3>
+    <h3 class="mb-4">SETTINGS<h3>
+        <h4>Account</h4>
 </div>
 <div id="alertMsg" class="">
 </div>
 <div class="mb-1">
     <label class="form-label">Account ID:</label>
-    <label id="user_id">{{userdata.acc_id}}</label>
+    <label id="user_id">{{user.acc_id}}</label>
 </div>
 <div class="mb-1">
     <label class="form-label">Account Position Type:</label>
-    {% comment %} <b><label id="user_type">{{userdata.acc_type_id}}</label></b> {% endcomment %}
-    <select id="user_type" class="form-select" aria-label="Default select example">
-        <option disabled>Select Type</option>
-        {% for res in type %}
-        <option {% if res.acc_type_id == userdata.acc_type_id %}selected{% endif %} value="{{res.acc_type_id}}">{{res.acc_type_name}}</option>
-        {% endfor %}
-    </select>
-
+    <b><label id="user_type">{{user.acc_type.acc_type_name}}</label></b>
 </div>
 <div class="mb-1">
     <label class="form-label">Account Created:</label>
-    <label id="user_created">{{userdata.acc_created_at}}</label>   
+    <label id="user_created">{{user.acc_created_at}}</label>   
 </div>
 <div class="mb-1">
     <label class="form-label">Last Login:</label>
-    <label id="user_lastlogin">{{userdata.last_login}}</label>  
+    <label id="user_lastlogin">{{user.last_login}}</label>  
 </div>
 <div class="mb-1">
     <label class="form-label">Account Userame:</label>
-    <b><label id="user_name">{{userdata.username}}</label></b>
-    <input value="{{userdata.username}}" id="username" type="text" class="form-control mb-4" placeholder="Update Account Username">
+    <b><label id="user_name">{{user.username}}</label></b>
+    <input value="{{user.username}}" id="username" type="text" class="form-control mb-4" placeholder="Update Account Username">
     <div id="auMsg">
 </div>
 <div class="mb-1">
@@ -46,36 +40,38 @@
     <div id="pwMsg">
 </div>
 <div class="mb-3">
-    <h3>Account Information</h3>
+    <h3>Account Information<h3>
 </div>
 <div class="mb-3">
     <label class="form-label">First Name:</label>
-    <label id="user_fname">{{userdata.emp.emp_fname}}</label>  
-    <input value="{{userdata.emp.emp_fname}}" id="fname" type="text" class="form-control mb-4" placeholder="Update Account First Name">
+    <label id="user_fname">{{user.emp.emp_fname}}</label>  
+    <input value="{{user.emp.emp_fname}}" id="fname" type="text" class="form-control mb-4" placeholder="Update Account First Name">
     <div id="fMsg">
 </div>
 <div class="mb-3">
     <label class="form-label">Last Name:</label>
-    <label id="user_lname">{{userdata.emp.emp_lname}}</label>
-    <input value="{{userdata.emp.emp_lname}}" id="lname" type="text" class="form-control mb-4" placeholder="Update Account Last Name">
+    <label id="user_lname">{{user.emp.emp_lname}}</label>
+    <input value="{{user.emp.emp_lname}}" id="lname" type="text" class="form-control mb-4" placeholder="Update Account Last Name">
     <div id="lMsg">
 </div>
-<div class="pb-5 col-12">
+<div class="col-12">
+    {% if user.acc_type_id != 3 %}
     <button id="btnSubmit" class="btn btn-dark float-end">Update</button>
+    {% endif %}
 </div>
 
 {% endblock %}
 
 {% block script %}
+    {% if user.acc_type_id != 3 %}
     <script>
         $('#btnSubmit').click(function () {
-            console.log('test')
             id = $('#user_id').text();
             fn = $('#fname').val();
             ln = $('#lname').val();
             u = $('#username').val();
             p = $('#password').val();
-            acc_type = $('#user_type').val();
+            acc_type = $('#user_type').text();
 
             $.validate_check = function (feed, input, data) {
                 txt = !data ? 'Required' : '';
@@ -118,4 +114,5 @@
         });
         
     </script>
+    {% endif %}
 {% endblock %}
