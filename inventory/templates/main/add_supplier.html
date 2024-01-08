@@ -34,7 +34,7 @@
     </div>
     <div class="mb-3">
         <label class="form-label">Supplier Address</label>
-        <input id="address" type="text" class="form-control" placeholder="Enter Address">
+        <input id="addr" type="text" class="form-control" placeholder="Enter Address">
         <div id="emMsg">
         </div>
     </div>
@@ -86,7 +86,7 @@
     $('#btnSubmit').click(function () {
         n = $('#name').val();
         p = $('#phone').val();
-        e = $('#address').val();
+        e = $('#addr').val();
 
         $.validate_check = function (feed, input, data) {
             txt = !data ? 'Required' : '';
@@ -102,7 +102,7 @@
         // Check if there's an empty fields
         $.validate_check('#snMsg', '#name', n);
         $.validate_check('#phoneMsg', '#phone', p);
-        $.validate_check('#emMsg', '#email', e);
+        $.validate_check('#emMsg', '#addr', e);
 
         // return if found
         if (!n || !p || !e) {           
@@ -112,7 +112,7 @@
         $.post("{% url 'Submit Supplier' %}", {
             name: n,
             phone: p,
-            email: e
+            addr: e
         }, function (e) {
             if (e.code == 200) {
                 $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
