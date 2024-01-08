@@ -15,11 +15,14 @@ import qrcode
 
 @login_required(login_url='/login')
 def orders(request: HttpRequest):
-    po = PurchaseOrder.objects.select_related('emp', 'sup')
-    obj = {
-        'result': po,
-    }
-    return render(request, 'main/orders.html', obj)
+    if request.user.acc_type_id != 3:    
+        po = PurchaseOrder.objects.select_related('emp', 'sup')
+        obj = {
+            'result': po,
+        }
+        return render(request, 'main/orders.html', obj)
+    
+    raise PermissionDenied()
 
 def create_po(request:HttpRequest):
     if not request.user.is_authenticated:
@@ -237,6 +240,10 @@ def update_po(request: HttpRequest):
                 sup_itm.sup_itm_status = 'Removed'
 
             sup_itm.save()
+            
+            if po.po_status == 'Approved':
+                sup_itm.prod.prod_price = float("{:.2f}".format(float(r['price'])))
+                sup_itm.prod.save()
         
             if po.po_status == 'Received':
                 data, in_created = inventory.get_or_create(prod_id = sup_itm.prod.prod_id)

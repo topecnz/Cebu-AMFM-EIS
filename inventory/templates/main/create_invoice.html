@@ -296,7 +296,7 @@
                         
                         var btn = 'add';
                         for (var k = 0; k < table.rows().count(); k++) {
-                            if (table.row(k).data()[0] == id && table.row(k).data()[1] == text) {
+                            if (table.row(k).data()[0] == id && table.row(k).data()[2] == e.desc) {
                                 btn = 'update';
                                 break
                             }
@@ -432,9 +432,9 @@
             var amount = parseFloat(price * qty).toFixed(2);
 
             for (var l = 0; l < table.rows().count(); l++) {
-                if (table.row(l).data()[0] == id && table.row(l).data()[1] == name) {
+                if (table.row(l).data()[0] == id && table.row(l).data()[2] == desc) {
                     table.row(l).data([
-                        id, br, desc, qty, price, amount,
+                        id, table.row(l).data()[1], desc, qty, price, amount,
                         '<button class="btn btn-dark prod-remove">Remove</button>'
                     ]).draw();
                     break;
