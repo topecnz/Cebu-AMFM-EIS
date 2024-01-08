@@ -11,14 +11,11 @@ from .models import Employee, AccountType, Product, ProductBrand, ProductType, I
 
 @login_required(login_url='/login')
 def suppliers(request: HttpRequest):
-    if request.user.acc_type_id != 3:
-        supplier = Supplier.objects.all()
-        obj = {
-            'result': supplier,
-        }
-        return render(request, 'main/suppliers.html', obj)
-    
-    raise PermissionDenied()
+    supplier = Supplier.objects.all()
+    obj = {
+        'result': supplier,
+    }
+    return render(request, 'main/suppliers.html', obj)
 
 def add_supplier(request: HttpRequest):
     if not request.user.is_authenticated:
