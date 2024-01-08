@@ -235,6 +235,10 @@ def update_po(request: HttpRequest):
                 sup_itm.sup_itm_status = 'Removed'
 
             sup_itm.save()
+            
+            if po.po_status == 'Approved':
+                sup_itm.prod.prod_price = float("{:.2f}".format(float(r['price'])))
+                sup_itm.prod.save()
         
             if po.po_status == 'Received':
                 data, in_created = inventory.get_or_create(prod_id = sup_itm.prod.prod_id)
