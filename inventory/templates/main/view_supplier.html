@@ -56,7 +56,7 @@
         $('#btnSubmit').click(function () {
             id = $('#sup_id').text();
             n = $('#sup_name').val();
-            p = $('#sup_phone').val();
+            //p = $('#sup_phone').val();
             e = $('#sup_address').val();
     
             $.validate_check = function (feed, input, data) {
@@ -72,19 +72,18 @@
     
             // Check if there's an empty fields
             $.validate_check('#snMsg', '#name', n);
-            $.validate_check('#phoneMsg', '#phone', p);
+            //$.validate_check('#phoneMsg', '#phone', p);
             $.validate_check('#emMsg', '#email', e);
     
             // return if found
-            if (!n || !p || !e) {           
+            if (!n || !e) {           
                 return 0;
             }
     
             $.post("{% url 'Update Supplier' %}", {
                 id: id,
                 name: n,
-                phone: p,
-                email: e
+                addr: e
             }, function (e) {
                 if (e.code == 200) {
                     $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
