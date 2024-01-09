@@ -54,7 +54,7 @@ class Employee(models.Model):
     emp_fname = models.CharField(max_length=1024)
     emp_mname = models.CharField(max_length=1024, blank=True, null=True)
     emp_lname = models.CharField(max_length=1024)
-    emp_birthdate = models.DateField(blank=True, null=True)
+    emp_birthdate = models.DateField(blank=True, null=True, unique=True)
     emp_phone = models.CharField(max_length=12, blank=True, null=True)
     emp_email = models.CharField(max_length=1024, blank=True, null=True)
     emp_created_at = models.DateTimeField(default=timezone.now)
