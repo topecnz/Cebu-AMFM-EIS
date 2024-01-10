@@ -11,7 +11,9 @@ from .models import Account, Employee
 from eis import settings
 
 import datetime
+import time
 import uuid
+import json
 
 def user_login(request: HttpRequest):    
     if request.method == 'POST':
@@ -95,10 +97,25 @@ def reset_password(request: HttpRequest):
             
             email.send(fail_silently=False)
             
-            if email:
-                request.session['r_token'] = str(token)
-                request.session['r_user'] = user.acc_id
-                request.session.modified = True
+            if True:
+                # request.session['r_token'] = str(token)
+                # request.session['r_user'] = user.acc_id
+                # request.session.modified = True
+                with open('./static/reset/user_token.json', 'r') as f:
+                    data = json.load(f)
+                    
+                # print(data)
+                
+                unix_expires = datetime.datetime.now() + datetime.timedelta(minutes=15)
+                
+                data['request'].append({
+                    "token": str(token),
+                    "acc_id": user.acc_id,
+                    "expires": time.mktime(unix_expires.timetuple())
+                })
+                
+                with open('./static/reset/user_token.json', 'w') as fw:
+                    json.dump(data, fw, indent=4) # no permission to network disk
             
         obj = {
             'success': True if emp and email else False,
@@ -113,47 +130,81 @@ def reset_password(request: HttpRequest):
     
     # return redirect('/')
 
-def change_password(request: HttpRequest, token: str):
+def change_password(request: HttpRequest, token: str = None):
     # if not request.user.is_authenticated:
     is_valid = False
-    if token == request.session.get('r_token'):
-        is_valid = True
+    data_found = False
+    
+    with open('./static/reset/user_token.json', 'r') as f:
+            data = json.load(f)
+            
+    for res in data['request']:
+        if res['token'] == token:
+            data = res
+            data_found = True
+            break
         
-        if request.method == "POST":
-            user = Account.objects.get(acc_id=request.session.get('r_user'))
-            
-            if user:
-                password = request.POST['pass']
-                cpassword = request.POST['cpass']
-                
-                if password != cpassword:
-                    obj = {
-                        'reset': True,
-                        'is_valid': is_valid,
-                        'status': 'warning',
-                        'success': False,
-                        'message': 'Password did not matched!'
-                    }
-                    return render(request, 'main/change_password.html', obj)
-                
-                user.password = make_password(password)
-                user.acc_updated_at = timezone.now()
-                user.save()
-                
-                del request.session['r_token']
-                del request.session['r_user']
-            
-            obj = {
+    # check if token is invalid
+    if not data_found:
+        obj = {
                 'reset': True,
                 'is_valid': is_valid,
-                'status': 'success' if user else 'warning',
-                'success': True if user else False,
-                'message': 'Password has been updated!\nYou can now login now!' if user else 'User not found'
+                'status': 'warning',
+                'success': False,
+                'message': 'Invalid token',
+                'is_token_expired': True
             }
             
+        return render(request, 'main/change_password.html', obj)
+    
+    # if token expires
+    if time.mktime(datetime.datetime.now().timetuple()) > data['expires']:
+        obj = {
+                'reset': True,
+                'is_valid': is_valid,
+                'status': 'warning',
+                'success': False,
+                'message': 'Token has expired.',
+                'is_token_expired': True
+            }
             
-            return render(request, 'main/change_password.html', obj)
+        return render(request, 'main/change_password.html', obj)
+    
+    is_valid = True
+        
+    if request.method == "POST":
+        user = Account.objects.get(acc_id=data['acc_id'])
+        
+        if user:
+            password = request.POST['pass']
+            cpassword = request.POST['cpass']
+            
+            if password != cpassword:
+                obj = {
+                    'reset': True,
+                    'is_valid': is_valid,
+                    'status': 'warning',
+                    'success': False,
+                    'message': 'Password did not matched!',
+                    'is_token_expired': False
+                }
+                return render(request, 'main/change_password.html', obj)
+            
+            user.password = make_password(password)
+            user.acc_updated_at = timezone.now()
+            user.save()
+        
+        obj = {
+            'reset': True,
+            'is_valid': is_valid,
+            'status': 'success' if user else 'warning',
+            'success': True if user else False,
+            'message': 'Password has been updated!\nYou can now login now!' if user else 'User not found'
+        }
+        
+        
+        return render(request, 'main/change_password.html', obj)
 
-        return render(request, 'main/change_password.html', { 'reset': True })
+    return render(request, 'main/change_password.html', { 'reset': True, 'is_token_expired': False })
         
     # return redirect('/')
