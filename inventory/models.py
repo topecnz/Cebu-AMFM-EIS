@@ -82,7 +82,7 @@ class Customer(models.Model):
 class Supplier(models.Model):
     sup_id = models.AutoField(primary_key=True)
     sup_name = models.CharField(max_length=1024)
-    sup_phone = models.CharField(max_length=12)
+    sup_phone = models.CharField(max_length=12, blank=True, null=True)
     sup_address = models.CharField(max_length=1024)
     sup_city = models.CharField(max_length=1024, blank=True, null=True)
     sup_status = models.CharField(max_length=32, default='Active')
