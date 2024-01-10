@@ -103,7 +103,7 @@ def reset_password(request: HttpRequest):
         obj = {
             'success': True if emp and email else False,
             'status': 'success' if emp and email else 'warning',
-            'message': 'We\'ve sent a reset password link into the associated email.' if emp and email else 'Email not found',
+            'message': 'We\'ve sent a reset password link into the associated email. Please check you inbox or spam folder.' if emp and email else 'Email not found',
             'reset': True
         }
         
