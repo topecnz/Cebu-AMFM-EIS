@@ -63,17 +63,9 @@ def submit_account(request: HttpRequest):
                 # validate username (security)
                 
                 User = get_user_model()
-                user = User.objects.filter(username=u)
-                
-                uname = False
-                for usr in user:
-                    if usr.username == u:
-                        uname = True
-                        break
-                        
-                print(uname)
+                user = User.objects.filter(username=u).first()
 
-                if not user and len(p) < 8:
+                if user and len(p) < 8:
                     return JsonResponse({
                         'code': 204,
                         'message': 'error'
@@ -81,7 +73,7 @@ def submit_account(request: HttpRequest):
 
                 reg = None
                 
-                if not uname:
+                if not user:
                     emp = Employee.objects.create(emp_fname=fn, emp_lname=ln)
                     emp.save()
                     reg = User.objects.create(username=u, password=make_password(p), acc_type_id=acc_type, emp_id=emp.emp_id)
