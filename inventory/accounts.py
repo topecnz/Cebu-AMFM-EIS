@@ -33,14 +33,11 @@ def check_username(request: HttpRequest):
             if request.method == "POST":
                 u = request.POST['username'].lower()
                 User = get_user_model()
-                user = User.objects.filter(username=u)
+                user = User.objects.filter(username=u).first()
                 
                 is_found = False
-                
-                for r in user:
-                    if r.username == u:
-                        is_found = True
-                        break
+                if user:
+                    is_found = True
                 
                 obj = {
                     'found': is_found
@@ -211,31 +208,41 @@ def update_account(request: HttpRequest):
             
     return redirect('/')
 
+@csrf_exempt
 def update_account_2(request: HttpRequest):
-    # if request.user.is_authenticated:
+    if request.user.is_authenticated:
     #     if request.user.acc_type_id == 2: # Admin
-    #         if request.method == "POST":
-    #             id = request.POST['id']
-    #             fn = request.POST['fname']
-    #             ln = request.POST['lname']
-    #             u = request.POST['username'].lower()
-    #             p = request.POST['password']
-    #             acc_type = request.POST['acc_type']
-
-    #             acc = Account.objects.get(acc_id=id)
-    #             emp = Employee.objects.get(emp_id=acc.emp.emp_id)
-    #             emp.emp_fname = fn
-    #             emp.emp_lname = ln
-    #             acc.username = u
-    #             acc.password = p
-    #             acc.acc_type = acc_type
-    #             acc.save()
-    #             emp.save()
-                
-    #             obj = {
-    #                 'code': 200 if acc else 204,
-    #                 'message': 'Account is successfully updated!' if acc else 'Error!',
-    #             }
-    #             return JsonResponse(obj)
+        if request.method == "POST":
+            fn = request.POST['fn']
+            mn = request.POST['mn']
+            ln = request.POST['ln']
+            u = request.POST['u'].lower()
+            p = request.POST['phone']
+            email = request.POST['email']
+            bd = request.POST['birthdate']
             
-    return render(request, 'main/account_settings.html')          
+            User = get_user_model()
+            user = User.objects.get(acc_id=request.user.acc_id)
+            
+            user.username = u
+            user.acc_updated_at = timezone.now()
+            user.save()
+            
+            emp = Employee.objects.get(emp_id=request.user.emp_id)
+            emp.emp_fname = fn
+            emp.emp_mname = mn
+            emp.emp_lname = ln
+            emp.emp_phone = p
+            emp.emp_email = email
+            emp.emp_birthdate = bd
+            emp.save()
+                
+            obj = {
+                'code': 200 if user and emp else 204,
+                'message': 'Account is successfully updated!' if user and emp else 'Error!',
+            }
+            return JsonResponse(obj)
+            
+        return render(request, 'main/account_settings.html')         
+    
+    return redirect('/') 

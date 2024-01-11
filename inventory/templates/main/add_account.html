@@ -134,8 +134,9 @@
 
     $('#username').on('input', function () {
         var username = $('#username').val();
+        var regex = /^[a-zA-Z0-9\.\_]*$/;
     
-        if (!/^[a-zA-Z]+$/.test(username)) {
+        if (!regex.test(username)) {
             // Check if the username contains special characters
             $('#userMsg').text("Please enter a valid username with only alphabet letters.").addClass('invalid-feedback').removeClass('valid-feedback');
             $('#username').addClass('is-invalid').removeClass('is-valid');
