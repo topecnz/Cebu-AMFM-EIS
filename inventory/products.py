@@ -56,7 +56,7 @@ def check_product_name(request: HttpRequest):
 @csrf_exempt
 def submit_product(request: HttpRequest):
     if request.user.is_authenticated:
-        if request.user.acc_type_id == 1:
+        if request.user.acc_type_id != 3:
             if request.method == "POST":
                 # p = request.POST['prod']
                 d = request.POST['desc'].upper()
@@ -119,27 +119,31 @@ def delete_product(request: HttpRequest):
     if request.user.acc_type_id != 3:
         if request.method == 'POST':
             id = request.POST['id']
-            prod = Product.objects.filter(prod_id=id) # results in multiple query
+            prod = Product.objects.filter(prod_id=id).first()
             
-            code = None
-            message = None
+            # default if false
+            code = 204
+            message = 'Error!'
+            
             if prod:
-                for u in prod:
-                    prod = u
-                    
-                prod.prod_status = 'Removed'
-                prod.prod_updated_at = timezone.now()
-                inv = Inventory.objects.get(prod_id=prod.prod_id)
-                inv.in_status = 'Removed'
-                prod.save()
-                inv.save()
+                inv = Inventory.objects.select_related('prod').get(prod_id=prod.prod_id)
                 
-                code = 200
-                message = 'Product is successfully deleted!'
+                if not inv.in_qty:
+                    prod.prod_status = 'Removed'
+                    prod.prod_updated_at = timezone.now()
+                    inv.in_status = 'Removed'
+                    prod.save()
+                    inv.save()
+                
+                    code = 200
+                    message = 'Product is successfully deleted!'
+                    
+                elif inv.in_qty:
+                    message = f"You can't delete an item [{prod.prod_br.prod_br_name} {prod.prod_desc}] because you have {inv.in_qty}pcs. left on inventory."
 
             obj = {
-                    'code': code if code else 204,
-                    'message': message if message else 'Error!',
+                    'code': code,
+                    'message': message,
                     'status': 'success' if code else 'warning',
                 }
             return JsonResponse(obj)

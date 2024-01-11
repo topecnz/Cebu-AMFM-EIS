@@ -321,7 +321,9 @@
         $.check_product();
         
         $('#product').change(function() {
-            $.check_product();
+            if ($(this).val().trim()) {
+                $.check_product();
+            }
         });
 
         $.validate_check = function (feed, input, data) {
