@@ -38,15 +38,13 @@ def check_product_name(request: HttpRequest):
     if request.user.is_authenticated:
         if request.user.acc_type_id == 1:
             if request.method == "POST":
-                p = request.POST['prod']
-                product = Product.objects.filter(prod_name=p, prod_status='Active')
+                p = request.POST['prod'].upper()
+                product = Product.objects.filter(prod_name=p, prod_status='Active').first()
                 
                 is_found = False
                 
-                for r in product:
-                    if r.prod_name.lower() == p.lower():
-                        is_found = True
-                        break
+                if product.prod_desc.upper() == p:
+                    is_found = True
                 
                 obj = {
                     'found': is_found
@@ -61,10 +59,10 @@ def submit_product(request: HttpRequest):
         if request.user.acc_type_id == 1:
             if request.method == "POST":
                 # p = request.POST['prod']
-                d = request.POST['desc']
+                d = request.POST['desc'].upper()
                 pr = float(request.POST['price'])
-                pt = request.POST['prod_type']
-                pb = request.POST['prod_br']
+                pt = request.POST['prod_type'].upper()
+                pb = request.POST['prod_br'].upper()
                 
                 pro, created = Product.objects.get_or_create(prod_desc=d)
                 pro.prod_price = pr

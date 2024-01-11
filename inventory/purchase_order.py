@@ -244,6 +244,7 @@ def update_po(request: HttpRequest):
                 data, in_created = inventory.get_or_create(prod_id = sup_itm.prod.prod_id)
             
                 data.in_qty = data.in_qty + int(r['qty']) if not in_created else int(r['qty'])
+                data.in_qty = 'Available' if data.in_qty else 'Out of Stock'
                 data.save()
         
         po.po_amount = "{:.2f}".format(total)

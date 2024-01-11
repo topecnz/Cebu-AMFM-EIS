@@ -114,10 +114,10 @@
             addr: e
         }, function (e) {
             if (e.code == 200) {
-                $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
+                $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning').fadeIn(0).fadeOut(2000);
             }
             else {
-                $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
+                $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success').fadeIn(0).fadeOut(2000);
             }
         }
         );
