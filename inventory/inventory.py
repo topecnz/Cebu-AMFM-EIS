@@ -37,7 +37,8 @@ def add_inventory(request: HttpRequest):
             if not found:
                 result.append({
                     'id': p.prod_id,
-                    'name': p.prod_desc
+                    'name': p.prod_desc,
+                    'brand': p.prod_br.prod_br_name
                 })
         
         obj = {
@@ -75,7 +76,9 @@ def submit_inventory(request: HttpRequest):
                 p = request.POST['prod']
                 q = request.POST['qty']
                 
-                inv = Inventory.objects.create(in_qty=q, in_status='Available', prod_id=p)
+                inv, created = Inventory.objects.get_or_create(prod_id=p)
+                inv.in_qty=q
+                inv.in_status='Available' if int(q) else 'Out of Stock' 
                 inv.save()
                 
                 obj = {
