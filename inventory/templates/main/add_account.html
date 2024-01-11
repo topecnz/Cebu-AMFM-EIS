@@ -138,7 +138,7 @@
     
         if (!regex.test(username)) {
             // Check if the username contains special characters
-            $('#userMsg').text("Please enter a valid username with only alphabet letters.").addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#userMsg').text("Please enter a valid username.").addClass('invalid-feedback').removeClass('valid-feedback');
             $('#username').addClass('is-invalid').removeClass('is-valid');
         } else if (username.length < 8) {
             // Check if the length is less than 8
