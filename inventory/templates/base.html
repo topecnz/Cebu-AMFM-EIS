@@ -18,9 +18,11 @@
         {% endif %}
     </head>
     <body>
+        {% if user.emp_id %}
         {% if user.is_authenticated %}
         {% if not reset %}
         {% include "components/header.html" with user=user %}
+        {% endif %}
         {% endif %}
         {% endif %}
         <div class="container">
