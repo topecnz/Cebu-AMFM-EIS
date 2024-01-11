@@ -238,4 +238,4 @@ def update_account_2(request: HttpRequest):
     #             }
     #             return JsonResponse(obj)
             
-    return render(request, 'main/settings.html')          
+    return render(request, 'main/account_settings.html')          
