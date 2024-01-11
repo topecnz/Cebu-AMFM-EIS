@@ -213,7 +213,7 @@
             {% elif po.po_status == 'Approved' %}
             <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Receive Order</button>
             {% endif %}
-            {% if po.po_status != 'Cancelled' or po.po_status != 'Received' %}
+            {% if po.po_status != 'Cancelled' or po.po_status != 'Delivered' %}
             <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal">Cancel</button>
             {% endif %}
             {% endif %}
@@ -735,8 +735,10 @@
 
 
         $('#btnBack').click(function () {
-            window.location.href = "{% url 'Products' %}"
+            window.location.href = "{% url 'Orders' %}"
         });
+
+        
 
     </script>
 {% endblock %}

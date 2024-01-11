@@ -215,7 +215,7 @@ def update_po(request: HttpRequest):
             
         po = PurchaseOrder.objects.get(po_id=request.POST['id'])
         inventory = Inventory.objects.select_related('prod')
-        po.po_status = 'Approved' if po.po_status == 'Pending' else 'Received'
+        po.po_status = 'Approved' if po.po_status == 'Pending' else 'Delivered'
         
         total = 0
         for r in j['result']:
@@ -240,7 +240,7 @@ def update_po(request: HttpRequest):
                 sup_itm.prod.prod_price = float("{:.2f}".format(float(r['price'])))
                 sup_itm.prod.save()
         
-            if po.po_status == 'Received':
+            if po.po_status == 'Delivered':
                 data, in_created = inventory.get_or_create(prod_id = sup_itm.prod.prod_id)
             
                 data.in_qty = data.in_qty + int(r['qty']) if not in_created else int(r['qty'])
