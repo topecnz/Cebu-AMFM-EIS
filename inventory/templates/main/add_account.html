@@ -110,7 +110,7 @@
         );
     });
 
-    $('#username').on('input', function () {
+    {% comment %} $('#username').on('input', function () {
         var u = $('#username').val()
         if (u.length < 8) {
             $('#userMsg').text("Input username atleast 8 characters.").addClass('invalid-feedback').removeClass('valid-feedback');
@@ -128,7 +128,69 @@
                 }
             })
         }
+    }); {% endcomment %}
+
+    // Username  Validation
+
+    $('#username').on('input', function () {
+        var username = $('#username').val();
+    
+        if (!/^[a-zA-Z]+$/.test(username)) {
+            // Check if the username contains special characters
+            $('#userMsg').text("Please enter a valid username with only alphabet letters.").addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#username').addClass('is-invalid').removeClass('is-valid');
+        } else if (username.length < 8) {
+            // Check if the length is less than 8
+            $('#userMsg').text("Input username at least 8 characters.").addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#username').addClass('is-invalid').removeClass('is-valid');
+        } else {
+            // Proceed with the uniqueness check
+            $.post("{% url 'Check Username' %}", {
+                username: username
+            }, function (response) {
+                if (response.found == true) {
+                    $('#userMsg').text("Username is already taken!").addClass('invalid-feedback').removeClass('valid-feedback');
+                    $('#username').addClass('is-invalid').removeClass('is-valid');
+                } else {
+                    $('#userMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                    $('#username').addClass('is-valid').removeClass('is-invalid');
+                }
+            });
+        }
     });
+    
+    
+
+
+    // First Name Validation
+$('#fname').on('input', function () {
+    var fname = $('#fname').val();
+
+    if (/^[a-zA-Z]+$/.test(fname)) {
+        $('#fnMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+        $('#fname').addClass('is-valid').removeClass('is-invalid');
+    } else {
+        var message = 'Please enter a valid first name.';
+        $('#fnMsg').text(message).addClass('invalid-feedback').removeClass('valid-feedback');
+        $('#fname').addClass('is-invalid').removeClass('is-valid');
+    }
+});
+
+// Last Name Validation
+$('#lname').on('input', function () {
+    var lname = $('#lname').val();
+
+    if (/^[a-zA-Z]+$/.test(lname)) {
+        $('#lnMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+        $('#lname').addClass('is-valid').removeClass('is-invalid');
+    } else {
+        var message = 'Please enter a valid last name.';
+        $('#lnMsg').text(message).addClass('invalid-feedback').removeClass('valid-feedback');
+        $('#lname').addClass('is-invalid').removeClass('is-valid');
+    }
+});
+
+
 
     $('#cpassword').on("input", function () {
         var pw = $('#password').val();
@@ -157,6 +219,7 @@
         }
     });
 
+    
     $('#btnBack').click(function () {
         window.location.href = "{% url 'Account Management' %}"
     });
