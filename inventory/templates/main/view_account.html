@@ -117,6 +117,11 @@
             }
             );
         });
+
+        $('#btnBack').click(function () {
+            window.location.href = "{% url 'Account Management' %}"
+        });
+
         
     </script>
 {% endblock %}

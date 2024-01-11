@@ -773,6 +773,10 @@
             $('#total').text(parseFloat(total).toFixed(2));
         }
 
+        $('#btnBack').click(function () {
+            window.location.href = "{% url 'Invoices' %}"
+        });
+
         {% endif %}
     </script>
 {% endblock %}

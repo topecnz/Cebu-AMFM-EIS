@@ -81,6 +81,12 @@
             }
             );
         });
+
+        $('#btnBack').click(function () {
+            window.location.href = "{% url 'Inventory' %}"
+        });
+
+
     </script>
     {% endif %}
 {% endblock %}

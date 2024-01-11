@@ -18,7 +18,7 @@
 </div>
 {% comment %} <div class="mb-3">
     <label class="form-label">Product Name</label>
-    <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{product.prod_name}}" id="prod" type="text" class="form-control" placeholder="Enter Product Name">
+    <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{product.prod_desc}}" id="prod" type="text" class="form-control" placeholder="Enter Product Name">
     <div id="pMsg">
     </div>
 </div> {% endcomment %}
@@ -204,6 +204,11 @@
         $('#btnBack').click(function () {
             window.location.href = "{% url 'Products' %}"
         });
+
+        $('#btnBack').click(function () {
+            window.location.href = "{% url 'Products' %}"
+        });
+
     </script>
     {% endif %}
 {% endblock %}
