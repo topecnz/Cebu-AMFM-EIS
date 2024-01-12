@@ -7,14 +7,16 @@
 {% endblock %}
 {% block content %}
 
-{% now "H" as current_hour %}
+{% comment %} {% now "H" as current_hour %}
 {% if current_hour >= 4 < 12 %}
     <h1 class="card-title"><b>Good Morning, {{ user.username }}!</b></h1>
 {% elif current_hour < 18 %}
     <h1 class="card-title"><b>Good Afternoon, {{ user.username }}!</b></h1>
 {% else %}
     <h1 class="card-title"><b>Good Evening, {{ user.username }}!</b></h1>
-{% endif %}
+{% endif %} {% endcomment %}
+
+<h1 class="card-title"><b>{{greet}}, {{ user.username }}!</b></h1>
 
 <style>
     .card-body h4 {

@@ -59,12 +59,14 @@ def home(request: HttpRequest):
     
     curr = datetime.datetime.now()
     
-    if curr.hour <= 6 >= 12:
+    if curr.hour >= 6 < 12:
         greet = 'Good Morning'
-    elif curr.hour < 18:
+    elif curr.hour > 12 <= 18:
         greet = 'Good Afternoon'
     else:
         greet = 'Good Evening'
+        
+    print(curr.hour, greet)
     
     # t = AccountType.objects.get(acc_type_id=request.user.acc_type_id)
     data = Account.objects.select_related('acc_type', 'emp').get(acc_id=request.user.acc_id)
