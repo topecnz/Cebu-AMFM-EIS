@@ -208,20 +208,18 @@
         <div class="text-end">
             <button id="btnPrint" class="btn btn-dark ">Print</button>
             {% if user.acc_type_id != 3%}
-            {% if po.po_status == 'Pending' %}
-            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Confirm Order</button>
-            {% elif po.po_status == 'Approved' %}
-            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Marked as Ordered</button>
-            {% endif %}
-            {% elif po.po_status == 'Ordered' %}
-            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Marked as In-Transit</button>
-            {% endif %}
-            {% elif po.po_status == 'In-Transit' %}
-            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Receive Order</button>
-            {% endif %}
-            {% if po.po_status != 'Cancelled' or po.po_status != 'Delivered' %}
-            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal">Cancel</button>
-            {% endif %}
+                {% if po.po_status == 'Pending' %}
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Confirm Order</button>
+                {% elif po.po_status == 'Approved' %}
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Marked as Ordered</button>
+                {% elif po.po_status == 'Ordered' %}
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Marked as In-Transit</button>
+                {% elif po.po_status == 'In-Transit' %}
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Receive Order</button>
+                {% endif %}
+                {% if po.po_status != 'Cancelled' or po.po_status != 'Delivered' %}
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal">Cancel</button>
+                {% endif %}
             {% endif %}
         </div>
     </div>
