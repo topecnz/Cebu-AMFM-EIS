@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
+from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist, SuspiciousOperation
 from .forms import *
@@ -284,4 +285,28 @@ def change_password_dropdown(request: HttpRequest):
             return JsonResponse(obj)
         
         return render(request, 'main/change_password_dropdown.html')
+    return redirect('/')
+
+@csrf_exempt
+def reset_password(request: HttpRequest):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            id = request.POST['id']
+            
+            User = get_user_model()
+            user = User.objects.filter(acc_id=id).first()
+            
+            if user:
+                newpass = get_random_string(8)
+                user.set_password(newpass)
+                user.save()
+            
+            obj = {
+                    'code': 200 if user else 204,
+                    'message': f'Account password has ben reset' if user else 'Error: user not found!',
+                    'new': f'New password for {user.username} is: {newpass}' if user else '',
+                    'status': 'success' if user else 'warning',
+                }
+            return JsonResponse(obj)
+        
     return redirect('/')

@@ -28,14 +28,6 @@
                 </tr>
             </thead>
             <tbody>
-                {% comment %} <tr>
-                    <td>Tiger Nixon</td>
-                    <td>System Architect</td>
-                    <td>Edinburgh</td>
-                    <td>61</td>
-                    <td>2011-04-25</td>
-                    <td>$320,800</td>
-                </tr> {% endcomment %}
                 {% if result %}
                 {% for user in result %}
                 {% if user.acc_is_active %}
@@ -54,7 +46,7 @@
                     <td>{{user.acc_updated_at}}</td>
                     <td><a href="{% url 'Account Management' %}{{user.acc_id}}" class="btn btn-dark">View</a>
                         <button class="btn btn-dark acc-delete">Delete</button>
-                        <button class="btn btn-dark">Reset Password</button>
+                        <button type="button" class="btn btn-dark acc-reset" data-bs-toggle="modal" data-bs-target="#confirmationModal">Reset Password</button>
                     </td>
                 </tr>
                 {% endif %}
@@ -75,6 +67,30 @@
             </tfoot>
         </table>
     </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="alertMsg2" class="">
+                </div>
+                <label id="switchConfirmText"></label>
+                <div class="mt-1">
+                    <label>Account ID: <span id="account-id"><span></label>
+                </div>
+            </div>
+            <div class="modal-footer">
+              {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> {% endcomment %}
+              <button id="btnReset" type="button" class="btn btn-primary">Proceed</button>
+            </div>
+          </div>
+        </div>
+      </div>
 {% endblock %}
 
 {% block script %}
@@ -86,16 +102,35 @@
         $('.acc-delete').each(function () {
             $(this).click(function () {
                 id = $(this).closest('.acc-data').find('.acc-id').text();
-                console.log(id)
                 $.post("{% url 'Delete Account' %}", {
                     id: id
                 }, function(e) {
                     if (e.code == 200) {
-                        $('#alertMsg').text(e.message).addClass('alert alert-success').remove('alert-warning');
+                        $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
                     } else {
-                        $('#alertMsg').text(e.message).addClass('alert alert-warning').remove('alert-success');
+                        $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
                     }
                 })
+            })
+        });
+        $('.acc-reset').each(function () {
+            $(this).click(function () {
+                id = $(this).closest('.acc-data').find('.acc-id').text();
+                $('#account-id').text(id);
+                $('#switchConfirmText').text('Are you sure to reset this password?'); 
+            })
+        });
+
+        $('#btnReset').click(function(){
+            $.post("{% url 'Reset Account Password' %}", {
+                id: $('#account-id').text()
+            }, function(e) {
+                if (e.code == 200) {
+                    $('#alertMsg2').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
+                    $('#switchConfirmText').text(e.new);
+                } else {
+                    $('#alertMsg2').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
+                }
             })
         });
     </script>
