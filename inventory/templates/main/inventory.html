@@ -20,7 +20,9 @@
             <thead>
                 <tr>
                     <th>Inventory ID</th>
-                    <th>Product Name</th>
+                    <th>Brand</th>
+                    <th>Description</th>
+                    <th>Type</th>
                     <th>Quantity</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -31,7 +33,9 @@
                 {% for inventory in result %}
                 <tr class="inv-data">
                     <td class="inv-id">{{inventory.in_id}}</td>
-                    <td>{{inventory.prod.prod_br.prod_br_name}} {{inventory.prod.prod_desc}}</td>
+                    <td>{{inventory.prod.prod_br.prod_br_name}}</td>
+                    <td>{{inventory.prod.prod_desc}}</td>
+                    <td>{{inventory.prod.prod_type.prod_type_name}}</td>
                     <td>{{inventory.in_qty}}</td>
                     <td class="inv-status">{{inventory.in_status}}</td>
                     <td><a href="{% url 'Inventory' %}{{inventory.in_id}}" class="btn btn-dark m-1">View</a>
@@ -46,7 +50,9 @@
             <tfoot>
                 <tr>
                     <th>Inventory ID</th>
-                    <th>Product Name</th>
+                    <th>Brand</th>
+                    <th>Description</th>
+                    <th>Type</th>
                     <th>Quantity</th>
                     <th>Status</th>
                     <th>Action</th>
