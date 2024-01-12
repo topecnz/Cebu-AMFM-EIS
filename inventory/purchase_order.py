@@ -136,7 +136,7 @@ def submit_order(request: HttpRequest):
         
         # generate qrcode
         img = qrcode.make(f"CEBU AMFM ELECTRONICS CENTER DATA=po-{po.po_id}")
-        img.save(f'./static/assets/qrcode/po-{po.po_id}')
+        img.save(f'./static/assets/qrcode/po-{po.po_id}.png')
             
         obj = {
             'code': 200 if po else 204,

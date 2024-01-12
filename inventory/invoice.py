@@ -128,7 +128,7 @@ def submit_invoice(request: HttpRequest):
         
         # generate qrcode
         img = qrcode.make(f"CEBU AMFM ELECTRONICS CENTER DATA=invoice-{invoice.inv_id}")
-        img.save(f'./static/assets/qrcode/invoice-{invoice.inv_id}')
+        img.save(f'./static/assets/qrcode/invoice-{invoice.inv_id}.png')
             
         obj = {
             'code': 200 if invoice and customer else 204,
