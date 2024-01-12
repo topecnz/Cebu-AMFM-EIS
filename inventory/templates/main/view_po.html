@@ -255,7 +255,7 @@
             <div class="modal-body">
                 <div id="alertMsg3" class="">
                 </div>
-                <label>{% if po.po_status == 'Pending' %}Are you sure to confirm order{% elif po.po_status == 'Approved' %}Receive order{% endif %} #{{po.po_id}}?</label>
+                <label>{% if po.po_status == 'Pending' %}Are you sure to confirm order{% elif po.po_status == 'Approved' %}Mark as Ordered{% elif po.po_status == 'Ordered' %}Mark as In-Transit{% elif po.po_status == 'In-Transit' %}Received{% endif %} #{{po.po_id}}?</label>
             </div>
             <div class="modal-footer">
                 {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> {% endcomment %}
@@ -622,6 +622,11 @@
             }, function(e) {
                 if (e.code == 200) {
                     $('#alertMsg3').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
+                    $(function () {
+                        setTimeout(function() {
+                          window.location.reload()
+                        }, 500);
+                      });
                 }
                 else {
                     $('#alertMsg3').text(e.message).addClass('alert alert-warning').removeClass('alert-success');

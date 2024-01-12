@@ -545,7 +545,7 @@
                     $('#alertMsg').text(e.message + ' Redirecting in 3 seconds...').addClass('alert alert-success').removeClass('alert-warning').fadeIn(0);
                     $(function () {
                         setTimeout(function() {
-                          //window.location = "{% url 'Orders'%}" + e.id;
+                          window.location = "{% url 'Orders'%}" + e.id;
                         }, 3000);
                       });
                 }
