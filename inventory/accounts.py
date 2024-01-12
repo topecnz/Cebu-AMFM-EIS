@@ -51,8 +51,8 @@ def submit_account(request: HttpRequest):
     if request.user.is_authenticated:
         if request.user.acc_type_id == 1:
             if request.method == "POST":
-                fn = request.POST['fname']
-                ln = request.POST['lname']
+                # fn = request.POST['fname']
+                # ln = request.POST['lname']
                 u = request.POST['username'].lower()
                 p = request.POST['password']
                 acc_type = request.POST['acc_type']
@@ -71,9 +71,9 @@ def submit_account(request: HttpRequest):
                 reg = None
                 
                 if not user:
-                    emp = Employee.objects.create(emp_fname=fn, emp_lname=ln)
-                    emp.save()
-                    reg = User.objects.create(username=u, password=make_password(p), acc_type_id=acc_type, emp_id=emp.emp_id)
+                    # emp = Employee.objects.create(emp_fname=fn, emp_lname=ln)
+                    # emp.save()
+                    reg = User.objects.create(username=u, password=make_password(p), acc_type_id=acc_type)
                     reg.save()
                 
                 

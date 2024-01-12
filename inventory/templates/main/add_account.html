@@ -11,7 +11,7 @@
     </div>
     <div id="alertMsg" class="">
     </div>
-    <div class="mb-3">
+    {% comment %} <div class="mb-3">
         <label class="form-label">First Name</label>
         <input id="fname" type="text" class="form-control" placeholder="Enter First Name">
         <div id="fnMsg">
@@ -22,7 +22,7 @@
         <input id="lname" type="text" class="form-control" placeholder="Enter Last Name">
         <div id="lnMsg">
         </div>
-    </div>
+    </div> {% endcomment %}
     <div class="mb-3">
         <label class="form-label">Username</label>
         <input id="username" type="text" class="form-control" placeholder="Enter Username">
@@ -62,8 +62,6 @@
 {% block script %}
 <script>
     $('#btnSubmit').click(function () {
-        fn = $('#fname').val();
-        ln = $('#lname').val();
         u = $('#username').val();
         p = $('#password').val();
         cp = $('#cpassword').val();
@@ -81,8 +79,6 @@
         };
 
         // Check if there's an empty fields
-        $.validate_check('#fnMsg', '#fname', fn);
-        $.validate_check('#lnMsg', '#lname', ln);
         $.validate_check('#userMsg', '#username', u);
         $.validate_check('#passMsg', '#password', p);
         $.validate_check('#cpassMsg', '#cpassword', cp);
@@ -94,8 +90,6 @@
         }
 
         $.post("{% url 'Submit Account' %}", {
-            fname: fn,
-            lname: ln,
             username: u,
             password: p,
             acc_type: at
