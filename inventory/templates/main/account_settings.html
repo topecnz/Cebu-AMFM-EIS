@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Account Settings{% endblock %}
+{% block style %}
+{% endblock %}
+{% block content %}
+
+{% csrf_token %}
+<div class="mb-3">
+    <h3 class="mb-5">Account Settings</h3>
+        {% comment %} <div class="mb-1">
+            <label class="form-label">Account Position Type:</label>
+            <b><label id="user_type">{{user.acc_type.acc_type_name}}</label></b>
+        </div>
+        <div class="mb-1">
+            <label class="form-label">Account Created:</label>
+            <label id="user_created">{{user.acc_created_at}}</label>   
+        </div>
+        <div class="mb-1">
+            <label class="form-label">Last Login:</label>
+            <label id="user_lastlogin">{{user.last_login}}</label>  
+        </div>
+        <div class="mb-1">
+            <label class="form-label">Account Userame:</label>
+            <b><label id="user_name">{{user.username}}</label></b>
+            <input value="{{user.username}}" id="username" type="text" class="form-control mb-4" placeholder="Update Account Username">
+            <div id="auMsg">
+        </div> {% endcomment %}
+</div>
+<div id="alertMsg" class="">
+</div>
+<div class="mb-3">
+    <h4>Account Details</h4>
+</div>
+<div class="row">
+    <div class="mb-3 col-4">
+        <label class="form-label">Username</label>
+        <input id="username" type="text" class="form-control" placeholder="Enter Username" value="{{user.username}}">
+        <div id="userMsg" class="">
+        </div>
+    </div>
+</div>
+<div class="mb-3">
+    <h4>Employee Details</h4>
+</div>
+<div class="mb-3">
+    <div class="row">
+        <div class="col">
+            <label class="form-label">First Name</label>
+            <input id="fname" type="text" class="form-control" placeholder="Enter First Name" value="{{user.emp.emp_fname}}">
+            <div id="fnMsg">
+            </div>
+        </div>
+        <div class="col">
+            <label class="form-label">Middle Name</label>
+            <input id="mname" type="text" class="form-control" placeholder="Enter Middle Name (Optional)" value="{{user.emp.emp_nname}}">
+            <div id="mnMsg">
+            </div>
+        </div>
+        <div class="col">
+            <label class="form-label">Last Name</label>
+            <input id="lname" type="text" class="form-control" placeholder="Enter Last Name" value="{{user.emp.emp_lname}}">
+            <div id="lnMsg">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mb-5">
+    <div class="row">
+        <div class="col">
+            <label class="form-label">Phone Number</label>
+            <input id="phone" type="number" class="form-control" placeholder="Enter Phone Number" value="{{user.emp.emp_phone}}">
+            <div id="phoneMsg">
+            </div>
+        </div>
+        <div class="col">
+            <label class="form-label">Email Address (Recovery Account)</label>
+            <input id="email" type="text" class="form-control" placeholder="Enter Email Address" value="{{user.emp.emp_email}}">
+            <div id="emailMsg">
+            </div>
+        </div>
+        <div class="col">
+            <label class="form-label">Birthdate</label>
+            <input id="birthdate" type="date" class="form-control" placeholder="mm/dd/yy" value="{{user.emp.emp_birthdate.year}}-{{user.emp.emp_birthdate.month}}-{{user.emp.emp_birthdate.day}}">
+            <div id="bdMsg">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-12">
+    <button id="btnSubmit" class="btn btn-dark float-end">Update</button>
+</div>
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        //store old data
+        var old_u = $('#username').val()
+        var old_u = $('#email').val()
+
+        $('#btnSubmit').click(function(){
+            u = $('#username').val();
+            fn = $('#fname').val();
+            mn = $('#mname').val();
+            ln = $('#lname').val();
+            p = $('#phone').val();
+            e = $('#email').val();
+            bd = $('#birthdate').val();
+
+            $.validate_check = function (feed, input, data) {
+                txt = !data ? 'Required' : '';
+                Ac = !data ? 'is-invalid' : 'is-valid';
+                Rc = !data ? 'is-valid' : 'is-invalid';
+                Af = !data ? 'invalid-feedback' : 'valid-feedback';
+                Rf = !data ? 'valid-feedback' : 'invalid-feedback';
+        
+                $(feed).text(txt).addClass(Af).removeClass(Rf);
+                $(input).addClass(Ac).removeClass(Rc);
+            };
+    ;
+            $.validate_check('#userMsg', '#username', u);
+            $.validate_check('#fnMsg', '#fname', fn);
+            $.validate_check('#lnMsg', '#lname', ln);
+            var ph = $.phone_validate();
+            var em = $.email_validate();
+            $.validate_check('#bdMsg', '#birthdate', bd);
+    
+            if (!fn || !ln || !p || !e || !bd || !u) {
+                $('#alertMsg').text('Please input required fields').addClass('alert alert-warning').removeClass('alert-success').fadeIn(0).fadeOut(2000);;
+                return 0;
+            }
+    
+            $.post("{% url 'Account Settings' %}", {
+                u: u,
+                fn: fn,
+                mn: mn,
+                ln: ln,
+                phone: p,
+                email: e,
+                birthdate:bd
+            }, function(e) {
+                if (e.code == 200) {
+                    $('#alertMsg').text(e.message + ' Redirecting in 3 seconds...').addClass('alert alert-success').removeClass('alert-warning');
+                    $(function () {
+                        setTimeout(function() {
+                          window.location.reload();
+                        }, 3000);
+                      });
+                }
+                else {
+                    $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success').fadeIn(0).fadeOut(2000);
+                }
+            })
+        });
+
+        $.phone_validate = function () {
+            var phone = $('#phone').val();
+            var limit = 12; // default
+    
+            var output = false;
+            // validate
+            if ((phone.startsWith('09') || phone.startsWith('639')) && $.isNumeric(phone)) {
+                // change limit if starts with 09
+                if (phone.startsWith('09') && $.isNumeric(phone)) {
+                    limit = 11;
+                }
+                
+                // check limit
+                if (limit == phone.length) {
+                    $('#phoneMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                    $('#phone').addClass('is-valid').removeClass('is-invalid');
+                    output = true;
+                }
+                else {
+                    var message = 'It must be ' + limit + ' numbers.';
+                    $('#phoneMsg').text(message).addClass('invalid-feedback').removeClass('valid-feedback');
+                    $('#phone').addClass('is-invalid').removeClass('is-valid');
+                }
+            }
+            else {
+                $('#phoneMsg').text("Please enter a valid number.").addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#phone').addClass('is-invalid').removeClass('is-valid');
+            }
+    
+            return output;
+        }
+    
+        $('#phone').on('input', function () {
+            $.phone_validate();
+        });
+    
+        $.email_validate = function () {
+            var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            var is_valid = regex.test($('#email').val());
+    
+            if (!is_valid) {
+                $('#emailMsg').text("Please enter a valid email.").addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#email').addClass('is-invalid').removeClass('is-valid');
+            } else {
+                $('#emailMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
+                $('#email').addClass('is-valid').removeClass('is-invalid');
+            }
+    
+            return is_valid;
+        }
+    
+        $('#email').on('input', function() {
+            var is_valid = $.email_validate();
+
+            if ($(this).val() == old_e) {
+                $('#emailMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                $('#email').addClass('is-valid').removeClass('is-invalid');
+                return 0;
+            }
+    
+            if (is_valid) {
+                $.post("{% url 'Check Email' %}", {
+                    email: $(this).val()
+                }, function (e) {
+                    if (e.found == true) {
+                        $('#emailMsg').text("Email is already taken!").addClass('invalid-feedback').removeClass('valid-feedback');
+                        $('#email').addClass('is-invalid').removeClass('is-valid');
+                    } else {
+                        $('#emailMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                        $('#email').addClass('is-valid').removeClass('is-invalid');
+                    }
+                })
+            } 
+        });
+
+        $('#username').on('input', function () {
+            var username = $(this).val();
+            var regex = /^[a-zA-Z0-9\.\_]*$/;
+
+            if ($(this).val() == old_u) {
+                $('#emailMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                $('#email').addClass('is-valid').removeClass('is-invalid');
+                return 0;
+            }
+        
+            // Check if the length is less than 8
+            if (!regex.test(username)) {
+                // Check if the username contains special characters
+                $('#userMsg').text("Please enter a valid username with only alphabet letters.").addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#username').addClass('is-invalid').removeClass('is-valid');
+            } else if (username.length < 8) {
+                $('#userMsg').text("Input username at least 8 characters.").addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#username').addClass('is-invalid').removeClass('is-valid');
+            } else {
+                $.post("{% url 'Check Username' %}", {
+                    username: username
+                }, function (e) {
+                    if (e.found == true) {
+                        $('#userMsg').text("Username is already taken!").addClass('invalid-feedback').removeClass('valid-feedback');
+                        $('#username').addClass('is-invalid').removeClass('is-valid');
+                    } else {
+                        $('#userMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                        $('#username').addClass('is-valid').removeClass('is-invalid');
+                    }
+                });
+            }
+        });
+        
+    </script>
+{% endblock %}

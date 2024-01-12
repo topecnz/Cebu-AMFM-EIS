@@ -112,8 +112,8 @@
             </div>
         </div>
         <div class="col-2">
-            <label class="form-label">Price Quotation</label>
-            <input id="prod-price" type="number" class=" form-control" placeholder="Enter Price Quotation" max="0">
+            <label class="form-label">Unit Price</label>
+            <input id="prod-price" type="number" class=" form-control" placeholder="Enter Unit Price" max="0">
             <div id="prMsg">
             </div>
         </div>
@@ -344,7 +344,9 @@
         $.check_product();
         
         $('#product').change(function() {
-            $.check_product();
+            if ($(this).val().trim()) {
+                $.check_product();
+            }
         });
 
         $('#sup-id').change(function (){
@@ -543,7 +545,7 @@
                     $('#alertMsg').text(e.message + ' Redirecting in 3 seconds...').addClass('alert alert-success').removeClass('alert-warning').fadeIn(0);
                     $(function () {
                         setTimeout(function() {
-                          //window.location = "{% url 'Orders'%}" + e.id;
+                          window.location = "{% url 'Orders'%}" + e.id;
                         }, 3000);
                       });
                 }

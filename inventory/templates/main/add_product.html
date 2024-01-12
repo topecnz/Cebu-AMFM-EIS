@@ -156,29 +156,29 @@
             prod_br: pb
         }, function (e) {
             if (e.code == 200) {
-                $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
+                $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning').fadeIn(0).fadeOut(2000);
             }
             else {
-                $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
+                $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success').fadeIn(0).fadeOut(2000);
             }
         }
         );
     });
 
-    $('#prod').on('input', function () {
-        var p = $('#prod').val()
+    {% comment %} $('#desc').on('input', function () {
+        var p = $(this).val()
         $.post("{% url 'Check Product Name' %}", {
             prod: p
         }, function (e) {
             if (e.found == true) {
                 $('#pMsg').text("Product is already added!").addClass('invalid-feedback').removeClass('valid-feedback');
-                $('#prod').addClass('is-invalid').removeClass('is-valid');
+                $(this).addClass('is-invalid').removeClass('is-valid');
             } else {
                 $('#pMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
-                $('#prod').addClass('is-valid').removeClass('is-invalid');
+                $(this).addClass('is-valid').removeClass('is-invalid');
             }
         })
-    });
+    }); {% endcomment %}
 
     $('#prod_type').change(function() {
         if ($('#prod_type').val() == 'other') {
@@ -200,5 +200,6 @@
     $('#btnBack').click(function () {
         window.location.href = "{% url 'Products' %}"
     });
+    
 </script>
 {% endblock %}

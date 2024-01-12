@@ -52,10 +52,11 @@ def submit_supplier(request: HttpRequest):
         if request.user.acc_type_id != 3:
             if request.method == "POST":
                 sn = request.POST['name']
-                phone = request.POST['phone']
-                email = request.POST['email']
+                # phone = request.POST['phone']
+                # email = request.POST['email']
+                address = request.POST['addr']
                 
-                sup = Supplier.objects.create(sup_name=sn, sup_phone=phone, sup_email=email, sup_status='Active')
+                sup = Supplier.objects.create(sup_name=sn, sup_address=address, sup_status='Active')
                 sup.save()
                 
                 obj = {
@@ -73,13 +74,13 @@ def update_supplier(request: HttpRequest):
             if request.method == "POST":
                 id = request.POST['id']
                 sn = request.POST['name']
-                phone = request.POST['phone']
-                email = request.POST['email']
+                # phone = request.POST['phone']
+                addr = request.POST['addr']
                 
                 sup = Supplier.objects.get(sup_id=id)
                 sup.sup_name = sn
-                sup.sup_phone = phone
-                sup.sup_email = email
+                # sup.sup_phone = phone
+                sup.sup_address = addr
                 sup.save()
                 
                 obj = {

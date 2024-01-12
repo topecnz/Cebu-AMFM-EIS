@@ -92,6 +92,7 @@
         </div>
     </div>
 
+{% if user.acc_type_id != 3 %}
 <div class="col-md-6">
     <div class="card mt-3 rounded-top rounded-2">
         <div class="card-body">
@@ -102,35 +103,68 @@
                         <i class="fas fa-plus-circle fa-lg me-3"></i> Add Product
                     </a>
                 </div>
-                {% if user.acc_type_id == 1%}
+                {% if user.acc_type_id == 1 %}
                 <div class="col-md-6 mb-2">
                     <a href="{% url 'Add Account' %}" class="btn btn-lg btn-primary btn-dark w-100" style="background-color: #141770;">
                         <i class="fas fa-user fa-lg me-3"></i> Add Account
                     </a>
                 </div>
                 {% endif %}
+
                 <div class="col-md-6 mb-2">
                     <a href="{% url 'Add Inventory' %}" class="btn btn-lg btn-primary btn-dark w-100 mb-2" style="background-color: #141770;">
                         <i class="fas fa-box fa-lg me-3"></i> Add Inventory
                     </a>
                 </div>
                 <div class="col-md-6 mb-2">
-                    <a href="{% url 'Create Invoice' %}" class="btn btn-lg btn-primary btn-dark w-100" style="background-color: #141770;">
+                    <a href="{% url 'Create Invoice' %}" class="btn btn-lg btn-primary btn-dark w-100 mb-2" style="background-color: #141770;">
                         <i class="fas fa-file-invoice fa-lg me-3"></i> Create Invoice
                     </a>
                 </div>
                 <div class="col-md-6 mb-2">
-                    <a href="{% url 'Create PO' %}" class="btn btn-lg btn-primary btn-dark w-100" style="background-color: #141770;">
+                    <a href="{% url 'Create PO' %}" class="btn btn-lg btn-primary btn-dark w-100 mb-2" style="background-color: #141770;">
                         <i class="fas fa-file-alt fa-lg me-3"></i> Create PO
                     </a>
                 </div>
                 <div class="col-md-6 mb-2">
                     <a href="{% url 'Add Supplier' %}" class="btn btn-lg btn-primary btn-dark w-100" style="background-color: #141770;">
-                        <i class="fas fa-shopping-cart fa-lg me-3"></i> Add Supplier
+                        <i class="fas fa-cart-plus fa-lg me-3"></i> Add Supplier
+                    </a>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#searchModal" class="btn btn-lg btn-primary btn-dark w-100 mb-2" style="background-color: #141770;">
+                        <i class="fas fa-print fa-lg me-3"></i> Print an Invoice
+                    </button>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <a href="{#}" class="btn btn-lg btn-primary btn-dark w-100 mb-2" style="background-color: #141770;">
+                        <i class="fas fa-qrcode fa-lg me-3"></i> Scan QR Code
                     </a>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Search Modal (Print an Invoice) -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="searchModalLabel">Print an Invoice</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div id="alertMsg" class="">
+            </div>
+            <input id="searchinv" type="number" placeholder="Enter Invoice ID" class="form-control"></input>
+        </div>
+        <div class="modal-footer">
+          {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> {% endcomment %}
+          <button id="btnSubmit" type="button" class="btn btn-primary" onclick="searchPrintInvoice();">Search</button>
+        </div>
+      </div>
     </div>
 </div>
 
@@ -159,5 +193,10 @@
     $('#calendar').fullCalendar({
         contentHeight: 'auto'
     });
+
+    function searchPrintInvoice() {
+        var id = document.getElementById('searchinv').value;
+        window.location = "{% url 'Invoices' %}" + id;
+    }
 </script>
 {% endblock %}

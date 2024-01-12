@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+{% block title %}Change Password{% endblock %}
+
+{% block style %}
+<style>
+    input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="mb-5 mt-5">
+        <h2><strong>Employee Information</strong></h2>
+    <div>
+    <div class="mb-3 mt-5">
+        <div class="mb-3">
+            <h4>Change Password</h4>
+        </div>
+        <div class="row">
+            <div class="col-6 mb-3">
+                <label class="form-label">Password</label>
+                <input id="password" type="password" class="form-control {% if is_p_matched %}{{p_color}}{% endif %}" placeholder="Enter Password">
+                <div id="passMsg">
+                </div>
+            </div>
+            <div class="col-6 mb-3">
+                <label class="form-label">Confirm Password</label>
+                <input id="cpassword" type="password" class="form-control" placeholder="Enter Confirm Password">
+                <div id="cpassMsg">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mb-3 mt-5">
+        <h4>Employee Details</h4>
+    </div>
+    <div class="mb-3">
+        <div class="row">
+            <div class="col-4 mb-3">
+                <label class="form-label">First Name</label>
+                <input id="fname" type="text" class="form-control" placeholder="Enter First Name">
+                <div id="fnMsg">
+                </div>
+            </div>
+            <div class="col-4 mb-3">
+                <label class="form-label">Middle Name</label>
+                <input id="mname" type="text" class="form-control" placeholder="Enter Middle Name (Optional)">
+                <div id="mnMsg">
+                </div>
+            </div>
+            <div class="col-4 mb-3">
+                <label class="form-label">Last Name</label>
+                <input id="lname" type="text" class="form-control" placeholder="Enter Last Name">
+                <div id="lnMsg">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4 mb-3">
+                <label class="form-label">Phone Number</label>
+                <input id="phone" type="number" class="form-control" placeholder="Enter Phone Number">
+                <div id="phoneMsg">
+                </div>
+            </div>
+            <div class="col-4 mb-3">
+                <label class="form-label">Email Address (Recovery Account)</label>
+                <input id="email" type="email" class="form-control" placeholder="Enter Email Address">
+                <div id="emailMsg">
+                </div>
+            </div>
+            <div class="col-4 mb-3">
+                <label class="form-label">Birthdate</label>
+                <input id="birthdate" type="date" class="form-control" placeholder="">
+                <div id="bdMsg">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal">Submit</button>
+        <a href="{% url 'Logout' %}" class="btn btn-dark">Logout</a>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="alertMsg" class="">
+                </div>
+                <label>Are you sure to complete this process?</label>
+            </div>
+            <div class="modal-footer">
+              {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> {% endcomment %}
+              <button id="btnSubmit" type="button" class="btn btn-primary">Proceed</button>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    $('#cpassword').on("input", function () {
+        var pw = $('#password').val();
+        var cpw = $('#cpassword').val();
+
+        if (pw != cpw) {
+            $('#cpassMsg').text("Password not matched!").addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#cpassword').addClass('is-invalid').removeClass('is-valid');
+        }
+        else {
+            $('#cpassMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
+            $('#cpassword').addClass('is-valid').removeClass('is-invalid');
+        }
+    });
+
+    $('#password').on("input", function () {
+        var pw = $('#password').val().length;
+
+        if (pw < 8) {
+            $('#passMsg').text("Input password atleast 8 characters.").addClass('invalid-feedback').removeClass('valid-feedback');;
+            $('#password').addClass('is-invalid').removeClass('is-valid');
+        }
+        else {
+            $('#passMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
+            $('#password').addClass('is-valid').removeClass('is-invalid');
+        }
+    });
+
+    $.phone_validate = function () {
+        var phone = $('#phone').val();
+        var limit = 12; // default
+
+        var output = false;
+        // validate
+        if ((phone.startsWith('09') || phone.startsWith('639')) && $.isNumeric(phone)) {
+            // change limit if starts with 09
+            if (phone.startsWith('09') && $.isNumeric(phone)) {
+                limit = 11;
+            }
+            
+            // check limit
+            if (limit == phone.length) {
+                $('#phoneMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                $('#phone').addClass('is-valid').removeClass('is-invalid');
+                output = true;
+            }
+            else {
+                var message = 'It must be ' + limit + ' numbers.';
+                $('#phoneMsg').text(message).addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#phone').addClass('is-invalid').removeClass('is-valid');
+            }
+        }
+        else {
+            $('#phoneMsg').text("Please enter a valid number.").addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#phone').addClass('is-invalid').removeClass('is-valid');
+        }
+
+        return output;
+    }
+
+    $('#phone').on('input', function () {
+        $.phone_validate();
+    });
+
+    $.email_validate = function () {
+        var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        var is_valid = regex.test($('#email').val());
+
+        if (!is_valid) {
+            $('#emailMsg').text("Please enter a valid email.").addClass('invalid-feedback').removeClass('valid-feedback');
+            $('#email').addClass('is-invalid').removeClass('is-valid');
+        } else {
+            $('#emailMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
+            $('#email').addClass('is-valid').removeClass('is-invalid');
+        }
+
+        return is_valid;
+    }
+
+    $('#email').on('input', function() {
+        var is_valid = $.email_validate();
+
+        if (is_valid) {
+            $.post("{% url 'Check Email' %}", {
+                email: $(this).val().trim()
+            }, function (e) {
+                if (e.found == true) {
+                    $('#emailMsg').text("Email is already taken!").addClass('invalid-feedback').removeClass('valid-feedback');
+                    $('#email').addClass('is-invalid').removeClass('is-valid');
+                } else {
+                    $('#emailMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                    $('#email').addClass('is-valid').removeClass('is-invalid');
+                }
+            })
+        } 
+    });
+
+    $.validate_check = function (feed, input, data) {
+        txt = !data ? 'Required' : '';
+        Ac = !data ? 'is-invalid' : 'is-valid';
+        Rc = !data ? 'is-valid' : 'is-invalid';
+        Af = !data ? 'invalid-feedback' : 'valid-feedback';
+        Rf = !data ? 'valid-feedback' : 'invalid-feedback';
+
+        $(feed).text(txt).addClass(Af).removeClass(Rf);
+        $(input).addClass(Ac).removeClass(Rc);
+    };
+
+    $('#btnSubmit').click(function(){
+        pass = $('#password').val();
+        cpass = $('#cpassword').val();
+        fn = $('#fname').val();
+        mn = $('#mname').val();
+        ln = $('#lname').val();
+        p = $('#phone').val();
+        e = $('#email').val();
+        bd = $('#birthdate').val();
+
+        $.validate_check('#passMsg', '#password', pass);
+        $.validate_check('#cpassMsg', '#cpassword', cpass);
+        $.validate_check('#fnMsg', '#fname', fn);
+        $.validate_check('#lnMsg', '#lname', ln);
+        var ph = $.phone_validate();
+        var em = $.email_validate();
+        $.validate_check('#bdMsg', '#birthdate', bd);
+
+        if (!pass || !cpass || !fn || !ln || !p || !e || !bd || pass != cpass) {
+            $('#alertMsg').text('Please input required fields').addClass('alert alert-warning').removeClass('alert-success').fadeIn(0).fadeOut(2000);;
+            return 0;
+        }
+
+        $.post("{% url 'Submit Info' %}", {
+            pass: pass,
+            cpass: cpass,
+            fn: fn,
+            mn: mn,
+            ln: ln,
+            phone: p,
+            email: e,
+            birthdate:bd
+        }, function(e) {
+            if (e.code == 200) {
+                $('#alertMsg').text(e.message + ' Redirecting in 3 seconds...').addClass('alert alert-success').removeClass('alert-warning').fadeIn(0);
+                $(function () {
+                    setTimeout(function() {
+                      window.location.reload();
+                    }, 3000);
+                  });
+            }
+            else {
+                $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success').fadeIn(0).fadeOut(2000);
+            }
+        })
+    });
+    
+</script>
+{% endblock %}
+
+
+
+
+
+
+

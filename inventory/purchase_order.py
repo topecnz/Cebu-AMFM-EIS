@@ -14,11 +14,14 @@ import json
 
 @login_required(login_url='/login')
 def orders(request: HttpRequest):
-    po = PurchaseOrder.objects.select_related('emp', 'sup')
-    obj = {
-        'result': po,
-    }
-    return render(request, 'main/orders.html', obj)
+    if request.user.acc_type_id != 3:    
+        po = PurchaseOrder.objects.select_related('emp', 'sup')
+        obj = {
+            'result': po,
+        }
+        return render(request, 'main/orders.html', obj)
+    
+    raise PermissionDenied()
 
 def create_po(request:HttpRequest):
     if not request.user.is_authenticated:
@@ -212,7 +215,15 @@ def update_po(request: HttpRequest):
             
         po = PurchaseOrder.objects.get(po_id=request.POST['id'])
         inventory = Inventory.objects.select_related('prod')
-        po.po_status = 'Approved' if po.po_status == 'Pending' else 'Received'
+        
+        if po.po_status == 'Pending':
+            po.po_status = 'Approved'
+        elif po.po_status == 'Approved':
+            po.po_status = 'Ordered'
+        elif po.po_status == 'Ordered':
+            po.po_status = 'In-Transit'
+        elif po.po_status == 'In-Transit':
+            po.po_status = 'Delivered'
         
         total = 0
         for r in j['result']:
@@ -232,14 +243,19 @@ def update_po(request: HttpRequest):
                 sup_itm.sup_itm_status = 'Removed'
 
             sup_itm.save()
-        
-            if po.po_status == 'Received':
-                data, in_created = inventory.get_or_create(prod_id = sup_itm.prod.prod_id)
             
+            if po.po_status == 'Approved':
+                sup_itm.prod.prod_price = float("{:.2f}".format(float(r['price'])))
+                sup_itm.prod.save()
+        
+            if po.po_status == 'Delivered':
+                data, in_created = inventory.get_or_create(prod_id = sup_itm.prod.prod_id)
+                data.in_qty = data.in_qty if data.in_qty else 0
                 data.in_qty = data.in_qty + int(r['qty']) if not in_created else int(r['qty'])
+                data.in_status = 'Available' if data.in_qty else 'Out of Stock'
                 data.save()
         
-        po.po_amount = "{:.2f}".format(total)
+        po.po_amount = "{:.2f}".format(total)        
 
         po.save()
             
