@@ -135,12 +135,13 @@
             })
         });
 
-        $('#btnSubmit').click(function() {
+        $('#btnSubmit').click(function(){
             $.post("{% url 'Delete Account' %}", {
-                id: $('#account-id-del')
+                id: $('#account-id-del').text()
             }, function(e) {
                 if (e.code == 200) {
                     $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
+                    $('#switchConfirmText2').text(e.new);
                 } else {
                     $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
                 }
