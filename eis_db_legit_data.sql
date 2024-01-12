@@ -38,6 +38,36 @@ INSERT INTO `invoice_type` (`inv_type_id`, `inv_type_name`) VALUES
 (2, 'Project-based');
 
 --
+-- Dumping data for table `product_brand`
+--
+
+INSERT INTO `product_brand` (`prod_br_id`, `prod_br_name`) VALUES
+(1, 'SHURE'),
+(2, 'SUPERLUX'),
+(3, 'MI PRO'),
+(4, 'PROSTAX'),
+(5, 'SENNHEISER'),
+(6, 'KEVLER'),
+(7, 'FROGIS'),
+(8, 'MACARDEN MC'),
+(9, 'EPSON'),
+(10, 'SONY'),
+(11, 'YAMAHA'),
+(12, 'SOUND CRAFT'),
+(13, 'DBX'),
+(14, 'MACKIE'),
+(15, 'K GEAR');
+
+--
+-- Dumping data for table `product_type`
+--
+
+INSERT INTO `product_type` (`prod_type_id`, `prod_type_name`) VALUES
+(1, 'MICROPHONE'),
+(2, 'PROJECTOR'),
+(3, 'MIXER');
+
+--
 -- Dumping data for table `product`
 --
 
@@ -90,35 +120,6 @@ INSERT INTO `product` (`prod_id`, `prod_desc`, `prod_price`, `prod_created_at`, 
 (46, 'GF22', 1, '2024-01-12 00:54:45.251352', '2024-01-12 00:54:45.251352', 3, 15, 'Active', NULL),
 (47, 'GA201', 1, '2024-01-12 00:54:50.621954', '2024-01-12 00:54:50.621954', 3, 15, 'Active', NULL);
 
---
--- Dumping data for table `product_brand`
---
-
-INSERT INTO `product_brand` (`prod_br_id`, `prod_br_name`) VALUES
-(1, 'SHURE'),
-(2, 'SUPERLUX'),
-(3, 'MI PRO'),
-(4, 'PROSTAX'),
-(5, 'SENNHEISER'),
-(6, 'KEVLER'),
-(7, 'FROGIS'),
-(8, 'MACARDEN MC'),
-(9, 'EPSON'),
-(10, 'SONY'),
-(11, 'YAMAHA'),
-(12, 'SOUND CRAFT'),
-(13, 'DBX'),
-(14, 'MACKIE'),
-(15, 'K GEAR');
-
---
--- Dumping data for table `product_type`
---
-
-INSERT INTO `product_type` (`prod_type_id`, `prod_type_name`) VALUES
-(1, 'MICROPHONE'),
-(2, 'PROJECTOR'),
-(3, 'MIXER');
 
 --
 -- Dumping data for table `inventory`
