@@ -251,16 +251,16 @@ def submit_info(request: HttpRequest):
         User = get_user_model()
         user = User.objects.get(acc_id=request.user.acc_id)
         
-        email = Employee.objects.filter(emp_email=email).first()
+        is_email = Employee.objects.filter(emp_email=email).first()
         
-        if len(pw) < 8 or pw != cpw or email:
+        if len(pw) < 8 or pw != cpw or is_email:
             message = ''
             if len(pw) < 8:
                 message += 'Password must be 8 characters. <br/>' 
             elif pw != cpw:
                 message += 'Password not matched. <br/>'
                 
-            if email:
+            if is_email:
                 message += 'Email already existed'
                  
             return JsonResponse({

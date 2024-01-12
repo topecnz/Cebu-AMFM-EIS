@@ -240,8 +240,6 @@
             return 0;
         }
 
-        console.log('teste')
-
         $.post("{% url 'Submit Info' %}", {
             pass: pass,
             cpass: cpass,
@@ -253,7 +251,7 @@
             birthdate:bd
         }, function(e) {
             if (e.code == 200) {
-                $('#alertMsg').text(e.message + ' Redirecting in 3 seconds...').addClass('alert alert-success').removeClass('alert-warning');
+                $('#alertMsg').text(e.message + ' Redirecting in 3 seconds...').addClass('alert alert-success').removeClass('alert-warning').fadeIn(0);
                 $(function () {
                     setTimeout(function() {
                       window.location.reload();
