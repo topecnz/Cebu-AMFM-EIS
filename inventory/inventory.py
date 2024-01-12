@@ -71,7 +71,7 @@ def view_inventory(request: HttpRequest, id: int):
 @csrf_exempt
 def submit_inventory(request: HttpRequest):
     if request.user.is_authenticated:
-        if request.user.acc_type_id == 1:
+        if request.user.acc_type_id != 3:
             if request.method == "POST":
                 p = request.POST['prod']
                 q = request.POST['qty']
