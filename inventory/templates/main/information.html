@@ -193,7 +193,7 @@
 
         if (is_valid) {
             $.post("{% url 'Check Email' %}", {
-                email: $(this).val()
+                email: $(this).val().trim()
             }, function (e) {
                 if (e.found == true) {
                     $('#emailMsg').text("Email is already taken!").addClass('invalid-feedback').removeClass('valid-feedback');

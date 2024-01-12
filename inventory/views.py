@@ -218,19 +218,18 @@ def change_password(request: HttpRequest, token: str = None):
 @csrf_exempt
 def check_email(request: HttpRequest):
     if request.user.is_authenticated:
-        if request.user.acc_type_id == 1:
-            if request.method == "POST":
-                u = request.POST['email'].lower()
-                emp = Employee.objects.filter(emp_email=u).first()
-                
-                is_found = False
-                if emp:
-                    is_found = True
-                
-                obj = {
-                    'found': is_found
-                }
-                return JsonResponse(obj)
+        if request.method == "POST":
+            u = request.POST['email'].lower()
+            emp = Employee.objects.filter(emp_email=u).first()
+            
+            is_found = False
+            if emp:
+                is_found = True
+            
+            obj = {
+                'found': is_found
+            }
+            return JsonResponse(obj)
 
     return redirect('/')
 
@@ -252,10 +251,21 @@ def submit_info(request: HttpRequest):
         User = get_user_model()
         user = User.objects.get(acc_id=request.user.acc_id)
         
-        if len(pw) < 8 or pw != cpw:
+        email = Employee.objects.filter(emp_email=email).first()
+        
+        if len(pw) < 8 or pw != cpw or email:
+            message = ''
+            if len(pw) < 8:
+                message += 'Password must be 8 characters. <br/>' 
+            elif pw != cpw:
+                message += 'Password not matched. <br/>'
+                
+            if email:
+                message += 'Email already existed'
+                 
             return JsonResponse({
                 'code': 204,
-                'message': 'error'
+                'message': f'Error: {message}' 
             })
         
         user.password = make_password(pw)
