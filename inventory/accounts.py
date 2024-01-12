@@ -183,29 +183,36 @@ def update_account(request: HttpRequest):
         if request.user.acc_type_id == 1: # Super Admin
             if request.method == "POST":
                 id = request.POST['id']
-                fn = request.POST['fname']
-                ln = request.POST['lname']
-                u = request.POST['username'].lower()
-                p = request.POST['password']
+                fn = request.POST['fn']
+                mn = request.POST['mn']
+                ln = request.POST['ln']
+                u = request.POST['u'].lower()
+                p = request.POST['phone']
+                email = request.POST['email']
+                bd = request.POST['birthdate']
                 acc_type = request.POST['acc_type']
 
-                acc = Account.objects.get(acc_id=id)
-                emp, created = Employee.objects.get_or_create(emp_fname=fn, emp_lname=ln)
+                User = get_user_model()
+                user = User.objects.filter(acc_id=id).first()
+                
+                user.username = u
+                user.acc_updated_at = timezone.now()
+                user.acc_type_id = acc_type
+                user.save()
+                
+                emp = Employee.objects.filter(emp_id=request.user.emp_id).first()
                 emp.emp_fname = fn
+                emp.emp_mname = mn
                 emp.emp_lname = ln
+                emp.emp_phone = p
+                emp.emp_email = email
+                emp.emp_birthdate = bd
                 emp.emp_updated_at = timezone.now()
                 emp.save()
-                acc.username = u
-                acc.password = make_password(p)
-                acc.acc_type_id = acc_type
-                acc.emp_id = emp.emp_id
-                acc.acc_type_id = int(acc_type)
-                acc.emp_id = emp.emp_id
-                acc.save()
-                
+                    
                 obj = {
-                    'code': 200 if acc else 204,
-                    'message': 'Account is successfully updated!' if acc else 'Error!',
+                    'code': 200 if user and emp else 204,
+                    'message': 'Account is successfully updated!' if user and emp else 'Error!',
                 }
                 return JsonResponse(obj)
             
@@ -214,7 +221,6 @@ def update_account(request: HttpRequest):
 @csrf_exempt
 def update_account_2(request: HttpRequest):
     if request.user.is_authenticated:
-    #     if request.user.acc_type_id == 2: # Admin
         if request.method == "POST":
             fn = request.POST['fn']
             mn = request.POST['mn']
@@ -225,13 +231,13 @@ def update_account_2(request: HttpRequest):
             bd = request.POST['birthdate']
             
             User = get_user_model()
-            user = User.objects.get(acc_id=request.user.acc_id)
+            user = User.objects.filter(acc_id=request.user.acc_id).first()
             
             user.username = u
             user.acc_updated_at = timezone.now()
             user.save()
             
-            emp = Employee.objects.get(emp_id=request.user.emp_id)
+            emp = Employee.objects.filter(emp_id=request.user.emp_id).first()
             emp.emp_fname = fn
             emp.emp_mname = mn
             emp.emp_lname = ln

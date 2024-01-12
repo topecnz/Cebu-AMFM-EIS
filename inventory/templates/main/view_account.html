@@ -104,14 +104,85 @@
 
 {% block script %}
     <script>
+        $.phone_validate = function () {
+            var phone = $('#phone').val();
+            var limit = 12; // default
+    
+            var output = false;
+            // validate
+            if ((phone.startsWith('09') || phone.startsWith('639')) && $.isNumeric(phone)) {
+                // change limit if starts with 09
+                if (phone.startsWith('09') && $.isNumeric(phone)) {
+                    limit = 11;
+                }
+                
+                // check limit
+                if (limit == phone.length) {
+                    $('#phoneMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                    $('#phone').addClass('is-valid').removeClass('is-invalid');
+                    output = true;
+                }
+                else {
+                    var message = 'It must be ' + limit + ' numbers.';
+                    $('#phoneMsg').text(message).addClass('invalid-feedback').removeClass('valid-feedback');
+                    $('#phone').addClass('is-invalid').removeClass('is-valid');
+                }
+            }
+            else {
+                $('#phoneMsg').text("Please enter a valid number.").addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#phone').addClass('is-invalid').removeClass('is-valid');
+            }
+    
+            return output;
+        }
+    
+        $('#phone').on('input', function () {
+            $.phone_validate();
+        });
+    
+        $.email_validate = function () {
+            var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            var is_valid = regex.test($('#email').val());
+    
+            if (!is_valid) {
+                $('#emailMsg').text("Please enter a valid email.").addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#email').addClass('is-invalid').removeClass('is-valid');
+            } else {
+                $('#emailMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');;
+                $('#email').addClass('is-valid').removeClass('is-invalid');
+            }
+    
+            return is_valid;
+        }
+    
+        $('#email').on('input', function() {
+            var is_valid = $.email_validate();
+    
+            if (is_valid) {
+                $.post("{% url 'Check Email' %}", {
+                    email: $(this).val().trim()
+                }, function (e) {
+                    if (e.found == true) {
+                        $('#emailMsg').text("Email is already taken!").addClass('invalid-feedback').removeClass('valid-feedback');
+                        $('#email').addClass('is-invalid').removeClass('is-valid');
+                    } else {
+                        $('#emailMsg').text("").addClass('valid-feedback').removeClass('invalid-feedback');
+                        $('#email').addClass('is-valid').removeClass('is-invalid');
+                    }
+                })
+            } 
+        });
+        
         $('#btnSubmit').click(function () {
-            console.log('test')
             id = $('#user_id').text();
-            fn = $('#fname').val();
-            ln = $('#lname').val();
             u = $('#username').val();
-            p = $('#password').val();
             acc_type = $('#user_type').val();
+            fn = $('#fname').val();
+            mn = $('#mname').val();
+            ln = $('#lname').val();
+            p = $('#phone').val();
+            e = $('#email').val();
+            bd = $('#birthdate').val();
 
             $.validate_check = function (feed, input, data) {
                 txt = !data ? 'Required' : '';
@@ -125,22 +196,26 @@
             };
 
             // Check if there's an empty fields
-            $.validate_check('#auMsg', '#username', u);
-            $.validate_check('#fMsg', '#fname', fn);
-            $.validate_check('#lMsg', '#lname', ln);
-            $.validate_check('#pwMsg', '#password', p);
+            $.validate_check('#fnMsg', '#fname', fn);
+            $.validate_check('#lnMsg', '#lname', ln);
+            var ph = $.phone_validate();
+            var em = $.email_validate();
+            $.validate_check('#bdMsg', '#birthdate', bd);
 
-            // return if found
-            if (!u || !fn || !ln || !p) {           
+            if (!u || !fn || !ln || !ph || !em || !bd) {
+                $('#alertMsg').text('Please input required fields').addClass('alert alert-warning').removeClass('alert-success').fadeIn(0).fadeOut(2000);
                 return 0;
             }
 
             $.post("{% url 'Update Account' %}", {
                 id: id,
-                fname: fn,
-                lname: ln,
-                username: u,
-                password: p,
+                fn: fn,
+                mn: mn,
+                ln: ln,
+                phone: p,
+                email: e,
+                birthdate: bd,
+                u: u,
                 acc_type: acc_type
             }, function (e) {
                 if (e.code == 200) {
