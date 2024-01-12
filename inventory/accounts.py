@@ -280,6 +280,9 @@ def change_password_dropdown(request: HttpRequest):
             acc.acc_updated_at = timezone.now()
             acc.save()
             
+            userlogin = authenticate(username=acc.username, password=p)
+            login(request, userlogin)
+            
             obj = {
                 'code': 200,
                 'message': 'Password is successfully updated',

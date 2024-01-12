@@ -283,6 +283,10 @@ def submit_info(request: HttpRequest):
         user.emp_id = emp.emp_id
         user.save()
         
+        # reloging user
+        userlogin = authenticate(username=user.username, password=pw)
+        login(request, userlogin)
+        
         obj = {
             'code': 200 if emp else 204,
             'message': 'Employee information is successfully added!' if emp else 'Error!',
