@@ -211,9 +211,9 @@
                 {% if po.po_status == 'Pending' %}
                 <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Confirm Order</button>
                 {% elif po.po_status == 'Approved' %}
-                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Marked as Ordered</button>
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Mark as Ordered</button>
                 {% elif po.po_status == 'Ordered' %}
-                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Marked as In-Transit</button>
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Mark as In-Transit</button>
                 {% elif po.po_status == 'In-Transit' %}
                 <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Receive Order</button>
                 {% endif %} 
