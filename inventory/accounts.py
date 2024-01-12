@@ -235,6 +235,7 @@ def update_account_2(request: HttpRequest):
             emp.emp_phone = p
             emp.emp_email = email
             emp.emp_birthdate = bd
+            emp.emp_updated_at = timezone.now()
             emp.save()
                 
             obj = {
@@ -251,30 +252,34 @@ def update_account_2(request: HttpRequest):
 def change_password_dropdown(request: HttpRequest):
     if request.user.is_authenticated:
         if request.method == "POST":
-            id = request.POST['id']
-            fn = request.POST['fname']
-            ln = request.POST['lname']
-            u = request.POST['username'].lower()
             p = request.POST['password']
-            acc_type = request.POST['acc_type']
+            cp = request.POST['cpassword']
+            op = request.POST['opassword']
             
-            acc = Account.objects.get(acc_id=id)
-            emp, created = Employee.objects.get_or_create(emp_fname=fn, emp_lname=ln)
-            emp.emp_fname = fn
-            emp.emp_lname = ln
-            emp.emp_updated_at = timezone.now()
-            emp.save()
-            acc.username = u
+            User = get_user_model()
+            acc = User.objects.filter(acc_id=request.user.acc_id).first()
+            
+            is_pass_valid = acc.check_password(op)
+            
+            if p != cp:
+                return JsonResponse({
+                    'code': 204,
+                    'message': 'Error: Password not matched'
+                })
+            
+            if not is_pass_valid:
+                return JsonResponse({
+                    'code': 204,
+                    'message': 'Error: Incorrect Password'
+                })
+                    
             acc.password = make_password(p)
-            acc.acc_type_id = acc_type
-            acc.emp_id = emp.emp_id
-            acc.acc_type_id = int(acc_type)
-            acc.emp_id = emp.emp_id
+            acc.acc_updated_at = timezone.now()
             acc.save()
             
             obj = {
-                'code': 200 if acc else 204,
-                'message': 'Password is successfully updated' if acc else 'Error!',
+                'code': 200,
+                'message': 'Password is successfully updated',
             }
             return JsonResponse(obj)
         
