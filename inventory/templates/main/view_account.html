@@ -49,18 +49,53 @@
     <h3>Account Information</h3>
 </div>
 <div class="mb-3">
-    <label class="form-label">First Name:</label>
-    <label id="user_fname">{{userdata.emp.emp_fname}}</label>  
-    <input value="{{userdata.emp.emp_fname}}" id="fname" type="text" class="form-control mb-4" placeholder="Update Account First Name">
-    <div id="fMsg">
+    <div class="row">
+        <div class="col-md-4">
+            <label class="form-label">First Name</label>
+            {% comment %} <label id="user_fname">{{userdata.emp.emp_fname}}</label>   {% endcomment %}
+            <input value="{{userdata.emp.emp_fname}}" id="fname" type="text" class="form-control mb-4" placeholder="Update Account First Name">
+            <div id="fMsg">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Middle Name</label>
+            <input value="{{user.emp.emp_nname}}" id="mname" type="text" class="form-control" placeholder="Enter Middle Name (Optional)">
+            <div id="mnMsg">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Last Name</label>
+            {% comment %} <label id="user_lname">{{userdata.emp.emp_lname}}</label> {% endcomment %}
+            <input value="{{userdata.emp.emp_lname}}" id="lname" type="text" class="form-control mb-4" placeholder="Update Account Last Name">
+            <div id="lMsg">
+            </div>  
+        </div>
+    </div>
 </div>
 <div class="mb-3">
-    <label class="form-label">Last Name:</label>
-    <label id="user_lname">{{userdata.emp.emp_lname}}</label>
-    <input value="{{userdata.emp.emp_lname}}" id="lname" type="text" class="form-control mb-4" placeholder="Update Account Last Name">
-    <div id="lMsg">
+    <div class="row">
+        <div class="col">
+            <label class="form-label">Phone Number</label>
+            <input id="phone" type="number" class="form-control" placeholder="Enter Phone Number" value="{{user.emp.emp_phone}}">
+            <div id="phoneMsg">
+            </div>
+        </div>
+        <div class="col">
+            <label class="form-label">Email Address (Recovery Account)</label>
+            <input id="email" type="text" class="form-control" placeholder="Enter Email Address" value="{{user.emp.emp_email}}">
+            <div id="emailMsg">
+            </div>
+        </div>
+        <div class="col">
+            <label class="form-label">Birthdate</label>
+            <input id="birthdate" type="date" class="form-control" placeholder="mm/dd/yy" value="{{user.emp.emp_birthdate.year}}-{{user.emp.emp_birthdate.month}}-{{user.emp.emp_birthdate.day}}">
+            <div id="bdMsg">
+            </div>
+        </div>
+    </div>
 </div>
-<div class="pb-5 col-12">
+
+<div class="mb-5 col-12">
     <button id="btnBack" class="btn btn-dark me-2">Go Back</button>
     <button id="btnSubmit" class="btn btn-dark float-end">Update</button>
 </div>
