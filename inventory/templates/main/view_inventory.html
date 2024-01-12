@@ -45,8 +45,6 @@
             p = $('#prod_id').text();
             i = $('#inv_id').text();
             q = $('#qty').val();
-
-            console.log(p, i)
     
             $.validate_check = function (feed, input, data) {
                 txt = !data ? 'Required' : '';
@@ -59,8 +57,19 @@
                 $(input).addClass(Ac).removeClass(Rc);
             };
     
-            // Check if there's an empty fields
-            $.validate_check('#qMsg', '#qty', p);
+            if (!$.isNumeric(q)) {
+                $('#qMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (q < 0) {
+                $('#qMsg').text('Invalid').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else {
+                $.validate_check('#qMsg', '#qty', q);
+            }
     
             // return if found
             if (!q) {           
