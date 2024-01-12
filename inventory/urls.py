@@ -16,6 +16,7 @@ urlpatterns = [
     path('accounts/delete_account/', accounts.delete_account, name="Delete Account"),
     path('accounts/update_account/', accounts.update_account, name="Update Account"),
     path('accounts/account_settings/', accounts.update_account_2, name="Account Settings"),
+    path('accounts/change_password_dropdown/', accounts.change_password_dropdown, name="Change Password Dropdown"),
     path('accounts/<int:id>/', accounts.view_account, name="View Account"),
     path('products/', products.products, name="Products"),
     path('products/add/', products.add_product, name="Add Product"),

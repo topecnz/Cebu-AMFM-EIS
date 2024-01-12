@@ -5,57 +5,57 @@
 {% endblock %}
 {% block content %}
 
-    {% csrf_token %}
-    <div class="mb-3">
-        <h3>Add Account<h3>
+{% csrf_token %}
+<div class="mb-3">
+    <h3>Add Account<h3>
+</div>
+<div id="alertMsg" class="">
+</div>
+<div class="mb-3">
+    <label class="form-label">First Name</label>
+    <input id="fname" type="text" class="form-control" placeholder="Enter First Name">
+    <div id="fnMsg">
     </div>
-    <div id="alertMsg" class="">
+</div>
+<div class="mb-3">
+    <label class="form-label">Last Name</label>
+    <input id="lname" type="text" class="form-control" placeholder="Enter Last Name">
+    <div id="lnMsg">
     </div>
-    <div class="mb-3">
-        <label class="form-label">First Name</label>
-        <input id="fname" type="text" class="form-control" placeholder="Enter First Name">
-        <div id="fnMsg">
-        </div>
+</div>
+<div class="mb-3">
+    <label class="form-label">Username</label>
+    <input id="username" type="text" class="form-control" placeholder="Enter Username">
+    <div id="userMsg">
     </div>
-    <div class="mb-3">
-        <label class="form-label">Last Name</label>
-        <input id="lname" type="text" class="form-control" placeholder="Enter Last Name">
-        <div id="lnMsg">
-        </div>
+</div>
+<div class="mb-3">
+    <label class="form-label">Password</label>
+    <input id="password" type="password" class="form-control {% if is_p_matched %}{{p_color}}{% endif %}" placeholder="Enter Password">
+    <div id="passMsg">
     </div>
-    <div class="mb-3">
-        <label class="form-label">Username</label>
-        <input id="username" type="text" class="form-control" placeholder="Enter Username">
-        <div id="userMsg">
-        </div>
+</div>
+<div class="mb-3">
+    <label class="form-label">Confirm Password</label>
+    <input id="cpassword" type="password" class="form-control" placeholder="Enter Confirm Password">
+    <div id="cpassMsg">
     </div>
-    <div class="mb-3">
-        <label class="form-label">Password</label>
-        <input id="password" type="password" class="form-control {% if is_p_matched %}{{p_color}}{% endif %}" placeholder="Enter Password">
-        <div id="passMsg">
-        </div>
+</div>
+<div class="mb-3">
+    <label class="form-label">Position</label>
+    <select id="acc_type" class="form-select" aria-label="Default select example">
+        <option selected disabled>Open this select menu</option>
+        {% for res in acc_type %}
+        <option value="{{res.acc_type_id}}">{{res.acc_type_name}}</option>
+        {% endfor %}
+    </select>
+    <div id="typeMsg">
     </div>
-    <div class="mb-3">
-        <label class="form-label">Confirm Password</label>
-        <input id="cpassword" type="password" class="form-control" placeholder="Enter Confirm Password">
-        <div id="cpassMsg">
-        </div>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Position</label>
-        <select id="acc_type" class="form-select" aria-label="Default select example">
-            <option selected disabled>Open this select menu</option>
-            {% for res in acc_type %}
-            <option value="{{res.acc_type_id}}">{{res.acc_type_name}}</option>
-            {% endfor %}
-        </select>
-        <div id="typeMsg">
-        </div>
-    </div>
-    <div class="col-12">
-        <button id="btnBack" class="btn btn-dark me-2">Go Back</button>
-        <button id="btnSubmit" class="btn btn-dark float-end">Add</button>
-    </div>
+</div>
+<div class="col-12">
+    <button id="btnBack" class="btn btn-dark me-2">Go Back</button>
+    <button id="btnSubmit" class="btn btn-dark float-end">Add</button>
+</div>
 
 {% endblock %}
 
@@ -89,7 +89,7 @@
         $.validate_check('#typeMsg', '#acc_type', at);
 
         // return if found
-        if (!fn || !ln || !u || !p || !cp || !at || pass != cpass) {           
+        if (!fn || !ln || !u || !p || !cp || !at || p != cp) {           
             return 0;
         }
 
