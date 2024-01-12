@@ -21,7 +21,7 @@
 </div>
 <div class="mb-3">
     <label class="form-label">Product Name:</label>
-    <label id="prod_name">{{inventory.prod.prod_name}}</label>
+    <label id="prod_name">{{inventory.prod.prod_br.prod_br_name}} {{inventory.prod.prod_desc}}</label>
 </div>
 <div class="mb-3">
     <label class="form-label">Quantity</label>
@@ -31,6 +31,7 @@
 </div>
 <div class="col-12">
     {% if user.acc_type_id != 3 %}
+    <button id="btnBack" class="btn btn-dark me-2">Go Back</button>
     <button id="btnSubmit" class="btn btn-dark float-end">Update</button>
     {% endif %}
 </div>
@@ -44,8 +45,6 @@
             p = $('#prod_id').text();
             i = $('#inv_id').text();
             q = $('#qty').val();
-
-            console.log(p, i)
     
             $.validate_check = function (feed, input, data) {
                 txt = !data ? 'Required' : '';
@@ -58,8 +57,19 @@
                 $(input).addClass(Ac).removeClass(Rc);
             };
     
-            // Check if there's an empty fields
-            $.validate_check('#qMsg', '#qty', p);
+            if (!$.isNumeric(q)) {
+                $('#qMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else if (q < 0) {
+                $('#qMsg').text('Invalid').addClass('invalid-feedback').removeClass('valid-feedback');
+                $('#qty').addClass('is-invalid').removeClass('is-valid');
+                return 0;
+            }
+            else {
+                $.validate_check('#qMsg', '#qty', q);
+            }
     
             // return if found
             if (!q) {           
@@ -80,6 +90,12 @@
             }
             );
         });
+
+        $('#btnBack').click(function () {
+            window.location.href = "{% url 'Inventory' %}"
+        });
+
+
     </script>
     {% endif %}
 {% endblock %}

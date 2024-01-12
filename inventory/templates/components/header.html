@@ -37,7 +37,7 @@
               <li><a href="{% url 'Home' %}" class="nav-link px-2 text-light">Home</a></li>
               <li><a href="{% url 'Inventory' %}" class="nav-link px-2 text-light">Inventory</a></li>
               <li><a href="{% url 'Invoices' %}" class="nav-link px-2 text-light">Invoices</a></li>
-              {% if user.acc_type_id == 1%}
+              {% if user.acc_type_id != 3 %}
               <li><a href="{% url 'Orders' %}" class="nav-link px-2 text-light">Orders</a></li>
               {% endif %}
               <li><a href="{% url 'Suppliers' %}" class="nav-link px-2 text-light">Suppliers</a></li>
@@ -54,7 +54,7 @@
             </a>
             <ul class="dropdown-menu text-small" aria-labelledby="dropdownMenuButton1">
               <li><a class="dropdown-item" href="{% url 'Account Settings' %}">Account Settings</a></li>
-              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'Change Password Dropdown'%}">Change Account Password</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{% url 'Logout' %}">Sign out</a></li>
             </ul>

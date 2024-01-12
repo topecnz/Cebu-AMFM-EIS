@@ -25,7 +25,7 @@
         <select id="prod_id" class="form-select" aria-label="Default select example">
             <option selected disabled>Select Product</option>
             {% for res in product %}
-            <option value="{{res.id}}">{{res.name}}</option>
+            <option value="{{res.id}}">{{res.brand}} {{res.name}}</option>
             {% endfor %}
         </select>
         <div id="pMsg">
@@ -63,25 +63,20 @@
 
         // Check if there's an empty fields
         $.validate_check('#pMsg', '#prod_id', p);
-        //$.validate_check('#qMsg', '#qty', p);
+        $.validate_check('#qMsg', '#qty', p);
 
         if (!$.isNumeric(q)) {
             $('#qMsg').text('Field must be a number.').addClass('invalid-feedback').removeClass('valid-feedback');
             $('#qty').addClass('is-invalid').removeClass('is-valid');
             return 0;
         }
-        else if (q <= 0) {
-            $('#qMsg').text('You need to input at least 1 quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
-            $('#qty').addClass('is-invalid').removeClass('is-valid');
-            return 0;
-        }
-        else if (q > s) {
-            $('#qMsg').text('You can only add up to ' + s + ' quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
+        else if (q < 0) {
+            $('#qMsg').text('Invalid').addClass('invalid-feedback').removeClass('valid-feedback');
             $('#qty').addClass('is-invalid').removeClass('is-valid');
             return 0;
         }
         else {
-            $.validate_check('#qMsg', '#qty', qty);
+            $.validate_check('#qMsg', '#qty', q);
         }
 
         // return if found
@@ -94,10 +89,10 @@
             qty: q,
         }, function (e) {
             if (e.code == 200) {
-                $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
+                $('#alertMsg').text(e.message).addClass('alert alert-success').removeClass('alert-warning').fadeIn(0).fadeOut(3000);
             }
             else {
-                $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
+                $('#alertMsg').text(e.message).addClass('alert alert-warning').removeClass('alert-success').fadeIn(0).fadeOut(3000);
             }
         }
         );

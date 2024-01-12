@@ -172,9 +172,9 @@
 {% block script %}
     <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
     <script>
-        {% comment %} $('#example').dataTable({
-            "dom": 'lrtip'
-        }); {% endcomment %}
+       // $('#example').dataTable({
+           // "dom": 'lrtip'
+       // }); 
         const table = new DataTable('#example', {
             select: true
         });
@@ -321,7 +321,9 @@
         $.check_product();
         
         $('#product').change(function() {
-            $.check_product();
+            if ($(this).val().trim()) {
+                $.check_product();
+            }
         });
 
         $.validate_check = function (feed, input, data) {

@@ -214,6 +214,10 @@
             <p>PHP <span id="total">{{invoice.inv_amount|floatformat:"2"}}</span></p>
         </div>
     </div>
+    <div>
+        <button id="btnBack" class="btn btn-dark me-2">Go Back</button>
+
+    </div>
     <div class="pb-5">
         <div class="text-end">
             {% if user.acc_type_id != 3%}
@@ -768,6 +772,10 @@
             }
             $('#total').text(parseFloat(total).toFixed(2));
         }
+
+        $('#btnBack').click(function () {
+            window.location.href = "{% url 'Invoices' %}"
+        });
 
         {% endif %}
     </script>

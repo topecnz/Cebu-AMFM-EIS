@@ -198,18 +198,28 @@
             <p>PHP <span id="total">{{po.po_amount}}</span></p>
         </div>
     </div>
+    <div>
+        <button id="btnBack" class="btn btn-dark me-2">Go Back</button>
+
+    </div>
+
+
     <div class="pb-5">
         <div class="text-end">
             <button id="btnPrint" class="btn btn-dark ">Print</button>
             {% if user.acc_type_id != 3%}
-            {% if po.po_status == 'Pending' %}
-            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Confirm Order</button>
-            {% elif po.po_status == 'Approved' %}
-            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Receive Order</button>
-            {% endif %}
-            {% if po.po_status != 'Cancelled' or po.po_status != 'Received' %}
-            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal">Cancel</button>
-            {% endif %}
+                {% if po.po_status == 'Pending' %}
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Confirm Order</button>
+                {% elif po.po_status == 'Approved' %}
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Mark as Ordered</button>
+                {% elif po.po_status == 'Ordered' %}
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Mark as In-Transit</button>
+                {% elif po.po_status == 'In-Transit' %}
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal1">Receive Order</button>
+                {% endif %} 
+                {% if po.po_status != 'Cancelled' or po.po_status != 'Delivered' %}
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmationModal">Cancel</button>
+                {% endif %}
             {% endif %}
         </div>
     </div>
@@ -245,7 +255,7 @@
             <div class="modal-body">
                 <div id="alertMsg3" class="">
                 </div>
-                <label>{% if po.po_status == 'Pending' %}Are you sure to confirm order{% elif po.po_status == 'Approved' %}Receive order{% endif %} #{{po.po_id}}?</label>
+                <label>{% if po.po_status == 'Pending' %}Are you sure to confirm order{% elif po.po_status == 'Approved' %}Mark as Ordered{% elif po.po_status == 'Ordered' %}Mark as In-Transit{% elif po.po_status == 'In-Transit' %}Received{% endif %} #{{po.po_id}}?</label>
             </div>
             <div class="modal-footer">
                 {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> {% endcomment %}
@@ -612,6 +622,11 @@
             }, function(e) {
                 if (e.code == 200) {
                     $('#alertMsg3').text(e.message).addClass('alert alert-success').removeClass('alert-warning');
+                    $(function () {
+                        setTimeout(function() {
+                          window.location.reload()
+                        }, 500);
+                      });
                 }
                 else {
                     $('#alertMsg3').text(e.message).addClass('alert alert-warning').removeClass('alert-success');
@@ -726,6 +741,13 @@
             }
             $('#total').text(parseFloat(total).toFixed(2));
         }
+
+
+        $('#btnBack').click(function () {
+            window.location.href = "{% url 'Orders' %}"
+        });
+
+        
 
     </script>
 {% endblock %}
