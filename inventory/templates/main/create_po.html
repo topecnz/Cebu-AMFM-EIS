@@ -57,23 +57,29 @@
         <h4>Delivery Information</h4>
     </div>
     <div class="mb-3">
+        <div class="form-check mb-3">
+            <input id="checkbox" class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+               Direct to client
+            </label>
+          </div>
         <div class="row">
             <div class="col-8">
                 <label class="form-label">Name</label>
-                <input id="name" type="text" class="form-control" placeholder="Enter Name">
+                <input disabled value="CEBU AM-FM ELECTRONICS CENTER" id="name" type="text" class="form-control" placeholder="Enter Name">
                 <div id="nameMsg">
                 </div>
             </div>
             <div class="col">
                 <label class="form-label">Phone Number</label>
-                <input id="phone" type="text" class="form-control" placeholder="Enter Phone Number">
+                <input disabled value="(032)2452120" id="phone" type="text" class="form-control" placeholder="Enter Phone Number">
                 <div id="phoneMsg">
                 </div>
             </div>
         </div>
         <div class="col">
             <label class="form-label">Address</label>
-            <input id="addr" type="text" class="form-control" placeholder="Enter Customer Address">
+            <input disabled value="259 Manalili Street, Cebu City" id="addr" type="text" class="form-control" placeholder="Enter Address">
             <div id="addrMsg">
             </div>
         </div>
@@ -198,6 +204,22 @@
         });
 
         $("#cus-details").hide();
+
+        var is_checked = false
+        $('#checkbox').change(function() {
+            if (!is_checked) {
+                $('#name').val('').attr('disabled', false);
+                $('#phone').val('').attr('disabled', false);
+                $('#addr').val('').attr('disabled', false);
+            }
+            else {
+                $('#name').val('CEBU AM-FM ELECTRONICS CENTER').attr('disabled', true).removeClass('is-valid').removeClass('is-invalid');
+                $('#phone').val('(032)2452120').attr('disabled', true).removeClass('is-valid').removeClass('is-invalid');
+                $('#addr').val('259 Manalili Street, Cebu City').attr('disabled', true).removeClass('is-valid').removeClass('is-invalid');
+            }
+
+            is_checked = (!is_checked)? true: false    
+        });
 
         $.phone_validate = function () {
             var phone = $('#phone').val();
@@ -511,13 +533,19 @@
             var addr = $('#addr').val();
 
             $.validate_check('#typeMsg', '#sup-id', id);
-            $.validate_check('#nameMsg', '#name', name);
-            $.validate_check('#phoneMsg', '#phone', phone);
-            $.validate_check('#addrMsg', '#addr', addr);
 
-
-            if (!id && !name && !phone && !addr) {
+            if (!id) {
                 return 0;
+            }
+
+            if (is_checked) {
+                $.validate_check('#nameMsg', '#name', name);
+                $.validate_check('#addrMsg', '#addr', addr);
+                is_phone = $.phone_validate();
+
+                if (!name || !is_phone || !addr) {
+                    return 0;
+                }
             }
 
             res = []

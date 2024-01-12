@@ -249,11 +249,11 @@ def update_po(request: HttpRequest):
 
             sup_itm.save()
             
-            if po.po_status == 'Approved':
+            if po.po_status == 'Approved' and po.po_del_name == 'CEBU AM-FM ELECTRONICS CENTER':
                 sup_itm.prod.prod_price = float("{:.2f}".format(float(r['price'])))
                 sup_itm.prod.save()
         
-            if po.po_status == 'Delivered':
+            if po.po_status == 'Delivered' and po.po_del_name == 'CEBU AM-FM ELECTRONICS CENTER':
                 data, in_created = inventory.get_or_create(prod_id = sup_itm.prod.prod_id)
                 data.in_qty = data.in_qty if data.in_qty else 0
                 data.in_qty = data.in_qty + int(r['qty']) if not in_created else int(r['qty'])
