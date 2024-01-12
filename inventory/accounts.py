@@ -156,22 +156,24 @@ def delete_account(request: HttpRequest):
             print(id)
 
             User = get_user_model()
-            user = User.objects.filter(acc_id=id)
-
+            user = User.objects.filter(acc_id=id).first()
+            
             if user:
-                for u in user:
-                    user=u
-
-            user.acc_is_active = False
-            user.save()
-
-            code = 200
-            message = 'Account is successfully deleted!'
+                if user.acc_type_id == 1 == request.user.acc_type_id:
+                    obj = {
+                        'code': 204,
+                        'message': "Error: You can't delete yourself",
+                        'status': 'Warning',
+                    }
+                    return JsonResponse(obj)
+                
+                user.acc_is_active = False
+                user.save()
 
             obj = {
-                    'code': code if code else 204,
-                    'message': message if message else 'Error!',
-                    'status': 'success' if code else 'Warning',
+                    'code': 200 if user else 204,
+                    'message': 'Account is successfully deleted!' if user else 'Error: user not found',
+                    'status': 'success' if user else 'Warning',
                 }
             return JsonResponse(obj)
 
