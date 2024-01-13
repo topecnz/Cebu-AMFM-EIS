@@ -31,12 +31,6 @@
     </div>
 </div>
 <div class="mb-3">
-    <label class="form-label">Supplier Phone</label>
-    <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{supplier.sup_phone}}" id="sup_phone" type="number" class="form-control" placeholder="Enter Phone Number">
-    <div id="phoneMsg">
-    </div>
-</div>
-<div class="mb-3">
     <label class="form-label">Supplier Address</label>
     <input {% if user.acc_type_id == 3 %}disabled{% endif %} value="{{supplier.sup_address}}" id="sup_address" type="text" class="form-control" placeholder="Enter Supplier Address">
     <div id="emMsg">
