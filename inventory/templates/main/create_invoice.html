@@ -482,8 +482,10 @@
                 $.validate_check('#addrMsg', '#addr', addr);
                 var ph = $.phone_validate();
 
-                if (!name && !ph && !addr) {
+                if (!name || !ph || !addr) {
                     output = false;
+                    
+                    
                 }
 
                 return output;
@@ -495,7 +497,7 @@
                 cus_data = $.cus_validate();
             }
 
-            if (!type && !cus_data) {
+            if (!type || !cus_data) {
                 return 0;
             }
 
