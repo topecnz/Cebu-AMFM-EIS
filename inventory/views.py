@@ -118,6 +118,7 @@ def reset_password(request: HttpRequest):
                     
                     data['request'].append({
                         "token": str(token),
+                        "is_changed": False,
                         "acc_id": user.acc_id,
                         "expires": time.mktime(unix_expires.timetuple())
                     })
@@ -165,6 +166,18 @@ def change_password(request: HttpRequest, token: str = None):
                 
             return render(request, 'main/change_password.html', obj)
         
+        if data['is_changed']:
+            obj = {
+                    'reset': True,
+                    'is_valid': is_valid,
+                    'status': 'warning',
+                    'success': False,
+                    'message': 'Token has expired.',
+                    'is_token_expired': True
+                }
+                
+            return render(request, 'main/change_password.html', obj)
+        
         # if token expires
         if time.mktime(datetime.datetime.now().timetuple()) > data['expires']:
             obj = {
@@ -201,6 +214,17 @@ def change_password(request: HttpRequest, token: str = None):
                 user.password = make_password(password)
                 user.acc_updated_at = timezone.now()
                 user.save()
+                
+                with open('./static/reset/user_token.json', 'r') as f:
+                    data = json.load(f)
+                    
+                for i in range(len(data['request'])):
+                    if data['request'][i]['token'] == token:
+                        data['request'][i]['is_changed'] = True
+                        break
+                    
+                with open('./static/reset/user_token.json', 'w') as fw:
+                        json.dump(data, fw, indent=4) # no permission to network disk
             
             obj = {
                 'reset': True,
