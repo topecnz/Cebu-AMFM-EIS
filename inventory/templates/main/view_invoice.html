@@ -588,7 +588,7 @@
                 $.validate_check('#nameMsg', '#name', name);
                 var ph = $.phone_validate();
 
-                if (!name && !ph) {
+                if (!name || !ph) {
                     output = false;
                 }
 
@@ -601,7 +601,7 @@
                 cus_data = $.cus_validate();
             }
 
-            if (!type && !cus_data) {
+            if (!type || !cus_data) {
                 return 0;
             }
 
