@@ -175,6 +175,22 @@ INSERT INTO `inventory` (`in_id`, `in_qty`, `in_status`, `in_created_at`, `in_up
 (47, 2, 'Available', '2024-01-12 01:17:24.197392', '2024-01-12 01:17:24.197392', 47);
 
 --
+-- Dumping data for table `employee`
+--
+
+INSERT INTO `employee` (`emp_id`, `emp_fname`, `emp_mname`, `emp_lname`, `emp_birthdate`, `emp_phone`, `emp_email`, `emp_created_at`, `emp_updated_at`) VALUES
+(1, 'Michael', 'Pino', 'Dedoyco', '1998-12-11', '09912365147', 'lmdstiwnu@gmail.com', '2024-01-13 11:15:00.427758', '2024-01-13 11:15:00.427758'),
+(2, 'Irene', '', 'Cagadas', '1998-08-15', '09186554753', 'irenecagadas0815@gmail.com', '2024-01-13 11:15:59.423403', '2024-01-13 11:15:59.423403');
+
+--
+-- Dumping data for table `account`
+--
+
+INSERT INTO `account` (`password`, `last_login`, `acc_id`, `username`, `acc_created_at`, `acc_updated_at`, `acc_type_id`, `emp_id`, `is_superuser`, `acc_is_active`) VALUES
+('pbkdf2_sha256$600000$pL98uJ9TVzdPru9PWapUiK$trFIwvni12qozaftVIZYcLGoIKQhXaZJ28xAUywMhyI=', '2024-01-13 11:15:00.976556', 1, 'michael_admin', '2024-01-13 11:06:39.263273', '2024-01-13 11:06:39.263273', 1, 1, 0, 1),
+('pbkdf2_sha256$600000$GjeBB13exF46H6mD1FB6e0$Z+WrtJiy6pGKJ6RxdjGY3r/Ynej9DorAxCIC/F4OPeU=', '2024-01-13 11:15:59.894166', 2, 'mx_irene', '2024-01-13 11:09:56.930814', '2024-01-13 11:09:56.930814', 2, 2, 0, 1);
+
+--
 -- Dumping data for table `supplier`
 --
 
