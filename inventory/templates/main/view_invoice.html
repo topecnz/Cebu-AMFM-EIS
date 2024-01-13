@@ -444,12 +444,12 @@
                 $('#qty').addClass('is-invalid').removeClass('is-valid');
                 return 0;
             }
-            else if (qty <= 0) {
+            else if (parseInt(qty) <= 0) {
                 $('#qMsg').text('You need to input at least 1 quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
                 $('#qty').addClass('is-invalid').removeClass('is-valid');
                 return 0;
             }
-            else if (qty > s) {
+            else if (parseInt(qty) > parseInt(s)) {
                 $('#qMsg').text('You can only add up to ' + s + ' quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
                 $('#qty').addClass('is-invalid').removeClass('is-valid');
                 return 0;
@@ -510,12 +510,12 @@
                 $('#qty').addClass('is-invalid').removeClass('is-valid');
                 return 0;
             }
-            else if (qty <= 0) {
+            else if (parseInt(qty) <= 0) {
                 $('#qMsg').text('You need to input at least 1 quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
                 $('#qty').addClass('is-invalid').removeClass('is-valid');
                 return 0;
             }
-            else if (qty > s) {
+            else if (parseInt(qty) > parseInt(s)) {
                 $('#qMsg').text('You can only add up to ' + s + ' quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
                 $('#qty').addClass('is-invalid').removeClass('is-valid');
                 return 0;
