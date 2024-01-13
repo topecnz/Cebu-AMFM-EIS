@@ -364,11 +364,7 @@
                 $('#qty').addClass('is-invalid').removeClass('is-valid');
                 return 0;
             }
-            else if (qty > s){
-                $('#qMsg').text('You can only add up to ' + s + ' quantity.').addClass('invalid-feedback').removeClass('valid-feedback');
-                $('#qty').addClass('is-invalid').removeClass('is-valid');
-                return 0;
-            }
+            
             else {
                 $.validate_check('#qMsg', '#qty', qty);
             }
