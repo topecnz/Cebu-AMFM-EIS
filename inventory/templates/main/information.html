@@ -235,7 +235,7 @@
         var em = $.email_validate();
         $.validate_check('#bdMsg', '#birthdate', bd);
 
-        if (!pass || !cpass || !fn || !ln || !p || !e || !bd || pass != cpass) {
+        if (!pass || !cpass || !fn || !ln || !ph || !em || !bd || pass != cpass) {
             $('#alertMsg').text('Please input required fields').addClass('alert alert-warning').removeClass('alert-success').fadeIn(0).fadeOut(2000);;
             return 0;
         }
