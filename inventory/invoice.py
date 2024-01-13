@@ -258,7 +258,8 @@ def update_invoice(request: HttpRequest):
             
         
         invoice.inv_amount = "{:.2f}".format(total)
-        invoice.inv_status = request.POST['inv_status']
+        if invoice.inv_type.inv_type_id == 2:
+            invoice.inv_status = request.POST['inv_status']
         
         # default as boolean if customer is excluded (for walk-in)
         customer = True
