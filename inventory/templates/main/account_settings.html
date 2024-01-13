@@ -81,7 +81,7 @@
         </div>
         <div class="col">
             <label class="form-label">Birthdate</label>
-            <input id="birthdate" type="date" class="form-control" placeholder="mm/dd/yy" value="{{user.emp.emp_birthdate.year}}-{{user.emp.emp_birthdate.month}}-{{user.emp.emp_birthdate.day}}">
+            <input id="birthdate" type="date" class="form-control" placeholder="mm/dd/yy" value="{{user.emp.emp_birthdate.year}}-{% if user.emp.emp_birthdate.month < 10 %}0{% endif %}{{user.emp.emp_birthdate.month}}-{% if user.emp.emp_birthdate.day < 10 %}0{% endif %}{{user.emp.emp_birthdate.day}}">
             <div id="bdMsg">
             </div>
         </div>
