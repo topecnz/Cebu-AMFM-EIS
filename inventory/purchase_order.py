@@ -191,7 +191,8 @@ def print_po(request: HttpRequest, id: int):
         if po.po_status != 'Removed':
             obj = {
                 'po': po,
-                'sup_itm': sup_itm
+                'sup_itm': sup_itm,
+                'qr': f'assets/qrcode/po-{po.po_id}.png'
             }
             
             return render(request, 'print/po.html', obj)
