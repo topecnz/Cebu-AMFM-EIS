@@ -13,6 +13,7 @@ from .models import Employee, AccountType, Product, ProductBrand, ProductType, I
 import json
 from datetime import timedelta, datetime
 import qrcode
+import uuid
 
 @login_required(login_url='/login')
 def invoices(request: HttpRequest):
@@ -127,10 +128,16 @@ def submit_invoice(request: HttpRequest):
             invoice.inv_term_date = timezone.now() + timezone.timedelta(days=30)
             invoice.cus_id = customer.cus_id
 
+        random_uuid = str(uuid.uuid4())
+        invoice.inv_qrcode = random_uuid
+        
         invoice.save()
         
         # generate qrcode
-        img = qrcode.make(f"CEBU AMFM ELECTRONICS CENTER DATA=invoice-{invoice.inv_id}")
+        # img = qrcode.make(f"CEBU AMFM ELECTRONICS CENTER DATA=invoice-{invoice.inv_id}")
+        # img.save(f'./static/assets/qrcode/invoice-{invoice.inv_id}.png')
+        
+        img = qrcode.make(random_uuid)
         img.save(f'./static/assets/qrcode/invoice-{invoice.inv_id}.png')
             
         obj = {

@@ -56,4 +56,5 @@ urlpatterns = [
     path('orders/update_po/', purchase_order.update_po, name="Update PO"),
     path('orders/delete_po/', purchase_order.delete_po, name="Delete PO"),
     path('qrcode/', qrcode.qrcode, name="Scanner"),
+    path('qrcode/scanner', qrcode.scanner, name="Scanner Check"),
 ]

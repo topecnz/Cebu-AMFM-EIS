@@ -12,6 +12,7 @@ from .models import Employee, AccountType, Product, ProductBrand, ProductType, I
 
 import json
 import qrcode
+import uuid
 
 @login_required(login_url='/login')
 def orders(request: HttpRequest):
@@ -131,11 +132,17 @@ def submit_order(request: HttpRequest):
             total += float(r['price']) * float(r['qty'])
             
         po.po_amount = "{:.2f}".format(total)
-
+        
+        random_uuid = str(uuid.uuid4())
+        po.po_qrcode = random_uuid
+        
         po.save()
         
         # generate qrcode
-        img = qrcode.make(f"CEBU AMFM ELECTRONICS CENTER DATA=po-{po.po_id}")
+        # img = qrcode.make(f"CEBU AMFM ELECTRONICS CENTER DATA=po-{po.po_id}")
+        # img.save(f'./static/assets/qrcode/po-{po.po_id}.png')
+        
+        img = qrcode.make(random_uuid)
         img.save(f'./static/assets/qrcode/po-{po.po_id}.png')
             
         obj = {
