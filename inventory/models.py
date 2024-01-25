@@ -131,6 +131,7 @@ class PurchaseOrder(models.Model):
     po_del_address = models.CharField(max_length=1024)
     po_del_city = models.CharField(max_length=1024, blank=True, null=True)
     po_status = models.CharField(default="Pending", max_length=32)
+    po_qrcode = models.CharField(blank=True, null=True, max_length=1024)
     sup = models.ForeignKey(Supplier, models.DO_NOTHING)
     emp = models.ForeignKey(Employee, models.DO_NOTHING)
 
@@ -183,6 +184,7 @@ class Invoice(models.Model):
     inv_amount = models.FloatField(blank=True, null=True)
     inv_type = models.ForeignKey(InvoiceType, models.DO_NOTHING, blank=True, null=True)
     inv_status = models.CharField(default="Unpaid", max_length=32)
+    inv_qrcode = models.CharField(blank=True, null=True, max_length=1024)
     inv_term_date = models.DateTimeField(blank=True, null=True)
     inv_balance = models.FloatField(blank=True, null=True)
     inv_updated_at = models.DateTimeField(default=timezone.now)
