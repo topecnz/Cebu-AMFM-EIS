@@ -4,6 +4,40 @@
 {% block style %}
     <link rel="stylesheet" href="{% static 'css/fullcalendar.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+    <style>
+        .card-body h4 {
+            margin-bottom: 15px;
+            color: #141770;
+        }
+    
+        .card-body p.card-text {
+            margin-bottom: 1px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    
+        .card-body p.card-text .label {
+            flex: 1;
+            text-align: right;
+            margin-right: 10px; /* Adjust the gap between label and value */
+        }
+    
+        .card-body p.card-text .value {
+            flex: 1;
+            text-align: left;
+        }
+    
+        #calendar {
+            width: auto;
+            height: auto;
+        }
+    
+        #liveTime {
+            font-size: 20px;
+            margin-top: 10px;
+        }
+    </style>
 {% endblock %}
 {% block content %}
 
@@ -17,41 +51,6 @@
 {% endif %} {% endcomment %}
 
 <h1 class="card-title"><b>{{greet}}, {{ user.username }}!</b></h1>
-
-<style>
-    .card-body h4 {
-        margin-bottom: 15px;
-        color: #141770;
-    }
-
-    .card-body p.card-text {
-        margin-bottom: 1px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .card-body p.card-text .label {
-        flex: 1;
-        text-align: right;
-        margin-right: 10px; /* Adjust the gap between label and value */
-    }
-
-    .card-body p.card-text .value {
-        flex: 1;
-        text-align: left;
-    }
-
-    #calendar {
-        width: auto;
-        height: auto;
-    }
-
-    #liveTime {
-        font-size: 20px;
-        margin-top: 10px;
-    }
-</style>
 
 <div class="row">
     <div class="col-md-6">
@@ -89,6 +88,7 @@
         <div class="card mt-3 rounded-top rounded-2">
             <div class="card-body">
                 <h4>Today</h4><h6 id="liveTime"></h6>
+                <button type="button" class="btn btn-dark mb-3" data-bs-toggle="modal" data-bs-target="#addSchedModal">Add Schedule</button>
                 <div id="calendar"></div>
             </div>
         </div>
@@ -170,6 +170,75 @@
     </div>
 </div>
 
+<!-- Add Schedule -->
+<div class="modal fade" id="addSchedModal" tabindex="-1" aria-labelledby="addSchedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addSchedModalLabel">Add Schedule</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-2">
+                <label class="form-label">Title</label>
+                <input id="s-title" type="text" placeholder="Enter Title" class="form-control"></input>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">Description</label>
+                <textarea id="s-desc" style="resize: none;" class="form-control"  rows="3"></textarea>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">Start Time</label>
+                <input id="s-start" type="datetime-local" class="form-control"></input>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">End Time</label>
+                <input id="s-end" type="datetime-local" class="form-control"></input>
+            </div>
+        </div>
+        <div class="modal-footer">
+          {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> {% endcomment %}
+          <button id="btnAddSched" type="button" class="btn btn-primary">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Display Schedule -->
+  <div class="modal fade" id="showSchedModal" tabindex="-1" aria-labelledby="showSchedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="showSchedModalLabel">Add Schedule</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-2">
+                <label class="form-label">Title</label>
+                <input id="ds-title" type="text" placeholder="Enter Title" class="form-control"></input>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">Description</label>
+                <textarea id="ds-desc" style="resize: none;" class="form-control"  rows="3"></textarea>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">Start Time</label>
+                <input id="ds-start" type="datetime-local" class="form-control"></input>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">End Time</label>
+                <input id="ds-end" type="datetime-local" class="form-control"></input>
+            </div>
+        </div>
+        <div class="modal-footer">
+          {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> {% endcomment %}
+          <button id="btnUpdateSched" type="button" class="btn btn-primary">Update</button>
+          <button id="btnDeleteSched" type="button" class="btn btn-primary">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 {% endblock %}
 {% block script %}
 <script src="{% static 'js/moment.min.js' %}"></script>
@@ -192,13 +261,89 @@
     setInterval(updateLiveTime, 1000);
     updateLiveTime();
 
-    $('#calendar').fullCalendar({
-        contentHeight: 'auto'
-    });
+
+    var calendar;
+    var data;
+
+    $.post("{% url 'Get Sched' %}", {}, function(e) {
+        var cal = document.getElementById('calendar');
+        data = e;
+        calendar = new FullCalendar.Calendar(cal, {
+          headerToolbar: {
+            left: 'prev,next today',
+            right: 'dayGridMonth,dayGridWeek,list',
+            center: 'title',
+          },
+          themeSystem: 'bootstrap5',
+          contentHeight: 'auto',
+          selectable: true,
+          events: e.data,
+          eventClick: function(info) {
+            console.log(e.data)
+            var r;
+            for (var i = 0; i < e.data.length; i++) {
+                r = e.data[i]
+                if (r.id == info.event.id) {
+                    $('#ds-title').val(r.title)
+                    $('#ds-desc').val(r.description)
+                    $('#ds-start').val(r.start)
+                    $('#ds-end').val(r.end)
+                    $('#btnUpdateSched').attr('data-id', info.event.id)
+                    $('#btnDeleteSched').attr('data-id', info.event.id)
+                    $('#showSchedModal').modal('show');
+                    break;
+                }
+            }
+        },
+        });
+        calendar.render();
+      });
 
     function searchPrintInvoice() {
         var id = document.getElementById('searchinv').value;
         window.location = "{% url 'Invoices' %}" + id;
     }
+
+    $('#btnAddSched').on('click', function() {
+        $.post("{% url 'Add Sched' %}", {
+            title: $('#s-title').val(),
+            desc: $('#s-desc').val(),
+            start: $('#s-start').val(),
+            end: $('#s-end').val()
+        }, function(e) {
+            if (e.code == 200) {
+                alert('success');
+            }
+        })
+    });
+
+    $('#btnUpdateSched').on('click', function() {
+        $.post("{% url 'Edit Sched' %}", {
+            id: $(this).attr('data-id'),
+            title: $('#ds-title').val(),
+            desc: $('#ds-desc').val(),
+            start: $('#ds-start').val(),
+            end: $('#ds-end').val()
+        }, function(e) {
+            if (e.code == 200) {
+                alert('Success');
+            }
+        })
+    });
+
+    $('#btnDeleteSched').on('click', function() {
+        var is_confirm = confirm("Are you sure to delete this scheduled event?");
+
+        if (is_confirm) {
+            $.post("{% url 'Delete Sched' %}", {
+                id: $(this).attr('data-id'),
+            }, function(e) {
+                if (e.code == 200) {
+                    alert('Success');
+                }
+            })
+        }
+    });
+
 </script>
 {% endblock %}

@@ -122,7 +122,7 @@ def reset_password(request: HttpRequest):
                     })
                     
                     with open('./static/reset/user_token.json', 'w') as fw:
-                        json.dump(data, fw, indent=4) # no permission to network disk
+                        json.dump(data, fw, indent=4)
                 
             obj = {
                 'success': True if emp and email else False,
@@ -318,4 +318,101 @@ def submit_info(request: HttpRequest):
         
         return JsonResponse(obj)
     
+    return redirect('/')
+
+@csrf_exempt
+def get_sched(request: HttpRequest):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            with open('./static/schedules/data.json', 'r') as f:
+                data = json.load(f)
+
+            return JsonResponse(data)
+        
+    return redirect('/')
+
+@csrf_exempt
+def add_sched(request: HttpRequest):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            with open('./static/schedules/data.json', 'r') as f:
+                data = json.load(f)
+                
+            data['data'].append({
+                "id": str(int(time.time())),
+                "title": request.POST['title'],
+                "description": request.POST['desc'],
+                "start": request.POST['start'],
+                "end": request.POST['end'],
+            })
+            
+            with open('./static/schedules/data.json', 'w') as fw:
+                json.dump(data, fw, indent=4)
+                
+            obj = {
+                'code': 200,
+                'message': 'Schedule event added.',
+            }
+            
+            return JsonResponse(obj)
+        
+    return redirect('/')
+
+@csrf_exempt
+def edit_sched(request: HttpRequest):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            with open('./static/schedules/data.json', 'r') as f:
+                data = json.load(f)
+            
+            new_data = {
+                'data': []
+            }
+            for r in data['data']:
+                if request.POST['id'] == r['id']:
+                    r['title'] = request.POST['title']
+                    r['description'] = request.POST['desc']
+                    r['start'] = request.POST['start']
+                    r['end'] = request.POST['end']
+                    
+                new_data['data'].append(r)
+            
+            with open('./static/schedules/data.json', 'w') as fw:
+                json.dump(new_data, fw, indent=4)
+                
+            obj = {
+                'code': 200,
+                'message': 'Schedule event added.',
+            }
+            
+            return JsonResponse(obj)
+        
+    return redirect('/')
+
+@csrf_exempt
+def delete_sched(request: HttpRequest):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            with open('./static/schedules/data.json', 'r') as f:
+                data = json.load(f)
+            
+            new_data = {
+                'data': []
+            }
+            for r in data['data']:
+                if request.POST['id'] == r['id']:
+                    continue
+                    
+                new_data['data'].append(r)
+            
+            with open('./static/schedules/data.json', 'w') as fw:
+                json.dump(new_data, fw, indent=4)
+                
+            obj = {
+                'code': 200,
+                'message': 'Schedule event added.',
+            }
+            
+            return JsonResponse(obj)
+        
     return redirect('/')
