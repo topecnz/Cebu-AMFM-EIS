@@ -59,9 +59,9 @@ def home(request: HttpRequest):
     
     curr = datetime.datetime.now()
     
-    if curr.hour <= 12 > 3:
+    if curr.hour >= 4 and curr.hour <= 12:
         greet = 'Good Morning'
-    elif curr.hour < 18:
+    elif curr.hour > 12 and curr.hour < 18:
         greet = 'Good Afternoon'
     else:
         greet = 'Good Evening'
